@@ -14,6 +14,7 @@ import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
 import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
+import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
 import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
@@ -417,6 +418,11 @@ const TransparenciaEmendaDetail = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Plano de Trabalho */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <PlanoTrabalhoPublicSection emendaId={emenda.id} />
           </div>
 
           {/* Empresas Licitadas */}

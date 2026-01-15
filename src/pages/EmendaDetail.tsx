@@ -9,13 +9,11 @@ import {
   Edit,
   Download,
   Loader2,
-  Save,
   Trash2,
+  Pencil,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -25,17 +23,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import StatusBadge from '@/components/dashboard/StatusBadge';
-import { useEmenda, useUpdateEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
+import { useEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
+import EditEmendaDialog from '@/components/emendas/EditEmendaDialog';
 import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
@@ -72,33 +64,10 @@ const EmendaDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: emenda, isLoading } = useEmenda(id || '');
-  const updateEmenda = useUpdateEmenda();
   const deleteEmenda = useDeleteEmenda();
   
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editStatus, setEditStatus] = useState('');
-  const [editValorExecutado, setEditValorExecutado] = useState('');
-
-  const handleOpenEditDialog = () => {
-    if (emenda) {
-      setEditStatus(emenda.status);
-      setEditValorExecutado(String(emenda.valor_executado));
-      setEditDialogOpen(true);
-    }
-  };
-
-  const handleSaveEdit = async () => {
-    if (!emenda) return;
-    
-    await updateEmenda.mutateAsync({
-      id: emenda.id,
-      status: editStatus as any,
-      valor_executado: parseFloat(editValorExecutado) || 0,
-    });
-    
-    setEditDialogOpen(false);
-  };
 
   const handleDelete = async () => {
     if (!emenda) return;
@@ -150,60 +119,10 @@ const EmendaDetail = () => {
             <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
-          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" onClick={handleOpenEditDialog}>
-                <Edit className="mr-2 h-4 w-4" />
-                Editar Execução
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Editar Status e Execução</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status da Emenda</Label>
-                  <Select value={editStatus} onValueChange={setEditStatus}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="aprovado">Aprovado</SelectItem>
-                      <SelectItem value="em_execucao">Em Execução</SelectItem>
-                      <SelectItem value="concluido">Concluído</SelectItem>
-                      <SelectItem value="cancelado">Cancelado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="valorExecutado">Valor Executado (R$)</Label>
-                  <Input
-                    id="valorExecutado"
-                    type="number"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={editValorExecutado}
-                    onChange={(e) => setEditValorExecutado(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Valor total da emenda: {formatCurrency(Number(emenda.valor))}
-                  </p>
-                </div>
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button onClick={handleSaveEdit} disabled={updateEmenda.isPending}>
-                    {updateEmenda.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    <Save className="mr-2 h-4 w-4" />
-                    Salvar
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={() => setEditDialogOpen(true)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Editar Emenda
+          </Button>
           
           {/* Delete Dialog */}
           <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -238,6 +157,15 @@ const EmendaDetail = () => {
           </Dialog>
         </div>
       </div>
+      
+      {/* Edit Dialog */}
+      {emenda && (
+        <EditEmendaDialog
+          emenda={emenda}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+        />
+      )}
 
       {/* Header */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">

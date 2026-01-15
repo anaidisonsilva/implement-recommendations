@@ -180,6 +180,15 @@ const TransparenciaEmendaDetail = () => {
 <body>
   <div class="header">
     <h1>Emenda Nº ${emenda.numero}</h1>
+    ${(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) ? `
+      <p style="font-size: 12px; margin: 5px 0;">
+        ${emenda.numero_proposta ? `Proposta: <strong>${emenda.numero_proposta}</strong>` : ''}
+        ${emenda.numero_proposta && (emenda.numero_convenio || emenda.numero_plano_acao) ? ' | ' : ''}
+        ${emenda.numero_convenio ? `Convênio: <strong>${emenda.numero_convenio}</strong>` : ''}
+        ${emenda.numero_convenio && emenda.numero_plano_acao ? ' | ' : ''}
+        ${emenda.numero_plano_acao ? `Plano de Ação: <strong>${emenda.numero_plano_acao}</strong>` : ''}
+      </p>
+    ` : ''}
     <p>${emenda.objeto}</p>
     <span class="status status-${emenda.status}">${statusLabels[emenda.status]}</span>
   </div>

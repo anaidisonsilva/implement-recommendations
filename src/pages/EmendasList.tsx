@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { PlusCircle, Download, LayoutGrid, List, Loader2 } from 'lucide-react';
+import { PlusCircle, LayoutGrid, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmendaCard from '@/components/emendas/EmendaCard';
 import EmendaFilters from '@/components/emendas/EmendaFilters';
+import ExportDialog from '@/components/emendas/ExportDialog';
 import { useEmendas } from '@/hooks/useEmendas';
 
 type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
@@ -66,10 +67,10 @@ const EmendasList = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
+          <ExportDialog 
+            statusFilter={statusFilter} 
+            concedenteFilter={concedenteFilter} 
+          />
           <Button asChild>
             <Link to="/emendas/nova">
               <PlusCircle className="mr-2 h-4 w-4" />

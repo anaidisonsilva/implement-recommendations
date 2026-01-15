@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import MainLayout from "./components/layout/MainLayout";
+import PrefeituraLayout from "./components/layout/PrefeituraLayout";
 import Dashboard from "./pages/Dashboard";
 import EmendasList from "./pages/EmendasList";
 import EmendaDetail from "./pages/EmendaDetail";
@@ -13,6 +14,11 @@ import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
 import NotFound from "./pages/NotFound";
+import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
+import AdminUsuarios from "./pages/admin/AdminUsuarios";
+import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
+import PrefeituraAuth from "./pages/prefeitura/PrefeituraAuth";
+import PrefeturaDashboard from "./pages/prefeitura/PrefeturaDashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,13 +34,57 @@ const App = () => (
             <Route path="/" element={<TransparenciaPublica />} />
             <Route path="/auth" element={<Auth />} />
             
-            {/* Rotas protegidas */}
+            {/* Rotas de prefeitura (white-label) */}
+            <Route path="/p/:slug" element={<PrefeituraPortal />} />
+            <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />
+            <Route
+              path="/p/:slug/dashboard"
+              element={
+                <ProtectedRoute>
+                  <PrefeituraLayout>
+                    <PrefeturaDashboard />
+                  </PrefeituraLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/p/:slug/emendas"
+              element={
+                <ProtectedRoute>
+                  <PrefeituraLayout>
+                    <EmendasList />
+                  </PrefeituraLayout>
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Rotas protegidas - Super Admin */}
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Dashboard />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/prefeituras"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AdminPrefeituras />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/usuarios"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AdminUsuarios />
                   </MainLayout>
                 </ProtectedRoute>
               }

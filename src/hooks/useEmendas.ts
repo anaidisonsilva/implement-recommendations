@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { toast } from 'sonner';
 
 export interface EmendaDB {
@@ -59,17 +60,33 @@ export interface CreateEmendaInput {
 }
 
 export const useEmendas = () => {
+  const { data: roles } = useUserRoles();
+  
+  const isSuperAdmin = roles?.some(r => r.role === 'super_admin') ?? false;
+  const prefeituraId = roles?.find(r => r.prefeitura_id)?.prefeitura_id ?? null;
+
   return useQuery({
-    queryKey: ['emendas'],
+    queryKey: ['emendas', isSuperAdmin, prefeituraId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('emendas')
         .select('*')
         .order('created_at', { ascending: false });
 
+      // Se não for super_admin, filtra pela prefeitura do usuário
+      if (!isSuperAdmin && prefeituraId) {
+        query = query.eq('prefeitura_id', prefeituraId);
+      } else if (!isSuperAdmin && !prefeituraId) {
+        // Usuário sem prefeitura associada não vê nenhuma emenda
+        return [];
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
       return data as EmendaDB[];
     },
+    enabled: roles !== undefined,
   });
 };
 
@@ -93,14 +110,18 @@ export const useEmenda = (id: string) => {
 export const useCreateEmenda = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { data: roles } = useUserRoles();
+  
+  const prefeituraId = roles?.find(r => r.prefeitura_id)?.prefeitura_id ?? null;
 
   return useMutation({
-    mutationFn: async (input: CreateEmendaInput) => {
+    mutationFn: async (input: CreateEmendaInput & { prefeitura_id?: string }) => {
       const { data, error } = await supabase
         .from('emendas')
         .insert({
           ...input,
           created_by: user?.id,
+          prefeitura_id: input.prefeitura_id ?? prefeituraId,
         })
         .select()
         .single();

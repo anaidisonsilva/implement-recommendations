@@ -13,6 +13,7 @@ import EmendaDetail from "./pages/EmendaDetail";
 import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
+import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
 import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
@@ -31,8 +32,10 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Rota pública de transparência */}
+            {/* Rotas públicas de transparência */}
             <Route path="/" element={<TransparenciaPublica />} />
+            <Route path="/transparencia" element={<TransparenciaPublica />} />
+            <Route path="/transparencia/:id" element={<TransparenciaEmendaDetail />} />
             <Route path="/auth" element={<Auth />} />
             
             {/* Rotas de prefeitura (white-label) */}

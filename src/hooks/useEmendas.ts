@@ -24,6 +24,7 @@ export interface EmendaDB {
   anuencia_previa_sus: boolean | null;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
+  prefeitura_id: string | null;
   created_at: string;
   updated_at: string;
 }

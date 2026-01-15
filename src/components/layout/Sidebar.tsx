@@ -9,6 +9,9 @@ import {
   HelpCircle,
   X,
   LogOut,
+  FileBarChart,
+  Building2,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -23,11 +26,12 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
+  { icon: FileBarChart, label: 'Relatórios', path: '/relatorios' },
 ];
 
 const adminMenuItems = [
-  { icon: ClipboardList, label: 'Prefeituras', path: '/admin/prefeituras' },
-  { icon: BarChart3, label: 'Usuários', path: '/admin/usuarios' },
+  { icon: Building2, label: 'Prefeituras', path: '/admin/prefeituras' },
+  { icon: Users, label: 'Usuários', path: '/admin/usuarios' },
 ];
 
 const bottomMenuItems = [

@@ -443,35 +443,43 @@ const Relatorios = () => {
       </Card>
 
       {/* Summary */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total de Emendas</CardDescription>
-            <CardTitle className="text-3xl">{totals.count}</CardTitle>
+            <CardDescription className="text-xs">Total de Emendas</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">{totals.count}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Valor Total</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(valorTotal)}</CardTitle>
+            <CardDescription className="text-xs">Valor Total</CardDescription>
+            <CardTitle className="text-base sm:text-lg font-semibold truncate" title={formatCurrency(valorTotal)}>
+              {formatCurrency(valorTotal)}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Concedente</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(totals.valorConcedente)}</CardTitle>
+            <CardDescription className="text-xs">Concedente</CardDescription>
+            <CardTitle className="text-base sm:text-lg font-semibold truncate" title={formatCurrency(totals.valorConcedente)}>
+              {formatCurrency(totals.valorConcedente)}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Contrapartida</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(totals.contrapartida)}</CardTitle>
+            <CardDescription className="text-xs">Contrapartida</CardDescription>
+            <CardTitle className="text-base sm:text-lg font-semibold truncate" title={formatCurrency(totals.contrapartida)}>
+              {formatCurrency(totals.contrapartida)}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Valor Executado</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(totals.executado)}</CardTitle>
+            <CardDescription className="text-xs">Valor Executado</CardDescription>
+            <CardTitle className="text-base sm:text-lg font-semibold truncate" title={formatCurrency(totals.executado)}>
+              {formatCurrency(totals.executado)}
+            </CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -485,31 +493,40 @@ const Relatorios = () => {
               Resultado ({filteredEmendas.length} emendas)
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-0 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Número</TableHead>
-                  <TableHead>Objeto</TableHead>
+                  <TableHead className="min-w-[150px]">Objeto</TableHead>
                   <TableHead>Município</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Executado</TableHead>
+                  <TableHead className="text-right">Concedente</TableHead>
+                  <TableHead className="text-right">Contrapartida</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-right">Executado</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEmendas.slice(0, 20).map((emenda) => (
-                  <TableRow key={emenda.id}>
-                    <TableCell className="font-medium">{emenda.numero}</TableCell>
-                    <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
-                    <TableCell>{emenda.municipio}</TableCell>
-                    <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>
-                    <TableCell>{formatCurrency(Number(emenda.valor_executado))}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={emenda.status} />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredEmendas.slice(0, 20).map((emenda) => {
+                  const valorConc = Number(emenda.valor);
+                  const valorContra = Number(emenda.contrapartida || 0);
+                  const valorTotalEmenda = valorConc + valorContra;
+                  return (
+                    <TableRow key={emenda.id}>
+                      <TableCell className="font-medium">{emenda.numero}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>{emenda.objeto}</TableCell>
+                      <TableCell>{emenda.municipio}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(valorConc)}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(valorContra)}</TableCell>
+                      <TableCell className="text-right font-medium">{formatCurrency(valorTotalEmenda)}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(Number(emenda.valor_executado))}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={emenda.status} />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
             {filteredEmendas.length > 20 && (

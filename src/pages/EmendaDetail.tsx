@@ -4,18 +4,16 @@ import {
   Building2,
   User,
   MapPin,
-  Calendar,
   CreditCard,
   Edit,
   Download,
-  ClipboardList,
-  FileText,
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
+import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -244,19 +242,7 @@ const EmendaDetail = () => {
 
       {/* Plano de Trabalho */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h3 className="flex items-center gap-2 font-semibold text-foreground">
-            <ClipboardList className="h-5 w-5 text-primary" />
-            Plano de Trabalho
-          </h3>
-          <Button variant="outline" size="sm">
-            <FileText className="mr-2 h-4 w-4" />
-            Visualizar Plano
-          </Button>
-        </div>
-        <p className="mt-4 text-muted-foreground">
-          Nenhum plano de trabalho vinculado a esta emenda.
-        </p>
+        <PlanoTrabalhoSection emendaId={emenda.id} />
       </div>
 
       {/* Compliance notice */}

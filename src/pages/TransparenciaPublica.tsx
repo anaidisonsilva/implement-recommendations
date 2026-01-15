@@ -1,14 +1,17 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import StatsCard from '@/components/dashboard/StatsCard';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import {
   FileText,
-  DollarSign,
+  Banknote,
   TrendingUp,
   Clock,
+  CheckCircle2,
+  PlayCircle,
   Building2,
   Loader2,
   LogIn,
@@ -17,6 +20,7 @@ import {
   ChevronRight,
   Filter,
   X,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,34 +65,6 @@ const statusOptions = [
 ];
 
 const ITEMS_PER_PAGE = 10;
-
-// Simple stats card component for this page
-const SimpleStatsCard = ({ 
-  title, 
-  value, 
-  icon: Icon, 
-  subtitle 
-}: { 
-  title: string; 
-  value: string; 
-  icon: React.ElementType; 
-  subtitle?: string;
-}) => (
-  <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-    <div className="flex items-start justify-between">
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <p className="text-2xl font-bold text-foreground">{value}</p>
-        {subtitle && (
-          <p className="text-xs text-muted-foreground">{subtitle}</p>
-        )}
-      </div>
-      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-        <Icon className="h-6 w-6" />
-      </div>
-    </div>
-  </div>
-);
 
 const TransparenciaPublica = () => {
   const { data: emendas, isLoading } = useEmendas();
@@ -155,10 +131,6 @@ const TransparenciaPublica = () => {
 
   const hasActiveFilters = searchTerm || statusFilter !== 'todos';
 
-  const percentualExecutado = stats.valorTotal > 0 
-    ? ((stats.valorExecutado / stats.valorTotal) * 100).toFixed(1) 
-    : '0';
-
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -202,38 +174,50 @@ const TransparenciaPublica = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <SimpleStatsCard
+        {/* Stats Cards - Same as Dashboard */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <StatsCard
             title="Total de Emendas"
-            value={stats.totalEmendas.toString()}
+            value={stats.totalEmendas}
             icon={FileText}
-            subtitle={`${stats.emendasEmExecucao} em execução`}
+            variant="primary"
           />
-          <SimpleStatsCard
+          <StatsCard
             title="Valor Total"
             value={formatCurrency(stats.valorTotal)}
-            icon={DollarSign}
-            subtitle={`${percentualExecutado}% executado`}
+            icon={Banknote}
+            variant="info"
           />
-          <SimpleStatsCard
+          <StatsCard
             title="Valor Executado"
             value={formatCurrency(stats.valorExecutado)}
             icon={TrendingUp}
-            subtitle={`${stats.emendasConcluidas} concluídas`}
+            variant="success"
           />
-          <SimpleStatsCard
+          <StatsCard
             title="Pendentes"
-            value={stats.emendasPendentes.toString()}
+            value={stats.emendasPendentes}
             icon={Clock}
-            subtitle={`${stats.emendasAprovadas} aprovadas`}
+            variant="warning"
+          />
+          <StatsCard
+            title="Em Execução"
+            value={stats.emendasEmExecucao}
+            icon={PlayCircle}
+            variant="info"
+          />
+          <StatsCard
+            title="Concluídas"
+            value={stats.emendasConcluidas}
+            icon={CheckCircle2}
+            variant="success"
           />
         </div>
 
         {/* Charts */}
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          <ExecutionChart stats={dashboardStats} />
           <ValueProgressChart stats={dashboardStats} />
+          <ExecutionChart stats={dashboardStats} />
         </div>
 
         {/* Filters */}
@@ -306,6 +290,7 @@ const TransparenciaPublica = () => {
                       <TableHead className="text-right">Valor</TableHead>
                       <TableHead className="text-right">% Exec.</TableHead>
                       <TableHead>Data</TableHead>
+                      <TableHead className="text-center">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -331,6 +316,13 @@ const TransparenciaPublica = () => {
                           </TableCell>
                           <TableCell className="text-right">{percentExec}%</TableCell>
                           <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>
+                          <TableCell className="text-center">
+                            <Button variant="ghost" size="sm" asChild>
+                              <Link to={`/transparencia/${emenda.id}`}>
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })}

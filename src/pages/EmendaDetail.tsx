@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Building2,
@@ -10,6 +10,7 @@ import {
   Download,
   Loader2,
   Save,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -21,6 +22,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -30,8 +33,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import StatusBadge from '@/components/dashboard/StatusBadge';
-import { useEmenda, useUpdateEmenda } from '@/hooks/useEmendas';
+import { useEmenda, useUpdateEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
+import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -65,10 +69,13 @@ const tipoRecebedorLabels = {
 
 const EmendaDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: emenda, isLoading } = useEmenda(id || '');
   const updateEmenda = useUpdateEmenda();
+  const deleteEmenda = useDeleteEmenda();
   
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editStatus, setEditStatus] = useState('');
   const [editValorExecutado, setEditValorExecutado] = useState('');
 
@@ -90,6 +97,18 @@ const EmendaDetail = () => {
     });
     
     setEditDialogOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (!emenda) return;
+    
+    try {
+      await deleteEmenda.mutateAsync(emenda.id);
+      toast.success('Emenda excluída com sucesso');
+      navigate('/emendas');
+    } catch (error) {
+      toast.error('Erro ao excluir emenda');
+    }
   };
 
   if (isLoading) {
@@ -182,6 +201,38 @@ const EmendaDetail = () => {
                   </Button>
                 </div>
               </div>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Delete Dialog */}
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="destructive">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Excluir
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Excluir Emenda</DialogTitle>
+                <DialogDescription>
+                  Tem certeza que deseja excluir a emenda Nº {emenda.numero}? Esta ação não pode ser desfeita.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDelete}
+                  disabled={deleteEmenda.isPending}
+                >
+                  {deleteEmenda.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Excluir
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>

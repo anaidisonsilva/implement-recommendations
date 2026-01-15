@@ -106,9 +106,10 @@ export type Database = {
       emendas: {
         Row: {
           anuencia_previa_sus: boolean | null
-          banco: string
+          banco: string | null
           cnpj_recebedor: string
-          conta_corrente: string
+          conta_corrente: string | null
+          contrapartida: number | null
           created_at: string
           created_by: string | null
           data_disponibilizacao: string
@@ -120,6 +121,9 @@ export type Database = {
           nome_concedente: string
           nome_recebedor: string
           numero: string
+          numero_convenio: string | null
+          numero_plano_acao: string | null
+          numero_proposta: string | null
           objeto: string
           prefeitura_id: string | null
           status: Database["public"]["Enums"]["status_emenda"]
@@ -131,9 +135,10 @@ export type Database = {
         }
         Insert: {
           anuencia_previa_sus?: boolean | null
-          banco: string
+          banco?: string | null
           cnpj_recebedor: string
-          conta_corrente: string
+          conta_corrente?: string | null
+          contrapartida?: number | null
           created_at?: string
           created_by?: string | null
           data_disponibilizacao: string
@@ -145,6 +150,9 @@ export type Database = {
           nome_concedente: string
           nome_recebedor: string
           numero: string
+          numero_convenio?: string | null
+          numero_plano_acao?: string | null
+          numero_proposta?: string | null
           objeto: string
           prefeitura_id?: string | null
           status?: Database["public"]["Enums"]["status_emenda"]
@@ -156,9 +164,10 @@ export type Database = {
         }
         Update: {
           anuencia_previa_sus?: boolean | null
-          banco?: string
+          banco?: string | null
           cnpj_recebedor?: string
-          conta_corrente?: string
+          conta_corrente?: string | null
+          contrapartida?: number | null
           created_at?: string
           created_by?: string | null
           data_disponibilizacao?: string
@@ -170,6 +179,9 @@ export type Database = {
           nome_concedente?: string
           nome_recebedor?: string
           numero?: string
+          numero_convenio?: string | null
+          numero_plano_acao?: string | null
+          numero_proposta?: string | null
           objeto?: string
           prefeitura_id?: string | null
           status?: Database["public"]["Enums"]["status_emenda"]

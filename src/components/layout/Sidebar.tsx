@@ -23,8 +23,11 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
-  { icon: ClipboardList, label: 'Planos de Trabalho', path: '/planos' },
-  { icon: BarChart3, label: 'Relatórios', path: '/relatorios' },
+];
+
+const adminMenuItems = [
+  { icon: ClipboardList, label: 'Prefeituras', path: '/admin/prefeituras' },
+  { icon: BarChart3, label: 'Usuários', path: '/admin/usuarios' },
 ];
 
 const bottomMenuItems = [
@@ -110,6 +113,35 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               );
             })}
           </ul>
+          
+          {/* Admin section */}
+          <div className="mt-6">
+            <p className="mb-2 px-3 text-xs font-semibold uppercase text-sidebar-foreground/50">
+              Administração
+            </p>
+            <ul className="space-y-1">
+              {adminMenuItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      onClick={onClose}
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        isActive
+                          ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                      )}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
 
         {/* Bottom navigation */}

@@ -121,6 +121,7 @@ export type Database = {
           nome_recebedor: string
           numero: string
           objeto: string
+          prefeitura_id: string | null
           status: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
@@ -145,6 +146,7 @@ export type Database = {
           nome_recebedor: string
           numero: string
           objeto: string
+          prefeitura_id?: string | null
           status?: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
@@ -169,6 +171,7 @@ export type Database = {
           nome_recebedor?: string
           numero?: string
           objeto?: string
+          prefeitura_id?: string | null
           status?: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente?: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"]
@@ -176,7 +179,15 @@ export type Database = {
           valor?: number
           valor_executado?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "emendas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       planos_trabalho: {
         Row: {
@@ -219,6 +230,45 @@ export type Database = {
           },
         ]
       }
+      prefeituras: {
+        Row: {
+          ativo: boolean
+          cnpj: string | null
+          created_at: string
+          estado: string
+          id: string
+          logo_url: string | null
+          municipio: string
+          nome: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          cnpj?: string | null
+          created_at?: string
+          estado?: string
+          id?: string
+          logo_url?: string | null
+          municipio: string
+          nome: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          cnpj?: string | null
+          created_at?: string
+          estado?: string
+          id?: string
+          logo_url?: string | null
+          municipio?: string
+          nome?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cargo: string | null
@@ -252,14 +302,58 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          prefeitura_id: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          prefeitura_id?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          prefeitura_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_prefeitura: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      user_belongs_to_prefeitura: {
+        Args: { _prefeitura_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "super_admin" | "prefeitura_admin" | "prefeitura_user"
       status_emenda:
         | "pendente"
         | "aprovado"
@@ -400,6 +494,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["super_admin", "prefeitura_admin", "prefeitura_user"],
       status_emenda: [
         "pendente",
         "aprovado",

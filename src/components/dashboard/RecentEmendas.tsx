@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 
 interface RecentEmendasProps {
   emendas: EmendaDB[];
+  basePath?: string;
 }
 
 const formatCurrency = (value: number) => {
@@ -15,13 +16,13 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const RecentEmendas = ({ emendas }: RecentEmendasProps) => {
+const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm">
       <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <h3 className="font-semibold text-foreground">Emendas Recentes</h3>
         <Button variant="ghost" size="sm" asChild>
-          <Link to="/emendas" className="text-primary hover:text-primary/80">
+          <Link to={`${basePath}/emendas`} className="text-primary hover:text-primary/80">
             Ver todas
             <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
@@ -32,7 +33,7 @@ const RecentEmendas = ({ emendas }: RecentEmendasProps) => {
         {emendas.slice(0, 5).map((emenda) => (
           <Link
             key={emenda.id}
-            to={`/emendas/${emenda.id}`}
+            to={`${basePath}/emendas/${emenda.id}`}
             className="flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">

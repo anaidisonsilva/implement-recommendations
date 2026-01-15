@@ -35,6 +35,7 @@ import {
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda, useUpdateEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
+import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
@@ -387,6 +388,11 @@ const EmendaDetail = () => {
       {/* Plano de Trabalho */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
         <PlanoTrabalhoSection emendaId={emenda.id} />
+      </div>
+
+      {/* Empresas Licitadas */}
+      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <EmpresasLicitacaoSection emendaId={emenda.id} />
       </div>
 
       {/* Compliance notice */}

@@ -189,6 +189,88 @@ export type Database = {
           },
         ]
       }
+      empresas_licitacao: {
+        Row: {
+          cnpj: string
+          created_at: string
+          created_by: string | null
+          emenda_id: string
+          id: string
+          nome_empresa: string
+          numero_empenho: string
+          updated_at: string
+        }
+        Insert: {
+          cnpj: string
+          created_at?: string
+          created_by?: string | null
+          emenda_id: string
+          id?: string
+          nome_empresa: string
+          numero_empenho: string
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string
+          created_at?: string
+          created_by?: string | null
+          emenda_id?: string
+          id?: string
+          nome_empresa?: string
+          numero_empenho?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresas_licitacao_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pagamentos: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data_pagamento: string
+          descricao: string | null
+          empresa_id: string
+          id: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data_pagamento: string
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data_pagamento?: string
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_licitacao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       planos_trabalho: {
         Row: {
           created_at: string

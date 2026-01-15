@@ -56,10 +56,10 @@ const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
               <div className="mt-2 flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <User className="h-3.5 w-3.5" />
-                  <span>{emenda.nome_concedente}</span>
+                  <span>{emenda.nome_concedente || emenda.nome_parlamentar || '-'}</span>
                 </div>
                 <span className="font-medium text-foreground">
-                  {formatCurrency(Number(emenda.valor))}
+                  {formatCurrency(Number(emenda.valor) + Number(emenda.contrapartida || 0))}
                 </span>
               </div>
             </div>

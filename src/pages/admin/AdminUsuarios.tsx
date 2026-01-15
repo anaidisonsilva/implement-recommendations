@@ -498,7 +498,7 @@ const AdminUsuarios = () => {
                   <TableCell>
                     <div>
                       <p className="font-medium">{(role as any).profile_nome || 'Sem nome'}</p>
-                      <p className="text-xs text-muted-foreground font-mono">{role.user_id.slice(0, 8)}...</p>
+                      <p className="text-xs text-muted-foreground">{(role as any).profile_email || role.user_id.slice(0, 8) + '...'}</p>
                     </div>
                   </TableCell>
                   <TableCell>

@@ -119,6 +119,29 @@ const Relatorios = () => {
   const handleExportPDF = () => {
     if (!filteredEmendas?.length) return;
 
+    const tableRows = filteredEmendas
+      .map((e) => {
+        const valorConc = Number(e.valor);
+        const valorContra = Number(e.contrapartida || 0);
+        const valorTotalEmenda = valorConc + valorContra;
+
+        return `
+          <tr>
+            <td>${e.numero}</td>
+            <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+            <td>${e.nome_parlamentar || '-'}</td>
+            <td>${e.nome_recebedor}</td>
+            <td>${e.municipio}</td>
+            <td class="text-right">${formatCurrency(valorConc)}</td>
+            <td class="text-right">${formatCurrency(valorContra)}</td>
+            <td class="text-right">${formatCurrency(valorTotalEmenda)}</td>
+            <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
+            <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
+          </tr>
+        `;
+      })
+      .join('');
+
     const htmlContent = `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -277,25 +300,7 @@ const Relatorios = () => {
       </tr>
     </thead>
     <tbody>
-      \${filteredEmendas.map((e) => {
-        const valorConc = Number(e.valor);
-        const valorContra = Number(e.contrapartida || 0);
-        const valorTotalEmenda = valorConc + valorContra;
-        return \`
-        <tr>
-          <td>\${e.numero}</td>
-          <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">\${e.objeto}</td>
-          <td>\${e.nome_parlamentar || '-'}</td>
-          <td>\${e.nome_recebedor}</td>
-          <td>\${e.municipio}</td>
-          <td class="text-right">\${formatCurrency(valorConc)}</td>
-          <td class="text-right">\${formatCurrency(valorContra)}</td>
-          <td class="text-right">\${formatCurrency(valorTotalEmenda)}</td>
-          <td class="text-right">\${formatCurrency(Number(e.valor_executado))}</td>
-          <td><span class="status status-\${e.status}">\${statusLabels[e.status] || e.status}</span></td>
-        </tr>
-      \`;
-      }).join('')}
+      ${tableRows}
     </tbody>
   </table>
 
@@ -314,14 +319,27 @@ const Relatorios = () => {
 
     const printWindow = window.open('', '_blank');
     if (printWindow) {
+      printWindow.document.open();
       printWindow.document.write(htmlContent);
       printWindow.document.close();
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
+      printWindow.onload = () => {
+        try {
+          printWindow.print();
+        } catch {
+          // ignore
+        }
+      };
       toast.success('Relatório aberto para impressão/PDF');
     } else {
-      toast.error('Popup bloqueado. Permita popups para exportar PDF.');
+      // Fallback: download HTML (usuário pode abrir e imprimir em PDF)
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.html`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.error('Popup bloqueado. Baixamos o HTML para imprimir em PDF.');
     }
   };
 

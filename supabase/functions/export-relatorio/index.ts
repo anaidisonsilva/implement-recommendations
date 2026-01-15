@@ -21,6 +21,7 @@ interface Emenda {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
+  contrapartida: number | null;
   banco: string;
   conta_corrente: string;
   anuencia_previa_sus: boolean | null;
@@ -86,7 +87,9 @@ function generateCSV(emendas: Emenda[]): string {
     'Gestor Responsável',
     'Objeto',
     'Grupo Natureza Despesa',
-    'Valor (R$)',
+    'Valor Concedente (R$)',
+    'Contrapartida (R$)',
+    'Valor Total (R$)',
     'Valor Executado (R$)',
     '% Executado',
     'Banco',
@@ -95,34 +98,43 @@ function generateCSV(emendas: Emenda[]): string {
     'Data Cadastro',
   ];
 
-  const rows = emendas.map((e) => [
-    escapeCSV(e.numero),
-    escapeCSV(statusLabels[e.status] || e.status),
-    escapeCSV(tipoConcedenteLabels[e.tipo_concedente] || e.tipo_concedente),
-    escapeCSV(e.nome_concedente),
-    escapeCSV(tipoRecebedorLabels[e.tipo_recebedor] || e.tipo_recebedor),
-    escapeCSV(e.nome_recebedor),
-    escapeCSV(e.cnpj_recebedor),
-    escapeCSV(e.municipio),
-    escapeCSV(e.estado),
-    escapeCSV(formatDate(e.data_disponibilizacao)),
-    escapeCSV(e.gestor_responsavel),
-    escapeCSV(e.objeto),
-    escapeCSV(e.grupo_natureza_despesa),
-    escapeCSV(Number(e.valor).toFixed(2)),
-    escapeCSV(Number(e.valor_executado).toFixed(2)),
-    escapeCSV(((Number(e.valor_executado) / Number(e.valor)) * 100).toFixed(2) + '%'),
-    escapeCSV(e.banco),
-    escapeCSV(e.conta_corrente),
-    escapeCSV(e.anuencia_previa_sus === null ? 'N/A' : e.anuencia_previa_sus ? 'Sim' : 'Não'),
-    escapeCSV(formatDate(e.created_at)),
-  ]);
+  const rows = emendas.map((e) => {
+    const valorConc = Number(e.valor);
+    const valorContra = Number(e.contrapartida || 0);
+    const valorTotal = valorConc + valorContra;
+    return [
+      escapeCSV(e.numero),
+      escapeCSV(statusLabels[e.status] || e.status),
+      escapeCSV(tipoConcedenteLabels[e.tipo_concedente] || e.tipo_concedente),
+      escapeCSV(e.nome_concedente),
+      escapeCSV(tipoRecebedorLabels[e.tipo_recebedor] || e.tipo_recebedor),
+      escapeCSV(e.nome_recebedor),
+      escapeCSV(e.cnpj_recebedor),
+      escapeCSV(e.municipio),
+      escapeCSV(e.estado),
+      escapeCSV(formatDate(e.data_disponibilizacao)),
+      escapeCSV(e.gestor_responsavel),
+      escapeCSV(e.objeto),
+      escapeCSV(e.grupo_natureza_despesa),
+      escapeCSV(valorConc.toFixed(2)),
+      escapeCSV(valorContra.toFixed(2)),
+      escapeCSV(valorTotal.toFixed(2)),
+      escapeCSV(Number(e.valor_executado).toFixed(2)),
+      escapeCSV(((Number(e.valor_executado) / valorTotal) * 100).toFixed(2) + '%'),
+      escapeCSV(e.banco),
+      escapeCSV(e.conta_corrente),
+      escapeCSV(e.anuencia_previa_sus === null ? 'N/A' : e.anuencia_previa_sus ? 'Sim' : 'Não'),
+      escapeCSV(formatDate(e.created_at)),
+    ];
+  });
 
   return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
 }
 
 function generateHTML(emendas: Emenda[]): string {
-  const totalValor = emendas.reduce((acc, e) => acc + Number(e.valor), 0);
+  const totalConcedente = emendas.reduce((acc, e) => acc + Number(e.valor), 0);
+  const totalContrapartida = emendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
+  const totalValor = totalConcedente + totalContrapartida;
   const totalExecutado = emendas.reduce((acc, e) => acc + Number(e.valor_executado), 0);
   const percentualGeral = totalValor > 0 ? ((totalExecutado / totalValor) * 100).toFixed(2) : '0.00';
 
@@ -132,20 +144,25 @@ function generateHTML(emendas: Emenda[]): string {
   }, {} as Record<string, number>);
 
   const tableRows = emendas
-    .map(
-      (e) => `
+    .map((e) => {
+      const valorConc = Number(e.valor);
+      const valorContra = Number(e.contrapartida || 0);
+      const valorTotal = valorConc + valorContra;
+      return `
     <tr>
       <td>${e.numero}</td>
       <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
       <td>${e.nome_concedente}</td>
       <td>${e.nome_recebedor}</td>
       <td>${e.municipio}/${e.estado}</td>
-      <td class="text-right">${formatCurrency(Number(e.valor))}</td>
+      <td class="text-right">${formatCurrency(valorConc)}</td>
+      <td class="text-right">${formatCurrency(valorContra)}</td>
+      <td class="text-right">${formatCurrency(valorTotal)}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
-      <td class="text-right">${((Number(e.valor_executado) / Number(e.valor)) * 100).toFixed(1)}%</td>
+      <td class="text-right">${((Number(e.valor_executado) / valorTotal) * 100).toFixed(1)}%</td>
     </tr>
-  `
-    )
+  `;
+    })
     .join('');
 
   return `
@@ -292,6 +309,14 @@ function generateHTML(emendas: Emenda[]): string {
       <div class="value">${formatCurrency(totalValor)}</div>
     </div>
     <div class="summary-card">
+      <div class="label">Concedente</div>
+      <div class="value">${formatCurrency(totalConcedente)}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Contrapartida</div>
+      <div class="value">${formatCurrency(totalContrapartida)}</div>
+    </div>
+    <div class="summary-card">
       <div class="label">Valor Executado</div>
       <div class="value green">${formatCurrency(totalExecutado)}</div>
     </div>
@@ -329,7 +354,9 @@ function generateHTML(emendas: Emenda[]): string {
         <th>Concedente</th>
         <th>Recebedor</th>
         <th>Município</th>
-        <th class="text-right">Valor</th>
+        <th class="text-right">Concedente</th>
+        <th class="text-right">Contrapartida</th>
+        <th class="text-right">Total</th>
         <th class="text-right">Executado</th>
         <th class="text-right">%</th>
       </tr>

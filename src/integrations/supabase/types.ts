@@ -370,6 +370,7 @@ export type Database = {
         Row: {
           cargo: string | null
           created_at: string
+          email: string | null
           id: string
           nome_completo: string
           orgao_setor: string | null
@@ -380,6 +381,7 @@ export type Database = {
         Insert: {
           cargo?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           nome_completo: string
           orgao_setor?: string | null
@@ -390,6 +392,7 @@ export type Database = {
         Update: {
           cargo?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           nome_completo?: string
           orgao_setor?: string | null

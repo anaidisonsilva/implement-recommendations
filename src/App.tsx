@@ -18,6 +18,7 @@ import TransparenciaPublica from "./pages/TransparenciaPublica";
 import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
+import Configuracoes from "./pages/Configuracoes";
 import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
 import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
@@ -141,6 +142,16 @@ const App = () => (
                 <ProtectedRoute>
                   <MainLayout>
                     <EmendaDetail />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/configuracoes"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Configuracoes />
                   </MainLayout>
                 </ProtectedRoute>
               }

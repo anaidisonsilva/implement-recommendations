@@ -72,15 +72,16 @@ export const useAllUserRoles = () => {
       const userIds = [...new Set(roles?.map(r => r.user_id) || [])];
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('user_id, nome_completo')
+        .select('user_id, nome_completo, email')
         .in('user_id', userIds);
 
       // Map profiles to roles
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p.nome_completo]) || []);
+      const profileMap = new Map(profiles?.map(p => [p.user_id, { nome: p.nome_completo, email: p.email }]) || []);
       
       return roles?.map(role => ({
         ...role,
-        profile_nome: profileMap.get(role.user_id) || null,
+        profile_nome: profileMap.get(role.user_id)?.nome || null,
+        profile_email: profileMap.get(role.user_id)?.email || null,
       })) || [];
     },
   });

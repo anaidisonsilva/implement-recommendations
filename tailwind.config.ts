@@ -39,6 +39,14 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -46,6 +54,10 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        header: {
+          DEFAULT: "hsl(var(--header))",
+          foreground: "hsl(var(--header-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -56,6 +68,13 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        status: {
+          pendente: "hsl(var(--status-pendente))",
+          aprovado: "hsl(var(--status-aprovado))",
+          execucao: "hsl(var(--status-execucao))",
+          concluido: "hsl(var(--status-concluido))",
+          cancelado: "hsl(var(--status-cancelado))",
         },
       },
       borderRadius: {

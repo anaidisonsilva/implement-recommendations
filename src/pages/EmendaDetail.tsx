@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -8,11 +9,28 @@ import {
   Edit,
   Download,
   Loader2,
+  Save,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import StatusBadge from '@/components/dashboard/StatusBadge';
-import { useEmenda } from '@/hooks/useEmendas';
+import { useEmenda, useUpdateEmenda } from '@/hooks/useEmendas';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
 
 const formatCurrency = (value: number) => {
@@ -48,6 +66,31 @@ const tipoRecebedorLabels = {
 const EmendaDetail = () => {
   const { id } = useParams();
   const { data: emenda, isLoading } = useEmenda(id || '');
+  const updateEmenda = useUpdateEmenda();
+  
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editStatus, setEditStatus] = useState('');
+  const [editValorExecutado, setEditValorExecutado] = useState('');
+
+  const handleOpenEditDialog = () => {
+    if (emenda) {
+      setEditStatus(emenda.status);
+      setEditValorExecutado(String(emenda.valor_executado));
+      setEditDialogOpen(true);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!emenda) return;
+    
+    await updateEmenda.mutateAsync({
+      id: emenda.id,
+      status: editStatus as any,
+      valor_executado: parseFloat(editValorExecutado) || 0,
+    });
+    
+    setEditDialogOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -87,10 +130,60 @@ const EmendaDetail = () => {
             <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
-          <Button size="sm">
-            <Edit className="mr-2 h-4 w-4" />
-            Editar
-          </Button>
+          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" onClick={handleOpenEditDialog}>
+                <Edit className="mr-2 h-4 w-4" />
+                Editar Execução
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar Status e Execução</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status da Emenda</Label>
+                  <Select value={editStatus} onValueChange={setEditStatus}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="aprovado">Aprovado</SelectItem>
+                      <SelectItem value="em_execucao">Em Execução</SelectItem>
+                      <SelectItem value="concluido">Concluído</SelectItem>
+                      <SelectItem value="cancelado">Cancelado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valorExecutado">Valor Executado (R$)</Label>
+                  <Input
+                    id="valorExecutado"
+                    type="number"
+                    step="0.01"
+                    placeholder="0,00"
+                    value={editValorExecutado}
+                    onChange={(e) => setEditValorExecutado(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Valor total da emenda: {formatCurrency(Number(emenda.valor))}
+                  </p>
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSaveEdit} disabled={updateEmenda.isPending}>
+                    {updateEmenda.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Save className="mr-2 h-4 w-4" />
+                    Salvar
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

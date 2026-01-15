@@ -1,0 +1,466 @@
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import StatusBadge from '@/components/dashboard/StatusBadge';
+import PublicExportDialog from '@/components/emendas/PublicExportDialog';
+import PaginationControls from '@/components/ui/pagination-controls';
+import {
+  ArrowLeft,
+  Loader2,
+  FileText,
+  Banknote,
+  TrendingUp,
+  Search,
+  Filter,
+  X,
+  Printer,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(value);
+};
+
+const formatCurrencyCompact = (value: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
+};
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('pt-BR');
+};
+
+type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
+
+const statusOptions = [
+  { value: 'todos', label: 'Todos os status' },
+  { value: 'pendente', label: 'Pendente' },
+  { value: 'aprovado', label: 'Aprovado' },
+  { value: 'em_execucao', label: 'Em Execução' },
+  { value: 'concluido', label: 'Concluído' },
+  { value: 'cancelado', label: 'Cancelado' },
+];
+
+const TransparenciaRelatorios = () => {
+  const { data: emendas, isLoading } = useEmendas();
+  const stats = useEmendasStats();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  const filteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+
+    return emendas.filter((emenda) => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch =
+        !searchTerm ||
+        emenda.numero.toLowerCase().includes(searchLower) ||
+        emenda.objeto.toLowerCase().includes(searchLower) ||
+        emenda.municipio.toLowerCase().includes(searchLower) ||
+        emenda.nome_concedente?.toLowerCase().includes(searchLower);
+
+      const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [emendas, searchTerm, statusFilter]);
+
+  // Calculate summary values
+  const summaryStats = useMemo(() => {
+    const valorConcedente = filteredEmendas.reduce((sum, e) => sum + Number(e.valor), 0);
+    const contrapartida = filteredEmendas.reduce((sum, e) => sum + Number(e.contrapartida || 0), 0);
+    const valorTotal = valorConcedente + contrapartida;
+    const valorExecutado = filteredEmendas.reduce((sum, e) => sum + Number(e.valor_executado), 0);
+    return { valorConcedente, contrapartida, valorTotal, valorExecutado };
+  }, [filteredEmendas]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
+  const paginatedEmendas = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredEmendas.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredEmendas, currentPage, itemsPerPage]);
+
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items);
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('todos');
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos';
+
+  const handlePrint = () => {
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Relatório de Emendas Parlamentares</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 10px; }
+          .header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid #1a365d; padding-bottom: 10px; }
+          .header h1 { color: #1a365d; font-size: 16px; margin-bottom: 3px; }
+          .header p { color: #666; font-size: 9px; }
+          .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+          .summary-card { background: #f8fafc; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; }
+          .summary-card .label { font-size: 8px; color: #666; text-transform: uppercase; }
+          .summary-card .value { font-size: 12px; font-weight: bold; color: #1a365d; }
+          table { width: 100%; border-collapse: collapse; font-size: 9px; }
+          th, td { border: 1px solid #e2e8f0; padding: 5px; text-align: left; }
+          th { background: #f1f5f9; font-weight: bold; color: #1a365d; }
+          tr:nth-child(even) { background: #f8fafc; }
+          .text-right { text-align: right; }
+          .footer { margin-top: 15px; text-align: center; font-size: 8px; color: #666; border-top: 1px solid #e2e8f0; padding-top: 10px; }
+          @media print { body { padding: 10px; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>RELATÓRIO DE EMENDAS PARLAMENTARES</h1>
+          <p>Portal de Transparência - Gerado em ${new Date().toLocaleString('pt-BR')}</p>
+          <p>${filteredEmendas.length} emenda(s) ${hasActiveFilters ? '(filtrado)' : ''}</p>
+        </div>
+
+        <div class="summary">
+          <div class="summary-card">
+            <div class="label">Valor Concedente</div>
+            <div class="value">${formatCurrency(summaryStats.valorConcedente)}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Contrapartida</div>
+            <div class="value">${formatCurrency(summaryStats.contrapartida)}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Valor Total</div>
+            <div class="value">${formatCurrency(summaryStats.valorTotal)}</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">Executado</div>
+            <div class="value">${formatCurrency(summaryStats.valorExecutado)}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Status</th>
+              <th>Objeto</th>
+              <th>Concedente</th>
+              <th>Município</th>
+              <th class="text-right">Concedente</th>
+              <th class="text-right">Contrapartida</th>
+              <th class="text-right">Total</th>
+              <th class="text-right">Executado</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredEmendas.map(emenda => {
+              const valor = Number(emenda.valor);
+              const contrapartida = Number(emenda.contrapartida || 0);
+              const total = valor + contrapartida;
+              return `
+              <tr>
+                <td>${emenda.numero}</td>
+                <td>${emenda.status.replace('_', ' ')}</td>
+                <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
+                <td>${emenda.nome_concedente || '-'}</td>
+                <td>${emenda.municipio}/${emenda.estado}</td>
+                <td class="text-right">${formatCurrency(valor)}</td>
+                <td class="text-right">${formatCurrency(contrapartida)}</td>
+                <td class="text-right">${formatCurrency(total)}</td>
+                <td class="text-right">${formatCurrency(Number(emenda.valor_executado))}</td>
+                <td>${formatDate(emenda.data_disponibilizacao)}</td>
+              </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>Este relatório foi gerado automaticamente pelo Portal de Transparência de Emendas Parlamentares</p>
+          <p>Em conformidade com a Recomendação MPC-MG nº 01/2025</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/transparencia">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  Relatórios
+                </h1>
+                <p className="mt-1 text-muted-foreground">
+                  Portal de Transparência - Emendas Parlamentares
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={handlePrint}>
+                <Printer className="mr-2 h-4 w-4" />
+                Imprimir
+              </Button>
+              <PublicExportDialog 
+                emendas={filteredEmendas.map(e => ({
+                  id: e.id,
+                  numero: e.numero,
+                  objeto: e.objeto,
+                  nome_concedente: e.nome_concedente,
+                  nome_parlamentar: e.nome_parlamentar,
+                  nome_recebedor: e.nome_recebedor,
+                  municipio: e.municipio,
+                  estado: e.estado,
+                  valor: Number(e.valor),
+                  valor_executado: Number(e.valor_executado),
+                  status: e.status,
+                  data_disponibilizacao: e.data_disponibilizacao,
+                }))}
+                title="Exportar Relatório"
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Summary Cards */}
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Emendas</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{filteredEmendas.length}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Valor Concedente</CardTitle>
+              <Banknote className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" title={formatCurrency(summaryStats.valorConcedente)}>
+                {formatCurrencyCompact(summaryStats.valorConcedente)}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
+              <Banknote className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary" title={formatCurrency(summaryStats.valorTotal)}>
+                {formatCurrencyCompact(summaryStats.valorTotal)}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Valor Executado</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600" title={formatCurrency(summaryStats.valorExecutado)}>
+                {formatCurrencyCompact(summaryStats.valorExecutado)}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <div className="mb-6 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Filter className="h-4 w-4" />
+              Filtros
+            </div>
+            
+            <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por número, objeto, município..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-9"
+                />
+              </div>
+              
+              <Select 
+                value={statusFilter} 
+                onValueChange={(value) => {
+                  setStatusFilter(value as StatusEmenda | 'todos');
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {hasActiveFilters && (
+                <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <X className="mr-1 h-4 w-4" />
+                  Limpar
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Número</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Objeto</TableHead>
+                  <TableHead>Concedente</TableHead>
+                  <TableHead>Município</TableHead>
+                  <TableHead className="text-right">Concedente</TableHead>
+                  <TableHead className="text-right">Contrapartida</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-right">Executado</TableHead>
+                  <TableHead>Data</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedEmendas.length > 0 ? (
+                  paginatedEmendas.map((emenda) => {
+                    const valor = Number(emenda.valor);
+                    const contrapartida = Number(emenda.contrapartida || 0);
+                    const total = valor + contrapartida;
+                    return (
+                      <TableRow key={emenda.id}>
+                        <TableCell className="font-medium">{emenda.numero}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={emenda.status} />
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>
+                          {emenda.objeto}
+                        </TableCell>
+                        <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
+                          {emenda.nome_concedente || '-'}
+                        </TableCell>
+                        <TableCell>{emenda.municipio}/{emenda.estado}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(valor)}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(contrapartida)}</TableCell>
+                        <TableCell className="text-right font-medium">{formatCurrencyCompact(total)}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_executado))}</TableCell>
+                        <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={10} className="py-8 text-center text-muted-foreground">
+                      Nenhuma emenda encontrada
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredEmendas.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
+          <p>
+            Portal de Emendas Parlamentares - Sistema de Gestão e Transparência
+          </p>
+          <p className="mt-1">
+            Em conformidade com a Recomendação MPC-MG nº 01/2025
+          </p>
+        </footer>
+      </main>
+    </div>
+  );
+};
+
+export default TransparenciaRelatorios;

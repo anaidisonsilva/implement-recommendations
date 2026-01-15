@@ -6,6 +6,7 @@ import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
+import PaginationControls from '@/components/ui/pagination-controls';
 import {
   FileText,
   Banknote,
@@ -17,11 +18,10 @@ import {
   Loader2,
   LogIn,
   Search,
-  ChevronLeft,
-  ChevronRight,
   Filter,
   X,
   Eye,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,8 +65,6 @@ const statusOptions = [
   { value: 'cancelado', label: 'Cancelado' },
 ];
 
-const ITEMS_PER_PAGE = 10;
-
 const TransparenciaPublica = () => {
   const { data: emendas, isLoading } = useEmendas();
   const stats = useEmendasStats();
@@ -75,6 +73,7 @@ const TransparenciaPublica = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const dashboardStats = {
     totalEmendas: stats.totalEmendas,
@@ -107,11 +106,16 @@ const TransparenciaPublica = () => {
   }, [emendas, searchTerm, statusFilter]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredEmendas.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
   const paginatedEmendas = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredEmendas.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredEmendas, currentPage]);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredEmendas.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredEmendas, currentPage, itemsPerPage]);
+
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items);
+    setCurrentPage(1);
+  };
 
   // Reset to first page when filters change
   const handleSearchChange = (value: string) => {
@@ -154,12 +158,20 @@ const TransparenciaPublica = () => {
                 Emendas Parlamentares - Acesso Público
               </p>
             </div>
-            <Button asChild>
-              <Link to="/auth">
-                <LogIn className="mr-2 h-4 w-4" />
-                Área Restrita
-              </Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" asChild>
+                <Link to="/transparencia/relatorios">
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Relatórios
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link to="/auth">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Área Restrita
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -351,62 +363,14 @@ const TransparenciaPublica = () => {
               </div>
 
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-border px-4 py-3">
-                  <p className="text-sm text-muted-foreground">
-                    Página {currentPage} de {totalPages}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Anterior
-                    </Button>
-                    
-                    {/* Page numbers */}
-                    <div className="hidden items-center gap-1 sm:flex">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum: number;
-                        if (totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
-                        
-                        return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? 'default' : 'outline'}
-                            size="sm"
-                            onClick={() => setCurrentPage(pageNum)}
-                            className="w-9"
-                          >
-                            {pageNum}
-                          </Button>
-                        );
-                      })}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                    >
-                      Próxima
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredEmendas.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                onItemsPerPageChange={handleItemsPerPageChange}
+              />
             </>
           ) : (
             <div className="py-12 text-center">

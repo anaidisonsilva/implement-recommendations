@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Users, Loader2, Shield, Building2 } from 'lucide-react';
+import { Plus, Trash2, Users, Loader2, Shield, Building2, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,10 +26,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useAllUserRoles, useCreateUserRole, useDeleteUserRole, AppRole } from '@/hooks/useUserRoles';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAllUserRoles, useCreateUserRole, useDeleteUserRole, AppRole, useIsSuperAdmin, useUserPrefeitura } from '@/hooks/useUserRoles';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 const roleLabels: Record<AppRole, string> = {
   super_admin: 'Super Admin',
@@ -38,13 +40,17 @@ const roleLabels: Record<AppRole, string> = {
 };
 
 const AdminUsuarios = () => {
+  const queryClient = useQueryClient();
   const { data: userRoles, isLoading } = useAllUserRoles();
   const { data: prefeituras } = usePrefeituras();
   const createUserRole = useCreateUserRole();
   const deleteUserRole = useDeleteUserRole();
+  const { isSuperAdmin } = useIsSuperAdmin();
+  const { prefeituraId: userPrefeituraId } = useUserPrefeitura();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  // States for assigning role to existing user
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [assignFormData, setAssignFormData] = useState({
     email: '',
     role: '' as AppRole | '',
     prefeitura_id: '',
@@ -52,16 +58,26 @@ const AdminUsuarios = () => {
   const [searchingUser, setSearchingUser] = useState(false);
   const [foundUserId, setFoundUserId] = useState<string | null>(null);
 
+  // States for creating new user
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [createFormData, setCreateFormData] = useState({
+    email: '',
+    password: '',
+    nome_completo: '',
+    role: '' as AppRole | '',
+    prefeitura_id: '',
+  });
+
   const handleSearchUser = async () => {
-    if (!formData.email) return;
+    if (!assignFormData.email) return;
 
     setSearchingUser(true);
     try {
-      // Search for user by email in profiles
       const { data, error } = await supabase
         .from('profiles')
         .select('user_id, nome_completo')
-        .ilike('nome_completo', `%${formData.email}%`)
+        .ilike('nome_completo', `%${assignFormData.email}%`)
         .limit(1);
 
       if (error) throw error;
@@ -80,33 +96,120 @@ const AdminUsuarios = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAssignSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!foundUserId || !formData.role) {
+    if (!foundUserId || !assignFormData.role) {
       toast.error('Selecione um usuário e uma função');
       return;
     }
 
     const payload: { user_id: string; role: AppRole; prefeitura_id?: string } = {
       user_id: foundUserId,
-      role: formData.role,
+      role: assignFormData.role,
     };
 
-    if (formData.role !== 'super_admin' && formData.prefeitura_id) {
-      payload.prefeitura_id = formData.prefeitura_id;
+    if (assignFormData.role !== 'super_admin' && assignFormData.prefeitura_id) {
+      payload.prefeitura_id = assignFormData.prefeitura_id;
     }
 
     await createUserRole.mutateAsync(payload);
-    setDialogOpen(false);
-    setFormData({ email: '', role: '', prefeitura_id: '' });
+    setAssignDialogOpen(false);
+    setAssignFormData({ email: '', role: '', prefeitura_id: '' });
     setFoundUserId(null);
+  };
+
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!createFormData.email || !createFormData.password || !createFormData.nome_completo || !createFormData.role) {
+      toast.error('Preencha todos os campos obrigatórios');
+      return;
+    }
+
+    if (createFormData.role !== 'super_admin' && !createFormData.prefeitura_id) {
+      toast.error('Selecione uma prefeitura');
+      return;
+    }
+
+    if (createFormData.password.length < 6) {
+      toast.error('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    setCreatingUser(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      
+      const response = await supabase.functions.invoke('create-user', {
+        body: {
+          email: createFormData.email,
+          password: createFormData.password,
+          nome_completo: createFormData.nome_completo,
+          role: createFormData.role,
+          prefeitura_id: createFormData.role !== 'super_admin' ? createFormData.prefeitura_id : undefined,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      if (response.data?.error) {
+        throw new Error(response.data.error);
+      }
+
+      toast.success('Usuário criado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['all_user_roles'] });
+      setCreateDialogOpen(false);
+      setCreateFormData({
+        email: '',
+        password: '',
+        nome_completo: '',
+        role: '',
+        prefeitura_id: '',
+      });
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      toast.error(error.message || 'Erro ao criar usuário');
+    } finally {
+      setCreatingUser(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja remover esta permissão?')) {
       await deleteUserRole.mutateAsync(id);
     }
+  };
+
+  // Filter roles based on user permissions
+  const filteredRoles = userRoles?.filter(role => {
+    if (isSuperAdmin) return true;
+    // Prefeitura admin can only see users from their prefeitura
+    return role.prefeitura_id === userPrefeituraId;
+  });
+
+  // Get available roles for creating users
+  const getAvailableRoles = () => {
+    if (isSuperAdmin) {
+      return [
+        { value: 'super_admin', label: 'Super Admin' },
+        { value: 'prefeitura_admin', label: 'Admin da Prefeitura' },
+        { value: 'prefeitura_user', label: 'Usuário da Prefeitura' },
+      ];
+    }
+    // Prefeitura admin can only create prefeitura_user
+    return [
+      { value: 'prefeitura_user', label: 'Usuário da Prefeitura' },
+    ];
+  };
+
+  // Get available prefeituras for creating users
+  const getAvailablePrefeituras = () => {
+    if (isSuperAdmin) return prefeituras || [];
+    // Prefeitura admin can only create users for their prefeitura
+    return prefeituras?.filter(p => p.id === userPrefeituraId) || [];
   };
 
   if (isLoading) {
@@ -123,89 +226,191 @@ const AdminUsuarios = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Usuários e Permissões</h1>
           <p className="mt-1 text-muted-foreground">
-            Gerencie as permissões dos usuários no sistema
+            Gerencie os usuários e suas permissões no sistema
           </p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Atribuir Permissão
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Atribuir Permissão</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Buscar Usuário (nome)</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="email"
-                    placeholder="Nome do usuário"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                  <Button type="button" variant="secondary" onClick={handleSearchUser} disabled={searchingUser}>
-                    {searchingUser ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Buscar'}
-                  </Button>
-                </div>
-                {foundUserId && (
-                  <p className="text-sm text-green-600">✓ Usuário encontrado</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Função *</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => setFormData({ ...formData, role: value as AppRole })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a função" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
-                    <SelectItem value="prefeitura_admin">Admin da Prefeitura</SelectItem>
-                    <SelectItem value="prefeitura_user">Usuário da Prefeitura</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {formData.role && formData.role !== 'super_admin' && (
+        <div className="flex gap-2">
+          {/* Create New User Dialog */}
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Criar Usuário
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Criar Novo Usuário</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="prefeitura">Prefeitura *</Label>
+                  <Label htmlFor="nome_completo">Nome Completo *</Label>
+                  <Input
+                    id="nome_completo"
+                    placeholder="Nome do usuário"
+                    value={createFormData.nome_completo}
+                    onChange={(e) => setCreateFormData({ ...createFormData, nome_completo: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="create_email">Email *</Label>
+                  <Input
+                    id="create_email"
+                    type="email"
+                    placeholder="email@exemplo.com"
+                    value={createFormData.email}
+                    onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Senha *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Mínimo 6 caracteres"
+                    value={createFormData.password}
+                    onChange={(e) => setCreateFormData({ ...createFormData, password: e.target.value })}
+                    required
+                    minLength={6}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="create_role">Função *</Label>
                   <Select
-                    value={formData.prefeitura_id}
-                    onValueChange={(value) => setFormData({ ...formData, prefeitura_id: value })}
+                    value={createFormData.role}
+                    onValueChange={(value) => setCreateFormData({ ...createFormData, role: value as AppRole })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione a prefeitura" />
+                      <SelectValue placeholder="Selecione a função" />
                     </SelectTrigger>
                     <SelectContent>
-                      {prefeituras?.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.nome}
+                      {getAvailableRoles().map((role) => (
+                        <SelectItem key={role.value} value={role.value}>
+                          {role.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              )}
-              <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancelar
+                {createFormData.role && createFormData.role !== 'super_admin' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="create_prefeitura">Prefeitura *</Label>
+                    <Select
+                      value={createFormData.prefeitura_id}
+                      onValueChange={(value) => setCreateFormData({ ...createFormData, prefeitura_id: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a prefeitura" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getAvailablePrefeituras().map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button type="button" variant="outline" onClick={() => setCreateDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={creatingUser}>
+                    {creatingUser && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Criar Usuário
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Assign Role Dialog - Only for Super Admin */}
+          {isSuperAdmin && (
+            <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Atribuir Permissão
                 </Button>
-                <Button type="submit" disabled={!foundUserId || !formData.role || createUserRole.isPending}>
-                  {createUserRole.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Atribuir
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Atribuir Permissão a Usuário Existente</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleAssignSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="search_email">Buscar Usuário (nome)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="search_email"
+                        placeholder="Nome do usuário"
+                        value={assignFormData.email}
+                        onChange={(e) => setAssignFormData({ ...assignFormData, email: e.target.value })}
+                      />
+                      <Button type="button" variant="secondary" onClick={handleSearchUser} disabled={searchingUser}>
+                        {searchingUser ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Buscar'}
+                      </Button>
+                    </div>
+                    {foundUserId && (
+                      <p className="text-sm text-green-600">✓ Usuário encontrado</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="assign_role">Função *</Label>
+                    <Select
+                      value={assignFormData.role}
+                      onValueChange={(value) => setAssignFormData({ ...assignFormData, role: value as AppRole })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a função" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
+                        <SelectItem value="prefeitura_admin">Admin da Prefeitura</SelectItem>
+                        <SelectItem value="prefeitura_user">Usuário da Prefeitura</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {assignFormData.role && assignFormData.role !== 'super_admin' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="assign_prefeitura">Prefeitura *</Label>
+                      <Select
+                        value={assignFormData.prefeitura_id}
+                        onValueChange={(value) => setAssignFormData({ ...assignFormData, prefeitura_id: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a prefeitura" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {prefeituras?.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  <div className="flex justify-end gap-2 pt-4">
+                    <Button type="button" variant="outline" onClick={() => setAssignDialogOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit" disabled={!foundUserId || !assignFormData.role || createUserRole.isPending}>
+                      {createUserRole.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Atribuir
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
 
-      {userRoles && userRoles.length > 0 ? (
+      {filteredRoles && filteredRoles.length > 0 ? (
         <div className="rounded-xl border border-border bg-card">
           <Table>
             <TableHeader>
@@ -217,7 +422,7 @@ const AdminUsuarios = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {userRoles.map((role) => (
+              {filteredRoles.map((role) => (
                 <TableRow key={role.id}>
                   <TableCell className="font-mono text-sm">
                     {role.user_id.slice(0, 8)}...
@@ -256,10 +461,10 @@ const AdminUsuarios = () => {
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
           <Users className="h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-lg font-medium text-muted-foreground">
-            Nenhuma permissão cadastrada
+            Nenhum usuário cadastrado
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Atribua permissões aos usuários para começar
+            Crie o primeiro usuário para começar
           </p>
         </div>
       )}

@@ -6,12 +6,13 @@ import {
   FileText,
   LogOut,
   Menu,
-  X,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -23,8 +24,11 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura } = usePrefeituraBySlug(slug ?? '');
   const { signOut, profile } = useAuth();
+  const { data: roles } = useUserRoles();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin' || r.role === 'super_admin');
 
   const navigation = [
     {
@@ -37,6 +41,11 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
+    ...(isPrefeituraAdmin ? [{
+      name: 'Usuários',
+      href: `/p/${slug}/usuarios`,
+      icon: Users,
+    }] : []),
   ];
 
   const isActive = (href: string) => location.pathname === href;

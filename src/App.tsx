@@ -61,6 +61,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/p/:slug/usuarios"
+              element={
+                <ProtectedRoute>
+                  <PrefeituraLayout>
+                    <AdminUsuarios />
+                  </PrefeituraLayout>
+                </ProtectedRoute>
+              }
+            />
             
             {/* Rotas protegidas - Super Admin */}
             <Route

@@ -302,9 +302,9 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
             {/* Dados Financeiros */}
             <div className="space-y-4">
               <h4 className="font-medium text-foreground">Dados Financeiros</h4>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="valor">Valor Total (R$) *</Label>
+                  <Label htmlFor="valor">Valor do Concedente (R$) *</Label>
                   <Input
                     id="valor"
                     type="number"
@@ -336,6 +336,22 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     onChange={(e) => setFormData({ ...formData, contrapartida: e.target.value })}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label>Valor Total (R$)</Label>
+                  <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-lg font-semibold text-primary">
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(
+                      (parseFloat(formData.valor) || 0) + (parseFloat(formData.contrapartida) || 0)
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Soma automática: Concedente + Contrapartida
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="grupo_natureza_despesa">Grupo Natureza de Despesa *</Label>
                   <Input

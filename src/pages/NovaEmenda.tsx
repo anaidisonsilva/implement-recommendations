@@ -314,7 +314,7 @@ const NovaEmenda = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="valor">Valor (R$) *</Label>
+              <Label htmlFor="valor">Valor do Concedente (R$) *</Label>
               <Input
                 id="valor"
                 type="number"
@@ -335,6 +335,20 @@ const NovaEmenda = () => {
                 value={formData.contrapartida}
                 onChange={(e) => handleChange('contrapartida', e.target.value)}
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Valor Total (R$)</Label>
+              <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-lg font-semibold text-primary">
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(
+                  (parseFloat(formData.valor) || 0) + (parseFloat(formData.contrapartida) || 0)
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Soma automática: Concedente + Contrapartida
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="banco">Banco</Label>

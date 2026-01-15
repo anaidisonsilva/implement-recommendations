@@ -102,7 +102,9 @@ const EmendaDetail = () => {
 
   const valor = Number(emenda.valor);
   const valorExecutado = Number(emenda.valor_executado);
-  const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
+  const contrapartida = Number(emenda.contrapartida || 0);
+  const valorTotal = valor + contrapartida;
+  const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -185,18 +187,24 @@ const EmendaDetail = () => {
             </div>
           </div>
           <div className="flex gap-6 text-right">
-            {emenda.contrapartida && Number(emenda.contrapartida) > 0 && (
+            <div>
+              <p className="text-sm text-muted-foreground">Valor Concedente</p>
+              <p className="text-lg font-semibold text-foreground">
+                {formatCurrency(valor)}
+              </p>
+            </div>
+            {contrapartida > 0 && (
               <div>
                 <p className="text-sm text-muted-foreground">Contrapartida</p>
-                <p className="text-xl font-bold text-warning">
-                  {formatCurrency(Number(emenda.contrapartida))}
+                <p className="text-lg font-semibold text-warning">
+                  {formatCurrency(contrapartida)}
                 </p>
               </div>
             )}
             <div>
               <p className="text-sm text-muted-foreground">Valor Total</p>
               <p className="text-2xl font-bold text-primary">
-                {formatCurrency(valor)}
+                {formatCurrency(valorTotal)}
               </p>
             </div>
           </div>
@@ -214,7 +222,7 @@ const EmendaDetail = () => {
               Executado: {formatCurrency(valorExecutado)}
             </span>
             <span className="text-muted-foreground">
-              Restante: {formatCurrency(valor - valorExecutado)}
+              Restante: {formatCurrency(valorTotal - valorExecutado)}
             </span>
           </div>
         </div>

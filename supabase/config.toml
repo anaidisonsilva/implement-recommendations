@@ -1,1 +1,4 @@
 project_id = "mimatrpfmfjvwphnvrht"
+
+[functions.export-relatorio]
+verify_jwt = false

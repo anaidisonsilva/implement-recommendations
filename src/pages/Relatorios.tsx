@@ -74,15 +74,16 @@ const Relatorios = () => {
     (acc, e) => ({
       valor: acc.valor + Number(e.valor),
       executado: acc.executado + Number(e.valor_executado),
+      contrapartida: acc.contrapartida + Number(e.contrapartida || 0),
       count: acc.count + 1,
     }),
-    { valor: 0, executado: 0, count: 0 }
-  ) ?? { valor: 0, executado: 0, count: 0 };
+    { valor: 0, executado: 0, contrapartida: 0, count: 0 }
+  ) ?? { valor: 0, executado: 0, contrapartida: 0, count: 0 };
 
   const handleExportCSV = () => {
     if (!filteredEmendas?.length) return;
 
-    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Status', 'Data'];
+    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Contrapartida', 'Status', 'Data'];
     const rows = filteredEmendas.map((e) => [
       e.numero,
       `"${e.objeto.replace(/"/g, '""')}"`,
@@ -92,6 +93,7 @@ const Relatorios = () => {
       e.municipio,
       e.valor,
       e.valor_executado,
+      e.contrapartida || 0,
       statusLabels[e.status] || e.status,
       formatDate(e.data_disponibilizacao),
     ]);
@@ -239,6 +241,10 @@ const Relatorios = () => {
       <div class="value">${formatCurrency(totals.executado)}</div>
     </div>
     <div class="summary-item">
+      <div class="label">Contrapartida</div>
+      <div class="value">${formatCurrency(totals.contrapartida)}</div>
+    </div>
+    <div class="summary-item">
       <div class="label">Execução</div>
       <div class="value">${totals.valor > 0 ? ((totals.executado / totals.valor) * 100).toFixed(1) : 0}%</div>
     </div>
@@ -255,6 +261,7 @@ const Relatorios = () => {
         <th>Município</th>
         <th class="text-right">Valor</th>
         <th class="text-right">Executado</th>
+        <th class="text-right">Contrapartida</th>
         <th>Status</th>
         <th>Data</th>
       </tr>
@@ -270,6 +277,7 @@ const Relatorios = () => {
           <td>\${e.municipio}</td>
           <td class="text-right">\${formatCurrency(Number(e.valor))}</td>
           <td class="text-right">\${formatCurrency(Number(e.valor_executado))}</td>
+          <td class="text-right">\${formatCurrency(Number(e.contrapartida || 0))}</td>
           <td><span class="status status-\${e.status}">\${statusLabels[e.status] || e.status}</span></td>
           <td>\${formatDate(e.data_disponibilizacao)}</td>
         </tr>
@@ -403,7 +411,7 @@ const Relatorios = () => {
       </Card>
 
       {/* Summary */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total de Emendas</CardDescription>
@@ -420,6 +428,12 @@ const Relatorios = () => {
           <CardHeader className="pb-2">
             <CardDescription>Valor Executado</CardDescription>
             <CardTitle className="text-3xl">{formatCurrency(totals.executado)}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Contrapartida</CardDescription>
+            <CardTitle className="text-3xl">{formatCurrency(totals.contrapartida)}</CardTitle>
           </CardHeader>
         </Card>
       </div>

@@ -391,7 +391,7 @@ const EmendaDetail = () => {
 
         {/* Objeto - em linha separada */}
         <div className="mt-4">
-          <p className="text-muted-foreground break-words">{emenda.objeto}</p>
+          <p className="text-muted-foreground break-words whitespace-normal overflow-hidden">{emenda.objeto}</p>
         </div>
 
         {/* Valores - grid responsivo */}

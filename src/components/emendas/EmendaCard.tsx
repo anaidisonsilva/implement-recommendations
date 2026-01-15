@@ -30,12 +30,12 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
       className="block rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4 min-w-0 flex-1">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Building2 className="h-6 w-6" />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground line-clamp-2">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-foreground line-clamp-2 break-words">
               {emenda.objeto}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -43,7 +43,9 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
             </p>
           </div>
         </div>
-        <StatusBadge status={emenda.status} />
+        <div className="shrink-0">
+          <StatusBadge status={emenda.status} />
+        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">

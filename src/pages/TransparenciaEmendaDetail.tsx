@@ -334,14 +334,28 @@ const TransparenciaEmendaDetail = () => {
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Building2 className="h-7 w-7" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-xl font-bold text-foreground">
                       Emenda Nº {emenda.numero}
                     </h1>
                     <StatusBadge status={emenda.status} />
                   </div>
-                  <p className="mt-2 text-muted-foreground">{emenda.objeto}</p>
+                  {/* Números de identificação - apenas se cadastrados */}
+                  {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      {emenda.numero_proposta && (
+                        <span>Proposta: <strong className="text-foreground">{emenda.numero_proposta}</strong></span>
+                      )}
+                      {emenda.numero_convenio && (
+                        <span>Convênio: <strong className="text-foreground">{emenda.numero_convenio}</strong></span>
+                      )}
+                      {emenda.numero_plano_acao && (
+                        <span>Plano de Ação: <strong className="text-foreground">{emenda.numero_plano_acao}</strong></span>
+                      )}
+                    </div>
+                  )}
+                  <p className="mt-2 text-muted-foreground break-words whitespace-normal overflow-hidden">{emenda.objeto}</p>
                 </div>
               </div>
               <div className="flex gap-6 text-right">

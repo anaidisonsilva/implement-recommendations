@@ -14,6 +14,7 @@ import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
 import NotFound from "./pages/NotFound";
+import Relatorios from "./pages/Relatorios";
 import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
 import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
@@ -85,6 +86,16 @@ const App = () => (
                 <ProtectedRoute>
                   <MainLayout>
                     <AdminUsuarios />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/relatorios"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Relatorios />
                   </MainLayout>
                 </ProtectedRoute>
               }

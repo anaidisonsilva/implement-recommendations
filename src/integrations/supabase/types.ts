@@ -118,7 +118,8 @@ export type Database = {
           grupo_natureza_despesa: string
           id: string
           municipio: string
-          nome_concedente: string
+          nome_concedente: string | null
+          nome_parlamentar: string | null
           nome_recebedor: string
           numero: string
           numero_convenio: string | null
@@ -147,7 +148,8 @@ export type Database = {
           grupo_natureza_despesa: string
           id?: string
           municipio: string
-          nome_concedente: string
+          nome_concedente?: string | null
+          nome_parlamentar?: string | null
           nome_recebedor: string
           numero: string
           numero_convenio?: string | null
@@ -176,7 +178,8 @@ export type Database = {
           grupo_natureza_despesa?: string
           id?: string
           municipio?: string
-          nome_concedente?: string
+          nome_concedente?: string | null
+          nome_parlamentar?: string | null
           nome_recebedor?: string
           numero?: string
           numero_convenio?: string | null

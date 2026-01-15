@@ -26,6 +26,7 @@ const NovaEmenda = () => {
     numeroProposta: '',
     tipoConcedente: '' as 'parlamentar' | 'comissao' | 'bancada' | 'outro' | '',
     nomeConcedente: '',
+    nomeParlamentar: '',
     tipoRecebedor: '' as 'administracao_publica' | 'entidade_sem_fins_lucrativos' | 'consorcio_publico' | 'pessoa_juridica_privada' | 'outro' | '',
     nomeRecebedor: '',
     cnpjRecebedor: '',
@@ -56,7 +57,8 @@ const NovaEmenda = () => {
       numero_plano_acao: formData.numeroPlanoAcao || null,
       numero_proposta: formData.numeroProposta || null,
       tipo_concedente: formData.tipoConcedente,
-      nome_concedente: formData.nomeConcedente,
+      nome_concedente: formData.nomeConcedente || null,
+      nome_parlamentar: formData.nomeParlamentar || null,
       tipo_recebedor: formData.tipoRecebedor,
       nome_recebedor: formData.nomeRecebedor,
       cnpj_recebedor: formData.cnpjRecebedor,
@@ -154,12 +156,12 @@ const NovaEmenda = () => {
           </div>
         </div>
 
-        {/* Concedente */}
+        {/* Concedente e Parlamentar */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Concedente</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Origem do Recurso</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="tipoConcedente">Tipo *</Label>
+              <Label htmlFor="tipoConcedente">Tipo de Emenda *</Label>
               <Select
                 value={formData.tipoConcedente}
                 onValueChange={(value) => handleChange('tipoConcedente', value)}
@@ -176,13 +178,21 @@ const NovaEmenda = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nomeConcedente">Nome *</Label>
+              <Label htmlFor="nomeParlamentar">Nome do Parlamentar</Label>
+              <Input
+                id="nomeParlamentar"
+                placeholder="Nome do parlamentar autor da emenda (opcional)"
+                value={formData.nomeParlamentar}
+                onChange={(e) => handleChange('nomeParlamentar', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="nomeConcedente">Órgão Concedente</Label>
               <Input
                 id="nomeConcedente"
-                placeholder="Nome do parlamentar, comissão ou bancada"
+                placeholder="Nome do órgão/ministério concedente do recurso (opcional)"
                 value={formData.nomeConcedente}
                 onChange={(e) => handleChange('nomeConcedente', e.target.value)}
-                required
               />
             </div>
           </div>

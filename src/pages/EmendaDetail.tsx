@@ -374,42 +374,51 @@ const EmendaDetail = () => {
 
       {/* Header */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Building2 className="h-7 w-7" />
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-xl font-bold text-foreground">
-                  Emenda Nº {emenda.numero}
-                </h1>
-                <StatusBadge status={emenda.status} />
-              </div>
-              <p className="mt-2 text-muted-foreground">{emenda.objeto}</p>
+        {/* Título e Status */}
+        <div className="flex items-start gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Building2 className="h-7 w-7" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl font-bold text-foreground">
+                Emenda Nº {emenda.numero}
+              </h1>
+              <StatusBadge status={emenda.status} />
             </div>
           </div>
-          <div className="flex gap-6 text-right">
-            <div>
-              <p className="text-sm text-muted-foreground">Valor Concedente</p>
-              <p className="text-lg font-semibold text-foreground">
-                {formatCurrency(valor)}
-              </p>
-            </div>
-            {contrapartida > 0 && (
-              <div>
-                <p className="text-sm text-muted-foreground">Contrapartida</p>
-                <p className="text-lg font-semibold text-warning">
-                  {formatCurrency(contrapartida)}
-                </p>
-              </div>
-            )}
-            <div>
-              <p className="text-sm text-muted-foreground">Valor Total</p>
-              <p className="text-2xl font-bold text-primary">
-                {formatCurrency(valorTotal)}
-              </p>
-            </div>
+        </div>
+
+        {/* Objeto - em linha separada */}
+        <div className="mt-4">
+          <p className="text-muted-foreground break-words">{emenda.objeto}</p>
+        </div>
+
+        {/* Valores - grid responsivo */}
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="text-xs text-muted-foreground">Valor Concedente</p>
+            <p className="text-lg font-semibold text-foreground">
+              {formatCurrency(valor)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="text-xs text-muted-foreground">Contrapartida</p>
+            <p className="text-lg font-semibold text-warning">
+              {formatCurrency(contrapartida)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-primary/10 p-3">
+            <p className="text-xs text-muted-foreground">Valor Total</p>
+            <p className="text-xl font-bold text-primary">
+              {formatCurrency(valorTotal)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="text-xs text-muted-foreground">Executado</p>
+            <p className="text-lg font-semibold text-foreground">
+              {formatCurrency(valorExecutado)}
+            </p>
           </div>
         </div>
 

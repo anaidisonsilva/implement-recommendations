@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Building2, Calendar, MapPin, User, Banknote } from 'lucide-react';
-import { Emenda } from '@/types/emenda';
+import { EmendaDB } from '@/hooks/useEmendas';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { Progress } from '@/components/ui/progress';
 
 interface EmendaCardProps {
-  emenda: Emenda;
+  emenda: EmendaDB;
 }
 
 const formatCurrency = (value: number) => {
@@ -20,9 +20,9 @@ const formatDate = (dateString: string) => {
 };
 
 const EmendaCard = ({ emenda }: EmendaCardProps) => {
-  const progressPercent = emenda.valor > 0 
-    ? (emenda.valorExecutado / emenda.valor) * 100 
-    : 0;
+  const valor = Number(emenda.valor);
+  const valorExecutado = Number(emenda.valor_executado);
+  const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
 
   return (
     <Link
@@ -49,7 +49,7 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <User className="h-4 w-4" />
-          <span className="truncate">{emenda.concedente.nome}</span>
+          <span className="truncate">{emenda.nome_concedente}</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           <MapPin className="h-4 w-4" />
@@ -57,11 +57,11 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(emenda.dataDisponibilizacao)}</span>
+          <span>{formatDate(emenda.data_disponibilizacao)}</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Banknote className="h-4 w-4" />
-          <span className="font-medium text-foreground">{formatCurrency(emenda.valor)}</span>
+          <span className="font-medium text-foreground">{formatCurrency(valor)}</span>
         </div>
       </div>
 
@@ -74,8 +74,8 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
         </div>
         <Progress value={progressPercent} className="h-2" />
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Executado: {formatCurrency(emenda.valorExecutado)}</span>
-          <span>Total: {formatCurrency(emenda.valor)}</span>
+          <span>Executado: {formatCurrency(valorExecutado)}</span>
+          <span>Total: {formatCurrency(valor)}</span>
         </div>
       </div>
     </Link>

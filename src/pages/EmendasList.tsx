@@ -1,20 +1,25 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { PlusCircle, Download, LayoutGrid, List } from 'lucide-react';
+import { PlusCircle, Download, LayoutGrid, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmendaCard from '@/components/emendas/EmendaCard';
 import EmendaFilters from '@/components/emendas/EmendaFilters';
-import { mockEmendas } from '@/data/mockEmendas';
-import { StatusEmenda, TipoConcedente } from '@/types/emenda';
+import { useEmendas } from '@/hooks/useEmendas';
+
+type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
+type TipoConcedente = 'parlamentar' | 'comissao' | 'bancada' | 'outro';
 
 const EmendasList = () => {
+  const { data: emendas, isLoading } = useEmendas();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const filteredEmendas = useMemo(() => {
-    return mockEmendas.filter((emenda) => {
+    if (!emendas) return [];
+
+    return emendas.filter((emenda) => {
       // Search filter
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
@@ -22,25 +27,33 @@ const EmendasList = () => {
         emenda.numero.toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
-        emenda.concedente.nome.toLowerCase().includes(searchLower) ||
-        emenda.recebedor.nome.toLowerCase().includes(searchLower);
+        emenda.nome_concedente.toLowerCase().includes(searchLower) ||
+        emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       // Status filter
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
 
       // Concedente filter
       const matchesConcedente =
-        concedenteFilter === 'todos' || emenda.concedente.tipo === concedenteFilter;
+        concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
 
       return matchesSearch && matchesStatus && matchesConcedente;
     });
-  }, [searchTerm, statusFilter, concedenteFilter]);
+  }, [emendas, searchTerm, statusFilter, concedenteFilter]);
 
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('todos');
     setConcedenteFilter('todos');
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

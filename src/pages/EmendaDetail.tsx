@@ -184,11 +184,21 @@ const EmendaDetail = () => {
               <p className="mt-2 text-muted-foreground">{emenda.objeto}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Valor Total</p>
-            <p className="text-2xl font-bold text-primary">
-              {formatCurrency(valor)}
-            </p>
+          <div className="flex gap-6 text-right">
+            {emenda.contrapartida && Number(emenda.contrapartida) > 0 && (
+              <div>
+                <p className="text-sm text-muted-foreground">Contrapartida</p>
+                <p className="text-xl font-bold text-warning">
+                  {formatCurrency(Number(emenda.contrapartida))}
+                </p>
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-muted-foreground">Valor Total</p>
+              <p className="text-2xl font-bold text-primary">
+                {formatCurrency(valor)}
+              </p>
+            </div>
           </div>
         </div>
 

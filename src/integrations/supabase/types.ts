@@ -14,7 +14,244 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cronograma_itens: {
+        Row: {
+          created_at: string
+          data_fim: string
+          data_inicio: string
+          etapa: string
+          id: string
+          percentual_conclusao: number
+          plano_trabalho_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_fim: string
+          data_inicio: string
+          etapa: string
+          id?: string
+          percentual_conclusao?: number
+          plano_trabalho_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_fim?: string
+          data_inicio?: string
+          etapa?: string
+          id?: string
+          percentual_conclusao?: number
+          plano_trabalho_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cronograma_itens_plano_trabalho_id_fkey"
+            columns: ["plano_trabalho_id"]
+            isOneToOne: false
+            referencedRelation: "planos_trabalho"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documentos: {
+        Row: {
+          created_at: string
+          emenda_id: string | null
+          id: string
+          nome: string
+          plano_trabalho_id: string | null
+          tipo: string
+          uploaded_by: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          emenda_id?: string | null
+          id?: string
+          nome: string
+          plano_trabalho_id?: string | null
+          tipo: string
+          uploaded_by?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          emenda_id?: string | null
+          id?: string
+          nome?: string
+          plano_trabalho_id?: string | null
+          tipo?: string
+          uploaded_by?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentos_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documentos_plano_trabalho_id_fkey"
+            columns: ["plano_trabalho_id"]
+            isOneToOne: false
+            referencedRelation: "planos_trabalho"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emendas: {
+        Row: {
+          anuencia_previa_sus: boolean | null
+          banco: string
+          cnpj_recebedor: string
+          conta_corrente: string
+          created_at: string
+          created_by: string | null
+          data_disponibilizacao: string
+          estado: string
+          gestor_responsavel: string
+          grupo_natureza_despesa: string
+          id: string
+          municipio: string
+          nome_concedente: string
+          nome_recebedor: string
+          numero: string
+          objeto: string
+          status: Database["public"]["Enums"]["status_emenda"]
+          tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
+          tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
+          updated_at: string
+          valor: number
+          valor_executado: number
+        }
+        Insert: {
+          anuencia_previa_sus?: boolean | null
+          banco: string
+          cnpj_recebedor: string
+          conta_corrente: string
+          created_at?: string
+          created_by?: string | null
+          data_disponibilizacao: string
+          estado?: string
+          gestor_responsavel: string
+          grupo_natureza_despesa: string
+          id?: string
+          municipio: string
+          nome_concedente: string
+          nome_recebedor: string
+          numero: string
+          objeto: string
+          status?: Database["public"]["Enums"]["status_emenda"]
+          tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
+          tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
+          updated_at?: string
+          valor: number
+          valor_executado?: number
+        }
+        Update: {
+          anuencia_previa_sus?: boolean | null
+          banco?: string
+          cnpj_recebedor?: string
+          conta_corrente?: string
+          created_at?: string
+          created_by?: string | null
+          data_disponibilizacao?: string
+          estado?: string
+          gestor_responsavel?: string
+          grupo_natureza_despesa?: string
+          id?: string
+          municipio?: string
+          nome_concedente?: string
+          nome_recebedor?: string
+          numero?: string
+          objeto?: string
+          status?: Database["public"]["Enums"]["status_emenda"]
+          tipo_concedente?: Database["public"]["Enums"]["tipo_concedente"]
+          tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"]
+          updated_at?: string
+          valor?: number
+          valor_executado?: number
+        }
+        Relationships: []
+      }
+      planos_trabalho: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          emenda_id: string
+          estimativa_recursos: number
+          finalidade: string
+          id: string
+          objeto: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          emenda_id: string
+          estimativa_recursos: number
+          finalidade: string
+          id?: string
+          objeto: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          emenda_id?: string
+          estimativa_recursos?: number
+          finalidade?: string
+          id?: string
+          objeto?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planos_trabalho_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          cargo: string | null
+          created_at: string
+          id: string
+          nome_completo: string
+          orgao_setor: string | null
+          telefone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cargo?: string | null
+          created_at?: string
+          id?: string
+          nome_completo: string
+          orgao_setor?: string | null
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cargo?: string | null
+          created_at?: string
+          id?: string
+          nome_completo?: string
+          orgao_setor?: string | null
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +260,19 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      status_emenda:
+        | "pendente"
+        | "aprovado"
+        | "em_execucao"
+        | "concluido"
+        | "cancelado"
+      tipo_concedente: "parlamentar" | "comissao" | "bancada" | "outro"
+      tipo_recebedor:
+        | "administracao_publica"
+        | "entidade_sem_fins_lucrativos"
+        | "consorcio_publico"
+        | "pessoa_juridica_privada"
+        | "outro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +399,22 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      status_emenda: [
+        "pendente",
+        "aprovado",
+        "em_execucao",
+        "concluido",
+        "cancelado",
+      ],
+      tipo_concedente: ["parlamentar", "comissao", "bancada", "outro"],
+      tipo_recebedor: [
+        "administracao_publica",
+        "entidade_sem_fins_lucrativos",
+        "consorcio_publico",
+        "pessoa_juridica_privada",
+        "outro",
+      ],
+    },
   },
 } as const

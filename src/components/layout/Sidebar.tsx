@@ -8,9 +8,11 @@ import {
   Settings,
   HelpCircle,
   X,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,6 +34,11 @@ const bottomMenuItems = [
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
+  const { signOut, profile } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <>
@@ -64,6 +71,20 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             ADPF 854 • MPC-MG
           </span>
         </div>
+
+        {/* User info */}
+        {profile && (
+          <div className="border-b border-sidebar-border px-4 py-3">
+            <p className="font-medium text-sidebar-foreground truncate">
+              {profile.nome_completo}
+            </p>
+            {profile.cargo && (
+              <p className="text-xs text-sidebar-foreground/70 truncate">
+                {profile.cargo}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4">
@@ -114,6 +135,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 </li>
               );
             })}
+            <li>
+              <button
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                Sair
+              </button>
+            </li>
           </ul>
         </div>
       </aside>

@@ -1,9 +1,9 @@
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2 } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
-import { mockEmendas, calculateStats } from '@/data/mockEmendas';
+import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -15,7 +15,16 @@ const formatCurrency = (value: number) => {
 };
 
 const Dashboard = () => {
-  const stats = calculateStats(mockEmendas);
+  const { data: emendas, isLoading } = useEmendas();
+  const stats = useEmendasStats();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -74,7 +83,20 @@ const Dashboard = () => {
       </div>
 
       {/* Recent emendas */}
-      <RecentEmendas emendas={mockEmendas} />
+      {emendas && emendas.length > 0 && <RecentEmendas emendas={emendas} />}
+
+      {/* Empty state */}
+      {(!emendas || emendas.length === 0) && (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
+          <FileText className="h-12 w-12 text-muted-foreground/50" />
+          <p className="mt-4 text-lg font-medium text-muted-foreground">
+            Nenhuma emenda cadastrada
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Comece cadastrando a primeira emenda no sistema
+          </p>
+        </div>
+      )}
 
       {/* Compliance notice */}
       <div className="rounded-xl border border-info/30 bg-info/5 p-4">

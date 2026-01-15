@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,15 +13,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
+import { useCreateEmenda, CreateEmendaInput } from '@/hooks/useEmendas';
 
 const NovaEmenda = () => {
   const navigate = useNavigate();
+  const createEmenda = useCreateEmenda();
+
   const [formData, setFormData] = useState({
     numero: '',
-    tipoConcedente: '',
+    tipoConcedente: '' as 'parlamentar' | 'comissao' | 'bancada' | 'outro' | '',
     nomeConcedente: '',
-    tipoRecebedor: '',
+    tipoRecebedor: '' as 'administracao_publica' | 'entidade_sem_fins_lucrativos' | 'consorcio_publico' | 'pessoa_juridica_privada' | 'outro' | '',
     nomeRecebedor: '',
     cnpjRecebedor: '',
     municipio: '',
@@ -37,10 +39,33 @@ const NovaEmenda = () => {
     hasAnuencia: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate save
-    toast.success('Emenda cadastrada com sucesso!');
+
+    if (!formData.tipoConcedente || !formData.tipoRecebedor || !formData.grupoNaturezaDespesa) {
+      return;
+    }
+
+    const input: CreateEmendaInput = {
+      numero: formData.numero,
+      tipo_concedente: formData.tipoConcedente,
+      nome_concedente: formData.nomeConcedente,
+      tipo_recebedor: formData.tipoRecebedor,
+      nome_recebedor: formData.nomeRecebedor,
+      cnpj_recebedor: formData.cnpjRecebedor,
+      municipio: formData.municipio,
+      estado: formData.estado,
+      data_disponibilizacao: formData.dataDisponibilizacao,
+      gestor_responsavel: formData.gestorResponsavel,
+      objeto: formData.objeto,
+      grupo_natureza_despesa: formData.grupoNaturezaDespesa,
+      valor: parseFloat(formData.valor),
+      banco: formData.banco,
+      conta_corrente: formData.contaCorrente,
+      anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
+    };
+
+    await createEmenda.mutateAsync(input);
     navigate('/emendas');
   };
 
@@ -234,12 +259,12 @@ const NovaEmenda = () => {
                   <SelectValue placeholder="Selecione o GND" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 - Pessoal e Encargos Sociais</SelectItem>
-                  <SelectItem value="2">2 - Juros e Encargos da Dívida</SelectItem>
-                  <SelectItem value="3">3 - Outras Despesas Correntes</SelectItem>
-                  <SelectItem value="4">4 - Investimentos</SelectItem>
-                  <SelectItem value="5">5 - Inversões Financeiras</SelectItem>
-                  <SelectItem value="6">6 - Amortização da Dívida</SelectItem>
+                  <SelectItem value="1 - Pessoal e Encargos Sociais">1 - Pessoal e Encargos Sociais</SelectItem>
+                  <SelectItem value="2 - Juros e Encargos da Dívida">2 - Juros e Encargos da Dívida</SelectItem>
+                  <SelectItem value="3 - Outras Despesas Correntes">3 - Outras Despesas Correntes</SelectItem>
+                  <SelectItem value="4 - Investimentos">4 - Investimentos</SelectItem>
+                  <SelectItem value="5 - Inversões Financeiras">5 - Inversões Financeiras</SelectItem>
+                  <SelectItem value="6 - Amortização da Dívida">6 - Amortização da Dívida</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -248,6 +273,7 @@ const NovaEmenda = () => {
               <Input
                 id="valor"
                 type="number"
+                step="0.01"
                 placeholder="0,00"
                 value={formData.valor}
                 onChange={(e) => handleChange('valor', e.target.value)}
@@ -313,9 +339,18 @@ const NovaEmenda = () => {
               Cancelar
             </Link>
           </Button>
-          <Button type="submit">
-            <Save className="mr-2 h-4 w-4" />
-            Salvar Emenda
+          <Button type="submit" disabled={createEmenda.isPending}>
+            {createEmenda.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Salvando...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Salvar Emenda
+              </>
+            )}
           </Button>
         </div>
       </form>

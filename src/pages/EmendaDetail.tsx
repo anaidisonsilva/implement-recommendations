@@ -5,17 +5,17 @@ import {
   User,
   MapPin,
   Calendar,
-  Banknote,
-  FileText,
   CreditCard,
   Edit,
   Download,
   ClipboardList,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
-import { mockEmendas } from '@/data/mockEmendas';
+import { useEmenda } from '@/hooks/useEmendas';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -49,7 +49,15 @@ const tipoRecebedorLabels = {
 
 const EmendaDetail = () => {
   const { id } = useParams();
-  const emenda = mockEmendas.find((e) => e.id === id);
+  const { data: emenda, isLoading } = useEmenda(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!emenda) {
     return (
@@ -62,9 +70,9 @@ const EmendaDetail = () => {
     );
   }
 
-  const progressPercent = emenda.valor > 0 
-    ? (emenda.valorExecutado / emenda.valor) * 100 
-    : 0;
+  const valor = Number(emenda.valor);
+  const valorExecutado = Number(emenda.valor_executado);
+  const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -108,7 +116,7 @@ const EmendaDetail = () => {
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Valor Total</p>
             <p className="text-2xl font-bold text-primary">
-              {formatCurrency(emenda.valor)}
+              {formatCurrency(valor)}
             </p>
           </div>
         </div>
@@ -122,10 +130,10 @@ const EmendaDetail = () => {
           <Progress value={progressPercent} className="h-3" />
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
-              Executado: {formatCurrency(emenda.valorExecutado)}
+              Executado: {formatCurrency(valorExecutado)}
             </span>
             <span className="text-muted-foreground">
-              Restante: {formatCurrency(emenda.valor - emenda.valorExecutado)}
+              Restante: {formatCurrency(valor - valorExecutado)}
             </span>
           </div>
         </div>
@@ -143,12 +151,12 @@ const EmendaDetail = () => {
             <div>
               <p className="text-sm text-muted-foreground">Tipo</p>
               <p className="font-medium text-foreground">
-                {tipoConcedenteLabels[emenda.concedente.tipo]}
+                {tipoConcedenteLabels[emenda.tipo_concedente]}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Nome</p>
-              <p className="font-medium text-foreground">{emenda.concedente.nome}</p>
+              <p className="font-medium text-foreground">{emenda.nome_concedente}</p>
             </div>
           </div>
         </div>
@@ -163,16 +171,16 @@ const EmendaDetail = () => {
             <div>
               <p className="text-sm text-muted-foreground">Tipo</p>
               <p className="font-medium text-foreground">
-                {tipoRecebedorLabels[emenda.recebedor.tipo]}
+                {tipoRecebedorLabels[emenda.tipo_recebedor]}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Nome</p>
-              <p className="font-medium text-foreground">{emenda.recebedor.nome}</p>
+              <p className="font-medium text-foreground">{emenda.nome_recebedor}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">CNPJ</p>
-              <p className="font-medium text-foreground">{emenda.recebedor.cnpj}</p>
+              <p className="font-medium text-foreground">{emenda.cnpj_recebedor}</p>
             </div>
           </div>
         </div>
@@ -192,12 +200,12 @@ const EmendaDetail = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Gestor Responsável</p>
-              <p className="font-medium text-foreground">{emenda.gestorResponsavel}</p>
+              <p className="font-medium text-foreground">{emenda.gestor_responsavel}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Data de Disponibilização</p>
               <p className="font-medium text-foreground">
-                {formatDate(emenda.dataDisponibilizacao)}
+                {formatDate(emenda.data_disponibilizacao)}
               </p>
             </div>
           </div>
@@ -212,7 +220,7 @@ const EmendaDetail = () => {
           <div className="mt-4 space-y-3">
             <div>
               <p className="text-sm text-muted-foreground">Grupo Natureza de Despesa</p>
-              <p className="font-medium text-foreground">{emenda.grupoNaturezaDespesa}</p>
+              <p className="font-medium text-foreground">{emenda.grupo_natureza_despesa}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Banco</p>
@@ -220,13 +228,13 @@ const EmendaDetail = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Conta Corrente</p>
-              <p className="font-medium text-foreground">{emenda.contaCorrente}</p>
+              <p className="font-medium text-foreground">{emenda.conta_corrente}</p>
             </div>
-            {emenda.anuenciaPreviaSUS !== null && (
+            {emenda.anuencia_previa_sus !== null && (
               <div>
                 <p className="text-sm text-muted-foreground">Anuência Prévia SUS</p>
                 <p className="font-medium text-foreground">
-                  {emenda.anuenciaPreviaSUS ? 'Sim' : 'Não'}
+                  {emenda.anuencia_previa_sus ? 'Sim' : 'Não'}
                 </p>
               </div>
             )}
@@ -246,15 +254,9 @@ const EmendaDetail = () => {
             Visualizar Plano
           </Button>
         </div>
-        {emenda.planoTrabalho ? (
-          <div className="mt-4">
-            <p className="text-muted-foreground">{emenda.planoTrabalho.finalidade}</p>
-          </div>
-        ) : (
-          <p className="mt-4 text-muted-foreground">
-            Nenhum plano de trabalho vinculado a esta emenda.
-          </p>
-        )}
+        <p className="mt-4 text-muted-foreground">
+          Nenhum plano de trabalho vinculado a esta emenda.
+        </p>
       </div>
 
       {/* Compliance notice */}

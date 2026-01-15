@@ -129,6 +129,15 @@ const EmendaDetail = () => {
         <div class="header">
           <h1>FICHA DE EMENDA PARLAMENTAR</h1>
           <p>Emenda Nº ${emenda.numero}</p>
+          ${(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) ? `
+            <p style="margin-top: 5px; font-size: 10px;">
+              ${emenda.numero_proposta ? `Proposta: <strong>${emenda.numero_proposta}</strong>` : ''}
+              ${emenda.numero_proposta && (emenda.numero_convenio || emenda.numero_plano_acao) ? ' | ' : ''}
+              ${emenda.numero_convenio ? `Convênio: <strong>${emenda.numero_convenio}</strong>` : ''}
+              ${emenda.numero_convenio && emenda.numero_plano_acao ? ' | ' : ''}
+              ${emenda.numero_plano_acao ? `Plano de Ação: <strong>${emenda.numero_plano_acao}</strong>` : ''}
+            </p>
+          ` : ''}
           <span class="status status-${emenda.status}">${emenda.status.replace('_', ' ').toUpperCase()}</span>
         </div>
 

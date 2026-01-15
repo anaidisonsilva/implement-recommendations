@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
+import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -241,7 +242,10 @@ const TransparenciaEmendaDetail = () => {
             </div>
           </div>
 
-          {/* Compliance notice */}
+          {/* Empresas Licitadas */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <EmpresasLicitacaoSection emendaId={emenda.id} readOnly />
+          </div>
           <div className="rounded-xl border border-info/30 bg-info/5 p-4 text-sm">
             <p className="text-muted-foreground">
               <strong className="text-info">Conformidade:</strong> Esta emenda está registrada em 

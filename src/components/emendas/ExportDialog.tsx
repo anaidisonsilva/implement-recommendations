@@ -64,15 +64,29 @@ const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => 
         // Open PDF (HTML) in new window for printing
         const printWindow = window.open('', '_blank');
         if (printWindow) {
+          printWindow.document.open();
           printWindow.document.write(data);
           printWindow.document.close();
-          // Auto-trigger print dialog after a short delay
-          setTimeout(() => {
-            printWindow.print();
-          }, 500);
+          printWindow.onload = () => {
+            try {
+              printWindow.print();
+            } catch {
+              // ignore
+            }
+          };
           toast.success('Relatório aberto para impressão/PDF');
         } else {
-          toast.error('Popup bloqueado. Permita popups para exportar PDF.');
+          // Fallback: download HTML (usuário pode abrir e imprimir em PDF)
+          const blob = new Blob([data], { type: 'text/html;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.html`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          toast.error('Popup bloqueado. Baixamos o HTML para imprimir em PDF.');
         }
       }
 

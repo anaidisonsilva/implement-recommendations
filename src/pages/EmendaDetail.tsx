@@ -386,6 +386,20 @@ const EmendaDetail = () => {
               </h1>
               <StatusBadge status={emenda.status} />
             </div>
+            {/* Números de identificação - apenas se cadastrados */}
+            {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                {emenda.numero_proposta && (
+                  <span>Proposta: <strong className="text-foreground">{emenda.numero_proposta}</strong></span>
+                )}
+                {emenda.numero_convenio && (
+                  <span>Convênio: <strong className="text-foreground">{emenda.numero_convenio}</strong></span>
+                )}
+                {emenda.numero_plano_acao && (
+                  <span>Plano de Ação: <strong className="text-foreground">{emenda.numero_plano_acao}</strong></span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

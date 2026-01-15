@@ -40,10 +40,10 @@ const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
               <Building2 className="h-5 w-5" />
             </div>
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 overflow-hidden">
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="font-medium text-foreground line-clamp-1">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground truncate max-w-full">
                     {emenda.objeto}
                   </p>
                   <p className="mt-0.5 text-sm text-muted-foreground">

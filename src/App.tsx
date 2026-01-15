@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SuperAdminRoute from "./components/auth/SuperAdminRoute";
+import AdminRoute from "./components/auth/AdminRoute";
 import MainLayout from "./components/layout/MainLayout";
 import PrefeituraLayout from "./components/layout/PrefeituraLayout";
 import Dashboard from "./pages/Dashboard";
@@ -97,11 +98,11 @@ const App = () => (
             <Route
               path="/admin/usuarios"
               element={
-                <SuperAdminRoute>
+                <AdminRoute>
                   <MainLayout>
                     <AdminUsuarios />
                   </MainLayout>
-                </SuperAdminRoute>
+                </AdminRoute>
               }
             />
             <Route

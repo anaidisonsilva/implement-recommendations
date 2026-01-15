@@ -6,12 +6,15 @@ import {
   MapPin,
   CreditCard,
   Loader2,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
+import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
+import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -46,6 +49,174 @@ const tipoRecebedorLabels = {
 const TransparenciaEmendaDetail = () => {
   const { id } = useParams();
   const { data: emenda, isLoading } = useEmenda(id || '');
+  const { data: empresas } = useEmpresasByEmenda(id || '');
+
+  const handleExportPDF = () => {
+    if (!emenda) return;
+
+    const valor = Number(emenda.valor);
+    const valorExecutado = Number(emenda.valor_executado);
+    const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
+
+    const empresasHtml = empresas?.length ? `
+      <h2 style="margin-top: 30px; color: #0066cc; font-size: 18px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">Empresas Licitadas e Pagamentos</h2>
+      ${empresas.map(emp => `
+        <div style="margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <div>
+              <strong>${emp.nome_empresa}</strong><br>
+              <span style="color: #666; font-size: 12px;">CNPJ: ${emp.cnpj} | Empenho: ${emp.numero_empenho}</span>
+            </div>
+            <div style="text-align: right;">
+              <strong style="color: #0066cc;">${formatCurrency(emp.pagamentos?.reduce((sum, p) => sum + Number(p.valor), 0) || 0)}</strong><br>
+              <span style="color: #666; font-size: 12px;">${emp.pagamentos?.length || 0} pagamento(s)</span>
+            </div>
+          </div>
+          ${emp.pagamentos?.length ? `
+            <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #e5e5e5;">
+                  <th style="padding: 6px; text-align: left;">Data</th>
+                  <th style="padding: 6px; text-align: right;">Valor</th>
+                  <th style="padding: 6px; text-align: left;">Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${emp.pagamentos.map(pag => `
+                  <tr style="border-bottom: 1px solid #e5e5e5;">
+                    <td style="padding: 6px;">${new Date(pag.data_pagamento).toLocaleDateString('pt-BR')}</td>
+                    <td style="padding: 6px; text-align: right;">${formatCurrency(Number(pag.valor))}</td>
+                    <td style="padding: 6px;">${pag.descricao || '-'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<p style="color: #666; font-size: 12px; margin-top: 10px;">Nenhum pagamento registrado</p>'}
+        </div>
+      `).join('')}
+    ` : '';
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Emenda Nº ${emenda.numero}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.5; }
+    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #0066cc; }
+    .header h1 { color: #0066cc; font-size: 22px; margin-bottom: 8px; }
+    .header p { color: #666; font-size: 14px; }
+    .status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .status-pendente { background: #fef3c7; color: #92400e; }
+    .status-aprovado { background: #dbeafe; color: #1e40af; }
+    .status-em_execucao { background: #e0e7ff; color: #3730a3; }
+    .status-concluido { background: #d1fae5; color: #065f46; }
+    .status-cancelado { background: #fee2e2; color: #991b1b; }
+    .progress-bar { background: #e5e5e5; border-radius: 4px; height: 12px; margin: 10px 0; }
+    .progress-fill { background: #0066cc; height: 100%; border-radius: 4px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .card { background: #f9f9f9; border-radius: 8px; padding: 15px; }
+    .card h3 { color: #0066cc; font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e5e5e5; }
+    .field { margin-bottom: 8px; }
+    .field .label { font-size: 11px; color: #666; text-transform: uppercase; }
+    .field .value { font-size: 13px; font-weight: 500; }
+    .summary { background: #e0f2fe; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+    .summary-item .label { font-size: 11px; color: #0369a1; }
+    .summary-item .value { font-size: 18px; font-weight: bold; color: #0066cc; }
+    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e5e5; text-align: center; font-size: 11px; color: #666; }
+    .compliance { background: #e0f2fe; border: 1px solid #0284c7; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 11px; color: #0369a1; }
+    @media print { body { padding: 10px; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Emenda Nº ${emenda.numero}</h1>
+    <p>${emenda.objeto}</p>
+    <span class="status status-${emenda.status}">${statusLabels[emenda.status]}</span>
+  </div>
+
+  <div class="summary">
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="label">Valor Total</div>
+        <div class="value">${formatCurrency(valor)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Executado</div>
+        <div class="value">${formatCurrency(valorExecutado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Restante</div>
+        <div class="value">${formatCurrency(valor - valorExecutado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Execução</div>
+        <div class="value">${progressPercent.toFixed(1)}%</div>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: ${progressPercent}%"></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Concedente</h3>
+      <div class="field"><div class="label">Tipo</div><div class="value">${tipoConcedenteLabels[emenda.tipo_concedente]}</div></div>
+      <div class="field"><div class="label">Nome</div><div class="value">${emenda.nome_concedente}</div></div>
+    </div>
+    <div class="card">
+      <h3>Recebedor</h3>
+      <div class="field"><div class="label">Tipo</div><div class="value">${tipoRecebedorLabels[emenda.tipo_recebedor]}</div></div>
+      <div class="field"><div class="label">Nome</div><div class="value">${emenda.nome_recebedor}</div></div>
+      <div class="field"><div class="label">CNPJ</div><div class="value">${emenda.cnpj_recebedor}</div></div>
+    </div>
+    <div class="card">
+      <h3>Localização e Gestão</h3>
+      <div class="field"><div class="label">Município/Estado</div><div class="value">${emenda.municipio}/${emenda.estado}</div></div>
+      <div class="field"><div class="label">Gestor Responsável</div><div class="value">${emenda.gestor_responsavel}</div></div>
+      <div class="field"><div class="label">Data Disponibilização</div><div class="value">${formatDate(emenda.data_disponibilizacao)}</div></div>
+    </div>
+    <div class="card">
+      <h3>Dados Financeiros</h3>
+      <div class="field"><div class="label">Grupo Natureza Despesa</div><div class="value">${emenda.grupo_natureza_despesa}</div></div>
+      <div class="field"><div class="label">Banco</div><div class="value">${emenda.banco}</div></div>
+      <div class="field"><div class="label">Conta Corrente</div><div class="value">${emenda.conta_corrente}</div></div>
+    </div>
+  </div>
+
+  ${empresasHtml}
+
+  <div class="compliance">
+    <strong>Conformidade:</strong> Esta emenda está registrada em conformidade com o Art. 2º, §1º da Recomendação MPC-MG nº 01/2025.
+  </div>
+
+  <div class="footer">
+    <p>Portal de Emendas Parlamentares - Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+  </div>
+</body>
+</html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      setTimeout(() => printWindow.print(), 500);
+      toast.success('Relatório aberto para impressão/PDF');
+    } else {
+      toast.error('Popup bloqueado. Permita popups para exportar PDF.');
+    }
+  };
+
+  const statusLabels: Record<string, string> = {
+    pendente: 'Pendente',
+    aprovado: 'Aprovado',
+    em_execucao: 'Em Execução',
+    concluido: 'Concluído',
+    cancelado: 'Cancelado',
+  };
 
   if (isLoading) {
     return (
@@ -84,12 +255,18 @@ const TransparenciaEmendaDetail = () => {
                 Detalhes da Emenda
               </p>
             </div>
-            <Button variant="outline" asChild>
-              <Link to="/transparencia">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Voltar ao portal
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleExportPDF}>
+                <Download className="mr-2 h-4 w-4" />
+                Exportar PDF
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/transparencia">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Voltar ao portal
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </header>

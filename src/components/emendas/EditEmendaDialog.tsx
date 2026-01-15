@@ -53,6 +53,8 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     numero_convenio: '',
     numero_plano_acao: '',
     numero_proposta: '',
+    data_inicio_vigencia: '',
+    data_fim_vigencia: '',
     status: '' as EmendaDB['status'],
   });
 
@@ -81,6 +83,8 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         numero_convenio: emenda.numero_convenio || '',
         numero_plano_acao: emenda.numero_plano_acao || '',
         numero_proposta: emenda.numero_proposta || '',
+        data_inicio_vigencia: emenda.data_inicio_vigencia || '',
+        data_fim_vigencia: emenda.data_fim_vigencia || '',
         status: emenda.status,
       });
     }
@@ -113,6 +117,8 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       numero_convenio: formData.numero_convenio || null,
       numero_plano_acao: formData.numero_plano_acao || null,
       numero_proposta: formData.numero_proposta || null,
+      data_inicio_vigencia: formData.data_inicio_vigencia || null,
+      data_fim_vigencia: formData.data_fim_vigencia || null,
       status: formData.status,
     });
     
@@ -408,6 +414,31 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     id="numero_proposta"
                     value={formData.numero_proposta}
                     onChange={(e) => setFormData({ ...formData, numero_proposta: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Vigência do Convênio */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-foreground">Vigência do Convênio</h4>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="data_inicio_vigencia">Data Início da Vigência</Label>
+                  <Input
+                    id="data_inicio_vigencia"
+                    type="date"
+                    value={formData.data_inicio_vigencia}
+                    onChange={(e) => setFormData({ ...formData, data_inicio_vigencia: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="data_fim_vigencia">Data Fim da Vigência</Label>
+                  <Input
+                    id="data_fim_vigencia"
+                    type="date"
+                    value={formData.data_fim_vigencia}
+                    onChange={(e) => setFormData({ ...formData, data_fim_vigencia: e.target.value })}
                   />
                 </div>
               </div>

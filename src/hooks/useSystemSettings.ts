@@ -75,3 +75,13 @@ export const useSystemName = () => {
   
   return { systemName, systemSubtitle, isLoading };
 };
+
+// Helper hook to get footer settings
+export const useFooterSettings = () => {
+  const { data: settings, isLoading } = useSystemSettings();
+  
+  const footerText = settings?.find(s => s.key === 'footer_text')?.value || 'Portal de Transparência de Emendas Parlamentares • ADPF 854/DF • MPC-MG';
+  const footerCompliance = settings?.find(s => s.key === 'footer_compliance')?.value || 'Em conformidade com a Recomendação MPC-MG nº 01/2025 e Lei Complementar nº 210/2024';
+  
+  return { footerText, footerCompliance, isLoading };
+};

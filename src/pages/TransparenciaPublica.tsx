@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import { useFooterSettings } from '@/hooks/useSystemSettings';
 import StatsCard from '@/components/dashboard/StatsCard';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
@@ -64,6 +65,16 @@ const statusOptions = [
   { value: 'concluido', label: 'Concluído' },
   { value: 'cancelado', label: 'Cancelado' },
 ];
+
+const DynamicFooter = () => {
+  const { footerText, footerCompliance } = useFooterSettings();
+  return (
+    <footer className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
+      <p>{footerText}</p>
+      <p className="mt-1">{footerCompliance}</p>
+    </footer>
+  );
+};
 
 const TransparenciaPublica = () => {
   const { data: emendas, isLoading } = useEmendas();
@@ -399,14 +410,7 @@ const TransparenciaPublica = () => {
         </div>
 
         {/* Footer */}
-        <footer className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>
-            Portal de Emendas Parlamentares - Sistema de Gestão e Transparência
-          </p>
-          <p className="mt-1">
-            Em conformidade com a Recomendação MPC-MG nº 01/2025
-          </p>
-        </footer>
+        <DynamicFooter />
       </main>
     </div>
   );

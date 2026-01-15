@@ -113,6 +113,8 @@ export type Database = {
           created_at: string
           created_by: string | null
           data_disponibilizacao: string
+          data_fim_vigencia: string | null
+          data_inicio_vigencia: string | null
           estado: string
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -143,6 +145,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           data_disponibilizacao: string
+          data_fim_vigencia?: string | null
+          data_inicio_vigencia?: string | null
           estado?: string
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -173,6 +177,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           data_disponibilizacao?: string
+          data_fim_vigencia?: string | null
+          data_inicio_vigencia?: string | null
           estado?: string
           gestor_responsavel?: string
           grupo_natureza_despesa?: string

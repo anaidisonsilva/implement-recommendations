@@ -16,6 +16,7 @@ import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
 import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
+import TransparenciaRelatorios from "./pages/TransparenciaRelatorios";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
@@ -38,6 +39,7 @@ const App = () => (
             {/* Rotas públicas de transparência */}
             <Route path="/" element={<TransparenciaPublica />} />
             <Route path="/transparencia" element={<TransparenciaPublica />} />
+            <Route path="/transparencia/relatorios" element={<TransparenciaRelatorios />} />
             <Route path="/transparencia/:id" element={<TransparenciaEmendaDetail />} />
             <Route path="/auth" element={<Auth />} />
             

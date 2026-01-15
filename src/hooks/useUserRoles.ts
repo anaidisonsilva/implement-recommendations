@@ -58,7 +58,7 @@ export const useAllUserRoles = () => {
   return useQuery({
     queryKey: ['all_user_roles'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: roles, error } = await supabase
         .from('user_roles')
         .select(`
           *,
@@ -67,7 +67,21 @@ export const useAllUserRoles = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Fetch profiles for all users
+      const userIds = [...new Set(roles?.map(r => r.user_id) || [])];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, nome_completo')
+        .in('user_id', userIds);
+
+      // Map profiles to roles
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p.nome_completo]) || []);
+      
+      return roles?.map(role => ({
+        ...role,
+        profile_nome: profileMap.get(role.user_id) || null,
+      })) || [];
     },
   });
 };

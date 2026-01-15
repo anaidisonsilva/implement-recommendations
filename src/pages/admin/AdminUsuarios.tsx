@@ -486,7 +486,7 @@ const AdminUsuarios = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Usuário ID</TableHead>
+                <TableHead>Usuário</TableHead>
                 <TableHead>Função</TableHead>
                 <TableHead>Prefeitura</TableHead>
                 <TableHead className="w-[80px]">Ações</TableHead>
@@ -495,8 +495,11 @@ const AdminUsuarios = () => {
             <TableBody>
               {filteredRoles.map((role) => (
                 <TableRow key={role.id}>
-                  <TableCell className="font-mono text-sm">
-                    {role.user_id.slice(0, 8)}...
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{(role as any).profile_nome || 'Sem nome'}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{role.user_id.slice(0, 8)}...</p>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge

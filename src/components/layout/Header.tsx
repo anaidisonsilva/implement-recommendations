@@ -1,12 +1,22 @@
 import { Menu, Bell, User, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useSystemName } from '@/hooks/useSystemSettings';
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 const Header = ({ onMenuClick }: HeaderProps) => {
+  const { systemName, systemSubtitle } = useSystemName();
+  
+  // Get initials from system name (first letter of first two words)
+  const initials = systemName
+    .split(' ')
+    .slice(0, 2)
+    .map(word => word.charAt(0).toUpperCase())
+    .join('');
+
   return (
     <header className="sticky top-0 z-50 w-full bg-header text-header-foreground shadow-md">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
@@ -22,11 +32,11 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/10">
-              <span className="text-lg font-bold">EP</span>
+              <span className="text-lg font-bold">{initials}</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold leading-tight">Portal de Emendas</h1>
-              <p className="text-xs text-header-foreground/70">Transparência e Rastreabilidade</p>
+              <h1 className="text-lg font-semibold leading-tight">{systemName}</h1>
+              <p className="text-xs text-header-foreground/70">{systemSubtitle}</p>
             </div>
           </div>
         </div>

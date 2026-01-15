@@ -1,15 +1,33 @@
-import { Copy, ExternalLink, Loader2, Link as LinkIcon } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Copy, ExternalLink, Loader2, Link as LinkIcon, Settings, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
 import { useIsSuperAdmin, useUserPrefeitura } from '@/hooks/useUserRoles';
+import { useSystemSettings, useUpdateSystemSetting } from '@/hooks/useSystemSettings';
 import { toast } from 'sonner';
 
 const Configuracoes = () => {
   const { data: prefeituras, isLoading } = usePrefeituras();
   const { isSuperAdmin } = useIsSuperAdmin();
   const { prefeituraId } = useUserPrefeitura();
+  const { data: systemSettings, isLoading: isLoadingSettings } = useSystemSettings();
+  const updateSetting = useUpdateSystemSetting();
+
+  const [systemName, setSystemName] = useState('');
+  const [systemSubtitle, setSystemSubtitle] = useState('');
+
+  // Initialize form values when settings load
+  useEffect(() => {
+    if (systemSettings) {
+      const nameSetting = systemSettings.find(s => s.key === 'system_name');
+      const subtitleSetting = systemSettings.find(s => s.key === 'system_subtitle');
+      if (nameSetting) setSystemName(nameSetting.value);
+      if (subtitleSetting) setSystemSubtitle(subtitleSetting.value);
+    }
+  }, [systemSettings]);
 
   // Get base URL for links
   const baseUrl = window.location.origin;
@@ -28,7 +46,19 @@ const Configuracoes = () => {
   const getPublicUrl = (slug: string) => `${baseUrl}/p/${slug}`;
   const getDashboardUrl = (slug: string) => `${baseUrl}/p/${slug}/dashboard`;
 
-  if (isLoading) {
+  const handleSaveSystemSettings = async () => {
+    const currentName = systemSettings?.find(s => s.key === 'system_name')?.value;
+    const currentSubtitle = systemSettings?.find(s => s.key === 'system_subtitle')?.value;
+
+    if (systemName !== currentName) {
+      await updateSetting.mutateAsync({ key: 'system_name', value: systemName });
+    }
+    if (systemSubtitle !== currentSubtitle) {
+      await updateSetting.mutateAsync({ key: 'system_subtitle', value: systemSubtitle });
+    }
+  };
+
+  if (isLoading || isLoadingSettings) {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -44,6 +74,52 @@ const Configuracoes = () => {
           Gerencie as configurações e acesse os links das prefeituras
         </p>
       </div>
+
+      {/* Sistema - apenas para super admin */}
+      {isSuperAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Configurações do Sistema
+            </CardTitle>
+            <CardDescription>
+              Personalize o nome e subtítulo que aparecem no cabeçalho do sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="systemName">Nome do Sistema</Label>
+              <Input
+                id="systemName"
+                value={systemName}
+                onChange={(e) => setSystemName(e.target.value)}
+                placeholder="Ex: Portal de Emendas"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="systemSubtitle">Subtítulo</Label>
+              <Input
+                id="systemSubtitle"
+                value={systemSubtitle}
+                onChange={(e) => setSystemSubtitle(e.target.value)}
+                placeholder="Ex: Transparência e Rastreabilidade"
+              />
+            </div>
+            <Button 
+              onClick={handleSaveSystemSettings}
+              disabled={updateSetting.isPending}
+            >
+              {updateSetting.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Salvar Alterações
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Links das Prefeituras */}
       <Card>

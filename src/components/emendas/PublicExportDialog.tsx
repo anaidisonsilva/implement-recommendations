@@ -15,7 +15,8 @@ interface EmendaData {
   id: string;
   numero: string;
   objeto: string;
-  nome_concedente: string;
+  nome_concedente: string | null;
+  nome_parlamentar?: string | null;
   nome_recebedor: string;
   municipio: string;
   estado: string;
@@ -57,11 +58,12 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Objeto', 'Concedente', 'Recebedor', 'Município/UF', 'Valor', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor', 'Valor Executado', 'Status', 'Data Disponibilização'];
       const rows = emendas.map((e) => [
         e.numero,
         `"${e.objeto.replace(/"/g, '""')}"`,
-        `"${e.nome_concedente.replace(/"/g, '""')}"`,
+        `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+        `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
         `"${e.nome_recebedor.replace(/"/g, '""')}"`,
         `${e.municipio}/${e.estado}`,
         e.valor,
@@ -240,6 +242,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
       <tr>
         <th>Número</th>
         <th>Objeto</th>
+        <th>Parlamentar</th>
         <th>Concedente</th>
         <th>Recebedor</th>
         <th>Município</th>
@@ -253,8 +256,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
       ${emendas.map((e) => `
         <tr>
           <td>${e.numero}</td>
-          <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td>${e.nome_concedente}</td>
+          <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+          <td>${e.nome_parlamentar || '-'}</td>
+          <td>${e.nome_concedente || '-'}</td>
           <td>${e.nome_recebedor}</td>
           <td>${e.municipio}/${e.estado}</td>
           <td class="text-right">${formatCurrency(Number(e.valor))}</td>

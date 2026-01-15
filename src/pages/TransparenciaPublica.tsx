@@ -282,6 +282,7 @@ const TransparenciaPublica = () => {
                   numero: e.numero,
                   objeto: e.objeto,
                   nome_concedente: e.nome_concedente,
+                  nome_parlamentar: e.nome_parlamentar,
                   nome_recebedor: e.nome_recebedor,
                   municipio: e.municipio,
                   estado: e.estado,

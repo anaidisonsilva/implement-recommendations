@@ -82,11 +82,12 @@ const Relatorios = () => {
   const handleExportCSV = () => {
     if (!filteredEmendas?.length) return;
 
-    const headers = ['Número', 'Objeto', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Status', 'Data'];
+    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Status', 'Data'];
     const rows = filteredEmendas.map((e) => [
       e.numero,
       `"${e.objeto.replace(/"/g, '""')}"`,
-      `"${e.nome_concedente.replace(/"/g, '""')}"`,
+      `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+      `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
       `"${e.nome_recebedor.replace(/"/g, '""')}"`,
       e.municipio,
       e.valor,
@@ -248,6 +249,7 @@ const Relatorios = () => {
       <tr>
         <th>Número</th>
         <th>Objeto</th>
+        <th>Parlamentar</th>
         <th>Concedente</th>
         <th>Recebedor</th>
         <th>Município</th>
@@ -258,19 +260,20 @@ const Relatorios = () => {
       </tr>
     </thead>
     <tbody>
-      ${filteredEmendas.map((e) => `
+      \${filteredEmendas.map((e) => \`
         <tr>
-          <td>${e.numero}</td>
-          <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td>${e.nome_concedente}</td>
-          <td>${e.nome_recebedor}</td>
-          <td>${e.municipio}</td>
-          <td class="text-right">${formatCurrency(Number(e.valor))}</td>
-          <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
-          <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
-          <td>${formatDate(e.data_disponibilizacao)}</td>
+          <td>\${e.numero}</td>
+          <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">\${e.objeto}</td>
+          <td>\${e.nome_parlamentar || '-'}</td>
+          <td>\${e.nome_concedente || '-'}</td>
+          <td>\${e.nome_recebedor}</td>
+          <td>\${e.municipio}</td>
+          <td class="text-right">\${formatCurrency(Number(e.valor))}</td>
+          <td class="text-right">\${formatCurrency(Number(e.valor_executado))}</td>
+          <td><span class="status status-\${e.status}">\${statusLabels[e.status] || e.status}</span></td>
+          <td>\${formatDate(e.data_disponibilizacao)}</td>
         </tr>
-      `).join('')}
+      \`).join('')}
     </tbody>
   </table>
 

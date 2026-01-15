@@ -7,7 +7,8 @@ export interface EmendaDB {
   id: string;
   numero: string;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
-  nome_concedente: string;
+  nome_concedente: string | null;
+  nome_parlamentar: string | null;
   tipo_recebedor: 'administracao_publica' | 'entidade_sem_fins_lucrativos' | 'consorcio_publico' | 'pessoa_juridica_privada' | 'outro';
   nome_recebedor: string;
   cnpj_recebedor: string;
@@ -36,7 +37,8 @@ export interface EmendaDB {
 export interface CreateEmendaInput {
   numero: string;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
-  nome_concedente: string;
+  nome_concedente?: string | null;
+  nome_parlamentar?: string | null;
   tipo_recebedor: 'administracao_publica' | 'entidade_sem_fins_lucrativos' | 'consorcio_publico' | 'pessoa_juridica_privada' | 'outro';
   nome_recebedor: string;
   cnpj_recebedor: string;

@@ -30,7 +30,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && !loading) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, loading, navigate]);
 
@@ -54,7 +54,7 @@ const Auth = () => {
         }
       } else {
         toast.success('Login realizado com sucesso!');
-        navigate('/');
+        navigate('/dashboard');
       }
     } finally {
       setIsSubmitting(false);
@@ -86,7 +86,7 @@ const Auth = () => {
         }
       } else {
         toast.success('Conta criada com sucesso! Você já pode fazer login.');
-        navigate('/');
+        navigate('/dashboard');
       }
     } finally {
       setIsSubmitting(false);

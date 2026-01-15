@@ -20,7 +20,7 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
   { icon: ClipboardList, label: 'Planos de Trabalho', path: '/planos' },

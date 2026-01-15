@@ -21,6 +21,9 @@ const NovaEmenda = () => {
 
   const [formData, setFormData] = useState({
     numero: '',
+    numeroConvenio: '',
+    numeroPlanoAcao: '',
+    numeroProposta: '',
     tipoConcedente: '' as 'parlamentar' | 'comissao' | 'bancada' | 'outro' | '',
     nomeConcedente: '',
     tipoRecebedor: '' as 'administracao_publica' | 'entidade_sem_fins_lucrativos' | 'consorcio_publico' | 'pessoa_juridica_privada' | 'outro' | '',
@@ -33,6 +36,7 @@ const NovaEmenda = () => {
     objeto: '',
     grupoNaturezaDespesa: '',
     valor: '',
+    contrapartida: '',
     banco: '',
     contaCorrente: '',
     anuenciaPreviaSUS: false,
@@ -48,6 +52,9 @@ const NovaEmenda = () => {
 
     const input: CreateEmendaInput = {
       numero: formData.numero,
+      numero_convenio: formData.numeroConvenio || null,
+      numero_plano_acao: formData.numeroPlanoAcao || null,
+      numero_proposta: formData.numeroProposta || null,
       tipo_concedente: formData.tipoConcedente,
       nome_concedente: formData.nomeConcedente,
       tipo_recebedor: formData.tipoRecebedor,
@@ -60,8 +67,9 @@ const NovaEmenda = () => {
       objeto: formData.objeto,
       grupo_natureza_despesa: formData.grupoNaturezaDespesa,
       valor: parseFloat(formData.valor),
-      banco: formData.banco,
-      conta_corrente: formData.contaCorrente,
+      contrapartida: formData.contrapartida ? parseFloat(formData.contrapartida) : null,
+      banco: formData.banco || null,
+      conta_corrente: formData.contaCorrente || null,
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
     };
 
@@ -114,6 +122,33 @@ const NovaEmenda = () => {
                 value={formData.dataDisponibilizacao}
                 onChange={(e) => handleChange('dataDisponibilizacao', e.target.value)}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="numeroConvenio">Número do Convênio</Label>
+              <Input
+                id="numeroConvenio"
+                placeholder="Ex: CONV-2026/001"
+                value={formData.numeroConvenio}
+                onChange={(e) => handleChange('numeroConvenio', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="numeroPlanoAcao">Número do Plano de Ação</Label>
+              <Input
+                id="numeroPlanoAcao"
+                placeholder="Ex: PA-2026/001"
+                value={formData.numeroPlanoAcao}
+                onChange={(e) => handleChange('numeroPlanoAcao', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="numeroProposta">Número da Proposta</Label>
+              <Input
+                id="numeroProposta"
+                placeholder="Ex: PROP-2026/001"
+                value={formData.numeroProposta}
+                onChange={(e) => handleChange('numeroProposta', e.target.value)}
               />
             </div>
           </div>
@@ -281,26 +316,38 @@ const NovaEmenda = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="banco">Banco *</Label>
+              <Label htmlFor="contrapartida">Contrapartida (R$)</Label>
               <Input
-                id="banco"
-                placeholder="Nome da instituição bancária"
-                value={formData.banco}
-                onChange={(e) => handleChange('banco', e.target.value)}
-                required
+                id="contrapartida"
+                type="number"
+                step="0.01"
+                placeholder="0,00 (opcional)"
+                value={formData.contrapartida}
+                onChange={(e) => handleChange('contrapartida', e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contaCorrente">Conta Corrente *</Label>
+              <Label htmlFor="banco">Banco</Label>
+              <Input
+                id="banco"
+                placeholder="Nome da instituição bancária (opcional)"
+                value={formData.banco}
+                onChange={(e) => handleChange('banco', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contaCorrente">Conta Corrente</Label>
               <Input
                 id="contaCorrente"
-                placeholder="Número da conta"
+                placeholder="Número da conta (opcional)"
                 value={formData.contaCorrente}
                 onChange={(e) => handleChange('contaCorrente', e.target.value)}
-                required
               />
             </div>
           </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            * Banco e conta corrente podem ser preenchidos após a aprovação do convênio
+          </p>
         </div>
 
         {/* SUS */}

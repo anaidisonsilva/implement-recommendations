@@ -19,9 +19,13 @@ export interface EmendaDB {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
-  banco: string;
-  conta_corrente: string;
+  banco: string | null;
+  conta_corrente: string | null;
   anuencia_previa_sus: boolean | null;
+  contrapartida: number | null;
+  numero_convenio: string | null;
+  numero_plano_acao: string | null;
+  numero_proposta: string | null;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;
@@ -43,9 +47,13 @@ export interface CreateEmendaInput {
   objeto: string;
   grupo_natureza_despesa: string;
   valor: number;
-  banco: string;
-  conta_corrente: string;
+  banco?: string | null;
+  conta_corrente?: string | null;
   anuencia_previa_sus?: boolean | null;
+  contrapartida?: number | null;
+  numero_convenio?: string | null;
+  numero_plano_acao?: string | null;
+  numero_proposta?: string | null;
 }
 
 export const useEmendas = () => {

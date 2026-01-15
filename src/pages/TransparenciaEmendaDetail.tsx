@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
 import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
+import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
 import { toast } from 'sonner';
@@ -51,13 +52,57 @@ const TransparenciaEmendaDetail = () => {
   const { id } = useParams();
   const { data: emenda, isLoading } = useEmenda(id || '');
   const { data: empresas } = useEmpresasByEmenda(id || '');
+  const { data: planoTrabalho } = usePlanoTrabalho(id || '');
+  const { data: cronogramaItems } = useCronogramaItems(planoTrabalho?.id || '');
 
   const handleExportPDF = () => {
     if (!emenda) return;
 
     const valor = Number(emenda.valor);
+    const contrapartida = Number(emenda.contrapartida || 0);
+    const valorTotal = valor + contrapartida;
     const valorExecutado = Number(emenda.valor_executado);
-    const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
+    const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+
+    const planoTrabalhoHtml = planoTrabalho ? `
+      <h2 style="margin-top: 30px; color: #0066cc; font-size: 18px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">Plano de Trabalho</h2>
+      <div style="margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+        <div style="margin-bottom: 10px;">
+          <strong style="color: #333;">Objeto:</strong><br>
+          <span>${planoTrabalho.objeto}</span>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <strong style="color: #333;">Finalidade:</strong><br>
+          <span>${planoTrabalho.finalidade}</span>
+        </div>
+        <div>
+          <strong style="color: #333;">Estimativa de Recursos:</strong> ${formatCurrency(Number(planoTrabalho.estimativa_recursos))}
+        </div>
+        ${cronogramaItems?.length ? `
+          <h3 style="margin-top: 15px; color: #0066cc; font-size: 14px;">Cronograma</h3>
+          <table style="width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+              <tr style="background: #e5e5e5;">
+                <th style="padding: 6px; text-align: left;">Etapa</th>
+                <th style="padding: 6px; text-align: center;">Início</th>
+                <th style="padding: 6px; text-align: center;">Fim</th>
+                <th style="padding: 6px; text-align: center;">% Conclusão</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${cronogramaItems.map(item => `
+                <tr style="border-bottom: 1px solid #e5e5e5;">
+                  <td style="padding: 6px;">${item.etapa}</td>
+                  <td style="padding: 6px; text-align: center;">${new Date(item.data_inicio).toLocaleDateString('pt-BR')}</td>
+                  <td style="padding: 6px; text-align: center;">${new Date(item.data_fim).toLocaleDateString('pt-BR')}</td>
+                  <td style="padding: 6px; text-align: center;">${item.percentual_conclusao}%</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : ''}
+      </div>
+    ` : '';
 
     const empresasHtml = empresas?.length ? `
       <h2 style="margin-top: 30px; color: #0066cc; font-size: 18px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">Empresas Licitadas e Pagamentos</h2>
@@ -142,21 +187,25 @@ const TransparenciaEmendaDetail = () => {
   <div class="summary">
     <div class="summary-grid">
       <div class="summary-item">
-        <div class="label">Valor Total</div>
+        <div class="label">Valor Concedente</div>
         <div class="value">${formatCurrency(valor)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Contrapartida</div>
+        <div class="value">${formatCurrency(contrapartida)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Valor Total</div>
+        <div class="value">${formatCurrency(valorTotal)}</div>
       </div>
       <div class="summary-item">
         <div class="label">Executado</div>
         <div class="value">${formatCurrency(valorExecutado)}</div>
       </div>
-      <div class="summary-item">
-        <div class="label">Restante</div>
-        <div class="value">${formatCurrency(valor - valorExecutado)}</div>
-      </div>
-      <div class="summary-item">
-        <div class="label">Execução</div>
-        <div class="value">${progressPercent.toFixed(1)}%</div>
-      </div>
+    </div>
+    <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 12px;">
+      <span>Restante: ${formatCurrency(valorTotal - valorExecutado)}</span>
+      <span>Execução: ${progressPercent.toFixed(1)}%</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" style="width: ${progressPercent}%"></div></div>
   </div>
@@ -186,6 +235,8 @@ const TransparenciaEmendaDetail = () => {
       <div class="field"><div class="label">Conta Corrente</div><div class="value">${emenda.conta_corrente}</div></div>
     </div>
   </div>
+
+  ${planoTrabalhoHtml}
 
   ${empresasHtml}
 
@@ -239,8 +290,10 @@ const TransparenciaEmendaDetail = () => {
   }
 
   const valor = Number(emenda.valor);
+  const contrapartida = Number(emenda.contrapartida || 0);
+  const valorTotal = valor + contrapartida;
   const valorExecutado = Number(emenda.valor_executado);
-  const progressPercent = valor > 0 ? (valorExecutado / valor) * 100 : 0;
+  const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -291,11 +344,27 @@ const TransparenciaEmendaDetail = () => {
                   <p className="mt-2 text-muted-foreground">{emenda.objeto}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold text-primary">
-                  {formatCurrency(valor)}
-                </p>
+              <div className="flex gap-6 text-right">
+                <div>
+                  <p className="text-sm text-muted-foreground">Valor Concedente</p>
+                  <p className="text-lg font-semibold text-foreground">
+                    {formatCurrency(valor)}
+                  </p>
+                </div>
+                {contrapartida > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Contrapartida</p>
+                    <p className="text-lg font-semibold text-amber-600">
+                      {formatCurrency(contrapartida)}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Valor Total</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {formatCurrency(valorTotal)}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -311,7 +380,7 @@ const TransparenciaEmendaDetail = () => {
                   Executado: {formatCurrency(valorExecutado)}
                 </span>
                 <span className="text-muted-foreground">
-                  Restante: {formatCurrency(valor - valorExecutado)}
+                  Restante: {formatCurrency(valorTotal - valorExecutado)}
                 </span>
               </div>
             </div>

@@ -317,9 +317,10 @@ const TransparenciaPublica = () => {
                       <TableHead>Número</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Concedente</TableHead>
-                      <TableHead>Recebedor</TableHead>
                       <TableHead>Município</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead className="text-right">Concedente</TableHead>
+                      <TableHead className="text-right">Contrapartida</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
                       <TableHead className="text-right">% Exec.</TableHead>
                       <TableHead>Data</TableHead>
                       <TableHead className="text-center">Ações</TableHead>
@@ -327,8 +328,12 @@ const TransparenciaPublica = () => {
                   </TableHeader>
                   <TableBody>
                     {paginatedEmendas.map((emenda) => {
-                      const percentExec = Number(emenda.valor) > 0 
-                        ? ((Number(emenda.valor_executado) / Number(emenda.valor)) * 100).toFixed(1)
+                      const valor = Number(emenda.valor);
+                      const contrapartida = Number(emenda.contrapartida || 0);
+                      const valorTotal = valor + contrapartida;
+                      const valorExecutado = Number(emenda.valor_executado);
+                      const percentExec = valorTotal > 0 
+                        ? ((valorExecutado / valorTotal) * 100).toFixed(1)
                         : '0';
                       return (
                         <TableRow key={emenda.id}>
@@ -339,12 +344,15 @@ const TransparenciaPublica = () => {
                           <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente}>
                             {emenda.nome_concedente}
                           </TableCell>
-                          <TableCell className="max-w-[150px] truncate" title={emenda.nome_recebedor}>
-                            {emenda.nome_recebedor}
-                          </TableCell>
                           <TableCell>{emenda.municipio}/{emenda.estado}</TableCell>
                           <TableCell className="text-right">
-                            {formatCurrency(Number(emenda.valor))}
+                            {formatCurrency(valor)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(contrapartida)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {formatCurrency(valorTotal)}
                           </TableCell>
                           <TableCell className="text-right">{percentExec}%</TableCell>
                           <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>

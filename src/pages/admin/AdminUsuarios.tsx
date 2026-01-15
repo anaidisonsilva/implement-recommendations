@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Users, Loader2, Shield, Building2, UserPlus } from 'lucide-react';
+import { Plus, Trash2, Users, Loader2, Shield, Building2, UserPlus, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -67,6 +67,16 @@ const AdminUsuarios = () => {
     nome_completo: '',
     role: '' as AppRole | '',
     prefeitura_id: '',
+  });
+
+  // States for editing user
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    user_id: '',
+    email: '',
+    password: '',
+    nome_completo: '',
   });
 
   const handleSearchUser = async () => {
@@ -180,6 +190,67 @@ const AdminUsuarios = () => {
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja remover esta permissão?')) {
       await deleteUserRole.mutateAsync(id);
+    }
+  };
+
+  const handleEditOpen = async (userId: string) => {
+    // Fetch user profile data
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('nome_completo')
+      .eq('user_id', userId)
+      .single();
+
+    setEditFormData({
+      user_id: userId,
+      email: '',
+      password: '',
+      nome_completo: profile?.nome_completo || '',
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editFormData.user_id) {
+      toast.error('Usuário não encontrado');
+      return;
+    }
+
+    if (editFormData.password && editFormData.password.length < 6) {
+      toast.error('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    setEditingUser(true);
+    try {
+      const response = await supabase.functions.invoke('update-user', {
+        body: {
+          user_id: editFormData.user_id,
+          email: editFormData.email || undefined,
+          password: editFormData.password || undefined,
+          nome_completo: editFormData.nome_completo || undefined,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      if (response.data?.error) {
+        throw new Error(response.data.error);
+      }
+
+      toast.success('Usuário atualizado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['all_user_roles'] });
+      setEditDialogOpen(false);
+      setEditFormData({ user_id: '', email: '', password: '', nome_completo: '' });
+    } catch (error: any) {
+      console.error('Error updating user:', error);
+      toast.error(error.message || 'Erro ao atualizar usuário');
+    } finally {
+      setEditingUser(false);
     }
   };
 
@@ -444,13 +515,24 @@ const AdminUsuarios = () => {
                     {(role as any).prefeituras?.nome ?? '-'}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(role.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditOpen(role.user_id)}
+                        title="Editar usuário"
+                      >
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(role.id)}
+                        title="Remover permissão"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -468,6 +550,56 @@ const AdminUsuarios = () => {
           </p>
         </div>
       )}
+
+      {/* Edit User Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar Usuário</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit_nome">Nome Completo</Label>
+              <Input
+                id="edit_nome"
+                placeholder="Nome do usuário"
+                value={editFormData.nome_completo}
+                onChange={(e) => setEditFormData({ ...editFormData, nome_completo: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_email">Novo Email (opcional)</Label>
+              <Input
+                id="edit_email"
+                type="email"
+                placeholder="Deixe em branco para manter"
+                value={editFormData.email}
+                onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_password">Nova Senha (opcional)</Label>
+              <Input
+                id="edit_password"
+                type="password"
+                placeholder="Deixe em branco para manter"
+                value={editFormData.password}
+                onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">Mínimo 6 caracteres</p>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={editingUser}>
+                {editingUser && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Salvar
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

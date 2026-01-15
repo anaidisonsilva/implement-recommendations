@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileBarChart, Download, Loader2, Calendar, Filter } from 'lucide-react';
+import { FileBarChart, Download, Loader2, Calendar, Filter, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -22,12 +22,25 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import StatusBadge from '@/components/dashboard/StatusBadge';
+import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
+};
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('pt-BR');
+};
+
+const statusLabels: Record<string, string> = {
+  pendente: 'Pendente',
+  aprovado: 'Aprovado',
+  em_execucao: 'Em Execução',
+  concluido: 'Concluído',
+  cancelado: 'Cancelado',
 };
 
 const Relatorios = () => {
@@ -72,23 +85,219 @@ const Relatorios = () => {
     const headers = ['Número', 'Objeto', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Status', 'Data'];
     const rows = filteredEmendas.map((e) => [
       e.numero,
-      e.objeto,
-      e.nome_concedente,
-      e.nome_recebedor,
+      `"${e.objeto.replace(/"/g, '""')}"`,
+      `"${e.nome_concedente.replace(/"/g, '""')}"`,
+      `"${e.nome_recebedor.replace(/"/g, '""')}"`,
       e.municipio,
       e.valor,
       e.valor_executado,
-      e.status,
-      e.data_disponibilizacao,
+      statusLabels[e.status] || e.status,
+      formatDate(e.data_disponibilizacao),
     ]);
 
-    const csvContent = [headers, ...rows].map((row) => row.join(';')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const csvContent = [headers.join(';'), ...rows.map((row) => row.join(';'))].join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Relatório CSV exportado com sucesso!');
+  };
+
+  const handleExportPDF = () => {
+    if (!filteredEmendas?.length) return;
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Emendas Parlamentares</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      padding: 20px; 
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    .header { 
+      text-align: center; 
+      margin-bottom: 30px; 
+      padding-bottom: 20px;
+      border-bottom: 2px solid #0066cc;
+    }
+    .header h1 { 
+      color: #0066cc; 
+      font-size: 24px; 
+      margin-bottom: 8px;
+    }
+    .header p { 
+      color: #666; 
+      font-size: 14px; 
+    }
+    .summary {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f5f7fa;
+      border-radius: 8px;
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-item .label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .summary-item .value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #0066cc;
+      margin-top: 4px;
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 11px;
+      margin-bottom: 20px;
+    }
+    th { 
+      background: #0066cc; 
+      color: white; 
+      padding: 10px 6px; 
+      text-align: left;
+      font-weight: 600;
+    }
+    td { 
+      padding: 8px 6px; 
+      border-bottom: 1px solid #e5e5e5;
+    }
+    tr:nth-child(even) { background: #f9f9f9; }
+    tr:hover { background: #f0f7ff; }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    .status-pendente { background: #fef3c7; color: #92400e; }
+    .status-aprovado { background: #dbeafe; color: #1e40af; }
+    .status-em_execucao { background: #e0e7ff; color: #3730a3; }
+    .status-concluido { background: #d1fae5; color: #065f46; }
+    .status-cancelado { background: #fee2e2; color: #991b1b; }
+    .text-right { text-align: right; }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e5e5;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+    }
+    .compliance {
+      background: #e0f2fe;
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 11px;
+      color: #0369a1;
+    }
+    @media print {
+      body { padding: 10px; }
+      .summary { break-inside: avoid; }
+      tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Relatório de Emendas Parlamentares</h1>
+    <p>Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+  </div>
+
+  <div class="summary">
+    <div class="summary-item">
+      <div class="label">Total de Emendas</div>
+      <div class="value">${totals.count}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Valor Total</div>
+      <div class="value">${formatCurrency(totals.valor)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Valor Executado</div>
+      <div class="value">${formatCurrency(totals.executado)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Execução</div>
+      <div class="value">${totals.valor > 0 ? ((totals.executado / totals.valor) * 100).toFixed(1) : 0}%</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Objeto</th>
+        <th>Concedente</th>
+        <th>Recebedor</th>
+        <th>Município</th>
+        <th class="text-right">Valor</th>
+        <th class="text-right">Executado</th>
+        <th>Status</th>
+        <th>Data</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${filteredEmendas.map((e) => `
+        <tr>
+          <td>${e.numero}</td>
+          <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+          <td>${e.nome_concedente}</td>
+          <td>${e.nome_recebedor}</td>
+          <td>${e.municipio}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor))}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
+          <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
+          <td>${formatDate(e.data_disponibilizacao)}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+
+  <div class="compliance">
+    <strong>Conformidade Legal:</strong> Este relatório atende aos requisitos de transparência da 
+    Recomendação MPC-MG nº 01/2025, ADPF 854/DF e Lei Complementar 210/2024.
+  </div>
+
+  <div class="footer">
+    <p>Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
+    <p>Em conformidade com a Recomendação MPC-MG nº 01/2025</p>
+  </div>
+</body>
+</html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+      toast.success('Relatório aberto para impressão/PDF');
+    } else {
+      toast.error('Popup bloqueado. Permita popups para exportar PDF.');
+    }
   };
 
   if (loadingEmendas) {
@@ -109,10 +318,16 @@ const Relatorios = () => {
             Gere relatórios e exporte dados das emendas
           </p>
         </div>
-        <Button onClick={handleExportCSV} disabled={!filteredEmendas?.length}>
-          <Download className="mr-2 h-4 w-4" />
-          Exportar CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportPDF} disabled={!filteredEmendas?.length}>
+            <FileText className="mr-2 h-4 w-4" />
+            Exportar PDF
+          </Button>
+          <Button onClick={handleExportCSV} disabled={!filteredEmendas?.length}>
+            <Download className="mr-2 h-4 w-4" />
+            Exportar CSV
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}

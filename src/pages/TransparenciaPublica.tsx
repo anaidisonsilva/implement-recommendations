@@ -5,6 +5,7 @@ import StatsCard from '@/components/dashboard/StatsCard';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
 import StatusBadge from '@/components/dashboard/StatusBadge';
+import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import {
   FileText,
   Banknote,
@@ -266,13 +267,31 @@ const TransparenciaPublica = () => {
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <div className="border-b border-border p-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-foreground">Emendas Cadastradas</h3>
-              <span className="text-sm text-muted-foreground">
-                {filteredEmendas.length === emendas?.length 
-                  ? `${emendas?.length || 0} emendas`
-                  : `${filteredEmendas.length} de ${emendas?.length || 0} emendas`
-                }
-              </span>
+              <div className="flex items-center gap-4">
+                <h3 className="font-semibold text-foreground">Emendas Cadastradas</h3>
+                <span className="text-sm text-muted-foreground">
+                  {filteredEmendas.length === emendas?.length 
+                    ? `${emendas?.length || 0} emendas`
+                    : `${filteredEmendas.length} de ${emendas?.length || 0} emendas`
+                  }
+                </span>
+              </div>
+              <PublicExportDialog 
+                emendas={filteredEmendas.map(e => ({
+                  id: e.id,
+                  numero: e.numero,
+                  objeto: e.objeto,
+                  nome_concedente: e.nome_concedente,
+                  nome_recebedor: e.nome_recebedor,
+                  municipio: e.municipio,
+                  estado: e.estado,
+                  valor: Number(e.valor),
+                  valor_executado: Number(e.valor_executado),
+                  status: e.status,
+                  data_disponibilizacao: e.data_disponibilizacao,
+                }))}
+                title="Exportar Emendas"
+              />
             </div>
           </div>
           

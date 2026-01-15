@@ -11,6 +11,7 @@ import EmendasList from "./pages/EmendasList";
 import EmendaDetail from "./pages/EmendaDetail";
 import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
+import TransparenciaPublica from "./pages/TransparenciaPublica";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,9 +24,13 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Rota pública de transparência */}
+            <Route path="/" element={<TransparenciaPublica />} />
             <Route path="/auth" element={<Auth />} />
+            
+            {/* Rotas protegidas */}
             <Route
-              path="/"
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <MainLayout>

@@ -165,11 +165,16 @@ export const useDeleteEmenda = () => {
 export const useEmendasStats = () => {
   const { data: emendas } = useEmendas();
 
+  const valorConcedente = emendas?.reduce((acc, e) => acc + Number(e.valor), 0) ?? 0;
+  const valorContrapartida = emendas?.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0) ?? 0;
+  const valorTotal = valorConcedente + valorContrapartida;
+
   return {
     totalEmendas: emendas?.length ?? 0,
-    valorTotal: emendas?.reduce((acc, e) => acc + Number(e.valor), 0) ?? 0,
+    valorConcedente,
+    valorTotal,
     valorExecutado: emendas?.reduce((acc, e) => acc + Number(e.valor_executado), 0) ?? 0,
-    valorContrapartida: emendas?.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0) ?? 0,
+    valorContrapartida,
     emendasPendentes: emendas?.filter((e) => e.status === 'pendente').length ?? 0,
     emendasAprovadas: emendas?.filter((e) => e.status === 'aprovado').length ?? 0,
     emendasEmExecucao: emendas?.filter((e) => e.status === 'em_execucao').length ?? 0,

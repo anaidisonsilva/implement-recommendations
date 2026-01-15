@@ -37,7 +37,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         <StatsCard
           title="Total de Emendas"
           value={stats.totalEmendas}
@@ -47,20 +47,27 @@ const Dashboard = () => {
         <StatsCard
           title="Valor Total"
           value={formatCurrency(stats.valorTotal)}
+          subtitle="Concedente + Contrapartida"
           icon={Banknote}
           variant="info"
         />
         <StatsCard
-          title="Valor Executado"
-          value={formatCurrency(stats.valorExecutado)}
-          icon={TrendingUp}
-          variant="success"
+          title="Concedente"
+          value={formatCurrency(stats.valorConcedente)}
+          icon={Banknote}
+          variant="default"
         />
         <StatsCard
           title="Contrapartida"
           value={formatCurrency(stats.valorContrapartida)}
           icon={HandCoins}
           variant="warning"
+        />
+        <StatsCard
+          title="Valor Executado"
+          value={formatCurrency(stats.valorExecutado)}
+          icon={TrendingUp}
+          variant="success"
         />
         <StatsCard
           title="Pendentes"

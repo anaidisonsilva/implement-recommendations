@@ -72,31 +72,38 @@ const Relatorios = () => {
 
   const totals = filteredEmendas?.reduce(
     (acc, e) => ({
-      valor: acc.valor + Number(e.valor),
+      valorConcedente: acc.valorConcedente + Number(e.valor),
       executado: acc.executado + Number(e.valor_executado),
       contrapartida: acc.contrapartida + Number(e.contrapartida || 0),
       count: acc.count + 1,
     }),
-    { valor: 0, executado: 0, contrapartida: 0, count: 0 }
-  ) ?? { valor: 0, executado: 0, contrapartida: 0, count: 0 };
+    { valorConcedente: 0, executado: 0, contrapartida: 0, count: 0 }
+  ) ?? { valorConcedente: 0, executado: 0, contrapartida: 0, count: 0 };
+
+  const valorTotal = totals.valorConcedente + totals.contrapartida;
 
   const handleExportCSV = () => {
     if (!filteredEmendas?.length) return;
 
-    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor', 'Valor Executado', 'Contrapartida', 'Status', 'Data'];
-    const rows = filteredEmendas.map((e) => [
-      e.numero,
-      `"${e.objeto.replace(/"/g, '""')}"`,
-      `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
-      `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
-      `"${e.nome_recebedor.replace(/"/g, '""')}"`,
-      e.municipio,
-      e.valor,
-      e.valor_executado,
-      e.contrapartida || 0,
-      statusLabels[e.status] || e.status,
-      formatDate(e.data_disponibilizacao),
-    ]);
+    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data'];
+    const rows = filteredEmendas.map((e) => {
+      const valorConc = Number(e.valor);
+      const valorContra = Number(e.contrapartida || 0);
+      return [
+        e.numero,
+        `"${e.objeto.replace(/"/g, '""')}"`,
+        `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+        `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
+        `"${e.nome_recebedor.replace(/"/g, '""')}"`,
+        e.municipio,
+        valorConc,
+        valorContra,
+        valorConc + valorContra,
+        e.valor_executado,
+        statusLabels[e.status] || e.status,
+        formatDate(e.data_disponibilizacao),
+      ];
+    });
 
     const csvContent = [headers.join(';'), ...rows.map((row) => row.join(';'))].join('\n');
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -234,19 +241,23 @@ const Relatorios = () => {
     </div>
     <div class="summary-item">
       <div class="label">Valor Total</div>
-      <div class="value">${formatCurrency(totals.valor)}</div>
+      <div class="value">${formatCurrency(valorTotal)}</div>
     </div>
     <div class="summary-item">
-      <div class="label">Valor Executado</div>
-      <div class="value">${formatCurrency(totals.executado)}</div>
+      <div class="label">Concedente</div>
+      <div class="value">${formatCurrency(totals.valorConcedente)}</div>
     </div>
     <div class="summary-item">
       <div class="label">Contrapartida</div>
       <div class="value">${formatCurrency(totals.contrapartida)}</div>
     </div>
     <div class="summary-item">
+      <div class="label">Valor Executado</div>
+      <div class="value">${formatCurrency(totals.executado)}</div>
+    </div>
+    <div class="summary-item">
       <div class="label">Execução</div>
-      <div class="value">${totals.valor > 0 ? ((totals.executado / totals.valor) * 100).toFixed(1) : 0}%</div>
+      <div class="value">${valorTotal > 0 ? ((totals.executado / valorTotal) * 100).toFixed(1) : 0}%</div>
     </div>
   </div>
 
@@ -256,32 +267,35 @@ const Relatorios = () => {
         <th>Número</th>
         <th>Objeto</th>
         <th>Parlamentar</th>
-        <th>Concedente</th>
         <th>Recebedor</th>
         <th>Município</th>
-        <th class="text-right">Valor</th>
-        <th class="text-right">Executado</th>
+        <th class="text-right">Concedente</th>
         <th class="text-right">Contrapartida</th>
+        <th class="text-right">Total</th>
+        <th class="text-right">Executado</th>
         <th>Status</th>
-        <th>Data</th>
       </tr>
     </thead>
     <tbody>
-      \${filteredEmendas.map((e) => \`
+      \${filteredEmendas.map((e) => {
+        const valorConc = Number(e.valor);
+        const valorContra = Number(e.contrapartida || 0);
+        const valorTotalEmenda = valorConc + valorContra;
+        return \`
         <tr>
           <td>\${e.numero}</td>
           <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">\${e.objeto}</td>
           <td>\${e.nome_parlamentar || '-'}</td>
-          <td>\${e.nome_concedente || '-'}</td>
           <td>\${e.nome_recebedor}</td>
           <td>\${e.municipio}</td>
-          <td class="text-right">\${formatCurrency(Number(e.valor))}</td>
+          <td class="text-right">\${formatCurrency(valorConc)}</td>
+          <td class="text-right">\${formatCurrency(valorContra)}</td>
+          <td class="text-right">\${formatCurrency(valorTotalEmenda)}</td>
           <td class="text-right">\${formatCurrency(Number(e.valor_executado))}</td>
-          <td class="text-right">\${formatCurrency(Number(e.contrapartida || 0))}</td>
           <td><span class="status status-\${e.status}">\${statusLabels[e.status] || e.status}</span></td>
-          <td>\${formatDate(e.data_disponibilizacao)}</td>
         </tr>
-      \`).join('')}
+      \`;
+      }).join('')}
     </tbody>
   </table>
 
@@ -421,19 +435,25 @@ const Relatorios = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Valor Total</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(totals.valor)}</CardTitle>
+            <CardTitle className="text-3xl">{formatCurrency(valorTotal)}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Valor Executado</CardDescription>
-            <CardTitle className="text-3xl">{formatCurrency(totals.executado)}</CardTitle>
+            <CardDescription>Concedente</CardDescription>
+            <CardTitle className="text-3xl">{formatCurrency(totals.valorConcedente)}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Contrapartida</CardDescription>
             <CardTitle className="text-3xl">{formatCurrency(totals.contrapartida)}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Valor Executado</CardDescription>
+            <CardTitle className="text-3xl">{formatCurrency(totals.executado)}</CardTitle>
           </CardHeader>
         </Card>
       </div>

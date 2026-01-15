@@ -22,6 +22,7 @@ interface EmendaData {
   estado: string;
   valor: number;
   valor_executado: number;
+  contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
 }
@@ -58,19 +59,25 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor', 'Valor Executado', 'Status', 'Data Disponibilização'];
-      const rows = emendas.map((e) => [
-        e.numero,
-        `"${e.objeto.replace(/"/g, '""')}"`,
-        `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
-        `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
-        `"${e.nome_recebedor.replace(/"/g, '""')}"`,
-        `${e.municipio}/${e.estado}`,
-        e.valor,
-        e.valor_executado,
-        statusLabels[e.status] || e.status,
-        formatDate(e.data_disponibilizacao),
-      ]);
+      const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const rows = emendas.map((e) => {
+        const valorConc = Number(e.valor);
+        const valorContra = Number(e.contrapartida || 0);
+        return [
+          e.numero,
+          `"${e.objeto.replace(/"/g, '""')}"`,
+          `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+          `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
+          `"${e.nome_recebedor.replace(/"/g, '""')}"`,
+          `${e.municipio}/${e.estado}`,
+          valorConc,
+          valorContra,
+          valorConc + valorContra,
+          e.valor_executado,
+          statusLabels[e.status] || e.status,
+          formatDate(e.data_disponibilizacao),
+        ];
+      });
 
       const csvContent = [headers.join(';'), ...rows.map((row) => row.join(';'))].join('\n');
       const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -97,11 +104,13 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
     try {
       const totals = emendas.reduce(
         (acc, e) => ({
-          valor: acc.valor + Number(e.valor),
+          valorConcedente: acc.valorConcedente + Number(e.valor),
           executado: acc.executado + Number(e.valor_executado),
+          contrapartida: acc.contrapartida + Number(e.contrapartida || 0),
         }),
-        { valor: 0, executado: 0 }
+        { valorConcedente: 0, executado: 0, contrapartida: 0 }
       );
+      const valorTotal = totals.valorConcedente + totals.contrapartida;
 
       const htmlContent = `
 <!DOCTYPE html>
@@ -225,7 +234,15 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
     </div>
     <div class="summary-item">
       <div class="label">Valor Total</div>
-      <div class="value">${formatCurrency(totals.valor)}</div>
+      <div class="value">${formatCurrency(valorTotal)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Concedente</div>
+      <div class="value">${formatCurrency(totals.valorConcedente)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Contrapartida</div>
+      <div class="value">${formatCurrency(totals.contrapartida)}</div>
     </div>
     <div class="summary-item">
       <div class="label">Valor Executado</div>
@@ -233,7 +250,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
     </div>
     <div class="summary-item">
       <div class="label">Execução</div>
-      <div class="value">${totals.valor > 0 ? ((totals.executado / totals.valor) * 100).toFixed(1) : 0}%</div>
+      <div class="value">${valorTotal > 0 ? ((totals.executado / valorTotal) * 100).toFixed(1) : 0}%</div>
     </div>
   </div>
 
@@ -243,30 +260,35 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
         <th>Número</th>
         <th>Objeto</th>
         <th>Parlamentar</th>
-        <th>Concedente</th>
         <th>Recebedor</th>
         <th>Município</th>
-        <th class="text-right">Valor</th>
+        <th class="text-right">Concedente</th>
+        <th class="text-right">Contrapartida</th>
+        <th class="text-right">Total</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
-        <th>Data</th>
       </tr>
     </thead>
     <tbody>
-      ${emendas.map((e) => `
+      ${emendas.map((e) => {
+        const valorConc = Number(e.valor);
+        const valorContra = Number(e.contrapartida || 0);
+        const valorTotalEmenda = valorConc + valorContra;
+        return `
         <tr>
           <td>${e.numero}</td>
           <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
           <td>${e.nome_parlamentar || '-'}</td>
-          <td>${e.nome_concedente || '-'}</td>
           <td>${e.nome_recebedor}</td>
           <td>${e.municipio}/${e.estado}</td>
-          <td class="text-right">${formatCurrency(Number(e.valor))}</td>
+          <td class="text-right">${formatCurrency(valorConc)}</td>
+          <td class="text-right">${formatCurrency(valorContra)}</td>
+          <td class="text-right">${formatCurrency(valorTotalEmenda)}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
           <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
-          <td>${formatDate(e.data_disponibilizacao)}</td>
         </tr>
-      `).join('')}
+      `;
+      }).join('')}
     </tbody>
   </table>
 

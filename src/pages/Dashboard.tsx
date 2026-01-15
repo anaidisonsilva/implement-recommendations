@@ -1,4 +1,4 @@
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2 } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
@@ -36,8 +36,8 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+      {/* Stats grid - Same as public page */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatsCard
           title="Total de Emendas"
           value={stats.totalEmendas}
@@ -47,21 +47,8 @@ const Dashboard = () => {
         <StatsCard
           title="Valor Total"
           value={formatCurrency(stats.valorTotal)}
-          subtitle="Concedente + Contrapartida"
           icon={Banknote}
           variant="info"
-        />
-        <StatsCard
-          title="Concedente"
-          value={formatCurrency(stats.valorConcedente)}
-          icon={Banknote}
-          variant="default"
-        />
-        <StatsCard
-          title="Contrapartida"
-          value={formatCurrency(stats.valorContrapartida)}
-          icon={HandCoins}
-          variant="warning"
         />
         <StatsCard
           title="Valor Executado"

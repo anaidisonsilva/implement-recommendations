@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Copy, ExternalLink, Loader2, Link as LinkIcon, Settings, Save } from 'lucide-react';
+import { Copy, ExternalLink, Loader2, Link as LinkIcon, Settings, Save, Palette, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
 import { useIsSuperAdmin, useUserPrefeitura } from '@/hooks/useUserRoles';
 import { useSystemSettings, useUpdateSystemSetting } from '@/hooks/useSystemSettings';
@@ -18,14 +20,21 @@ const Configuracoes = () => {
 
   const [systemName, setSystemName] = useState('');
   const [systemSubtitle, setSystemSubtitle] = useState('');
+  const [footerText, setFooterText] = useState('');
+  const [footerCompliance, setFooterCompliance] = useState('');
+  const [primaryColor, setPrimaryColor] = useState('');
+  const [headerColor, setHeaderColor] = useState('');
 
   // Initialize form values when settings load
   useEffect(() => {
     if (systemSettings) {
-      const nameSetting = systemSettings.find(s => s.key === 'system_name');
-      const subtitleSetting = systemSettings.find(s => s.key === 'system_subtitle');
-      if (nameSetting) setSystemName(nameSetting.value);
-      if (subtitleSetting) setSystemSubtitle(subtitleSetting.value);
+      const getSetting = (key: string) => systemSettings.find(s => s.key === key)?.value || '';
+      setSystemName(getSetting('system_name'));
+      setSystemSubtitle(getSetting('system_subtitle'));
+      setFooterText(getSetting('footer_text'));
+      setFooterCompliance(getSetting('footer_compliance'));
+      setPrimaryColor(getSetting('primary_color'));
+      setHeaderColor(getSetting('header_color'));
     }
   }, [systemSettings]);
 
@@ -47,14 +56,50 @@ const Configuracoes = () => {
   const getDashboardUrl = (slug: string) => `${baseUrl}/p/${slug}/dashboard`;
 
   const handleSaveSystemSettings = async () => {
-    const currentName = systemSettings?.find(s => s.key === 'system_name')?.value;
-    const currentSubtitle = systemSettings?.find(s => s.key === 'system_subtitle')?.value;
+    const updates: { key: string; value: string }[] = [];
+    const getSetting = (key: string) => systemSettings?.find(s => s.key === key)?.value || '';
 
-    if (systemName !== currentName) {
-      await updateSetting.mutateAsync({ key: 'system_name', value: systemName });
+    if (systemName !== getSetting('system_name')) updates.push({ key: 'system_name', value: systemName });
+    if (systemSubtitle !== getSetting('system_subtitle')) updates.push({ key: 'system_subtitle', value: systemSubtitle });
+
+    for (const update of updates) {
+      await updateSetting.mutateAsync(update);
     }
-    if (systemSubtitle !== currentSubtitle) {
-      await updateSetting.mutateAsync({ key: 'system_subtitle', value: systemSubtitle });
+    
+    if (updates.length === 0) {
+      toast.info('Nenhuma alteração detectada');
+    }
+  };
+
+  const handleSaveFooterSettings = async () => {
+    const updates: { key: string; value: string }[] = [];
+    const getSetting = (key: string) => systemSettings?.find(s => s.key === key)?.value || '';
+
+    if (footerText !== getSetting('footer_text')) updates.push({ key: 'footer_text', value: footerText });
+    if (footerCompliance !== getSetting('footer_compliance')) updates.push({ key: 'footer_compliance', value: footerCompliance });
+
+    for (const update of updates) {
+      await updateSetting.mutateAsync(update);
+    }
+    
+    if (updates.length === 0) {
+      toast.info('Nenhuma alteração detectada');
+    }
+  };
+
+  const handleSaveColorSettings = async () => {
+    const updates: { key: string; value: string }[] = [];
+    const getSetting = (key: string) => systemSettings?.find(s => s.key === key)?.value || '';
+
+    if (primaryColor !== getSetting('primary_color')) updates.push({ key: 'primary_color', value: primaryColor });
+    if (headerColor !== getSetting('header_color')) updates.push({ key: 'header_color', value: headerColor });
+
+    for (const update of updates) {
+      await updateSetting.mutateAsync(update);
+    }
+    
+    if (updates.length === 0) {
+      toast.info('Nenhuma alteração detectada');
     }
   };
 
@@ -77,48 +122,172 @@ const Configuracoes = () => {
 
       {/* Sistema - apenas para super admin */}
       {isSuperAdmin && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Configurações do Sistema
-            </CardTitle>
-            <CardDescription>
-              Personalize o nome e subtítulo que aparecem no cabeçalho do sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="systemName">Nome do Sistema</Label>
-              <Input
-                id="systemName"
-                value={systemName}
-                onChange={(e) => setSystemName(e.target.value)}
-                placeholder="Ex: Portal de Emendas"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="systemSubtitle">Subtítulo</Label>
-              <Input
-                id="systemSubtitle"
-                value={systemSubtitle}
-                onChange={(e) => setSystemSubtitle(e.target.value)}
-                placeholder="Ex: Transparência e Rastreabilidade"
-              />
-            </div>
-            <Button 
-              onClick={handleSaveSystemSettings}
-              disabled={updateSetting.isPending}
-            >
-              {updateSetting.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              Salvar Alterações
-            </Button>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="sistema" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="sistema">Sistema</TabsTrigger>
+            <TabsTrigger value="footer">Footer</TabsTrigger>
+            <TabsTrigger value="cores">Cores</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="sistema">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Configurações do Sistema
+                </CardTitle>
+                <CardDescription>
+                  Personalize o nome e subtítulo que aparecem no cabeçalho do sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="systemName">Nome do Sistema</Label>
+                  <Input
+                    id="systemName"
+                    value={systemName}
+                    onChange={(e) => setSystemName(e.target.value)}
+                    placeholder="Ex: Portal de Emendas"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="systemSubtitle">Subtítulo</Label>
+                  <Input
+                    id="systemSubtitle"
+                    value={systemSubtitle}
+                    onChange={(e) => setSystemSubtitle(e.target.value)}
+                    placeholder="Ex: Transparência e Rastreabilidade"
+                  />
+                </div>
+                <Button 
+                  onClick={handleSaveSystemSettings}
+                  disabled={updateSetting.isPending}
+                >
+                  {updateSetting.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Salvar Alterações
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="footer">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Texto do Rodapé
+                </CardTitle>
+                <CardDescription>
+                  Personalize as mensagens que aparecem no rodapé das páginas
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="footerText">Texto Principal do Rodapé</Label>
+                  <Textarea
+                    id="footerText"
+                    value={footerText}
+                    onChange={(e) => setFooterText(e.target.value)}
+                    placeholder="Ex: Portal de Transparência de Emendas Parlamentares • ADPF 854/DF • MPC-MG"
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="footerCompliance">Texto de Conformidade</Label>
+                  <Textarea
+                    id="footerCompliance"
+                    value={footerCompliance}
+                    onChange={(e) => setFooterCompliance(e.target.value)}
+                    placeholder="Ex: Em conformidade com a Recomendação MPC-MG nº 01/2025..."
+                    rows={2}
+                  />
+                </div>
+                <Button 
+                  onClick={handleSaveFooterSettings}
+                  disabled={updateSetting.isPending}
+                >
+                  {updateSetting.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Salvar Alterações
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="cores">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Palette className="h-5 w-5" />
+                  Cores do Sistema
+                </CardTitle>
+                <CardDescription>
+                  Personalize as cores principais do sistema (formato HSL: ex: 222 47% 25%)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="primaryColor">Cor Primária (HSL)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="primaryColor"
+                        value={primaryColor}
+                        onChange={(e) => setPrimaryColor(e.target.value)}
+                        placeholder="222 47% 25%"
+                      />
+                      <div 
+                        className="h-10 w-10 rounded border border-border shrink-0"
+                        style={{ backgroundColor: primaryColor ? `hsl(${primaryColor})` : 'hsl(222 47% 25%)' }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="headerColor">Cor do Cabeçalho (HSL)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="headerColor"
+                        value={headerColor}
+                        onChange={(e) => setHeaderColor(e.target.value)}
+                        placeholder="222 47% 20%"
+                      />
+                      <div 
+                        className="h-10 w-10 rounded border border-border shrink-0"
+                        style={{ backgroundColor: headerColor ? `hsl(${headerColor})` : 'hsl(222 47% 20%)' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
+                  <p><strong>Dica:</strong> Use valores HSL separados por espaço. Exemplo:</p>
+                  <ul className="mt-1 list-disc list-inside">
+                    <li>Azul institucional: 222 47% 25%</li>
+                    <li>Verde: 142 76% 36%</li>
+                    <li>Vermelho: 0 84% 60%</li>
+                  </ul>
+                </div>
+                <Button 
+                  onClick={handleSaveColorSettings}
+                  disabled={updateSetting.isPending}
+                >
+                  {updateSetting.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Salvar Cores
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
 
       {/* Links das Prefeituras */}

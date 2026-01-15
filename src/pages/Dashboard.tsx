@@ -3,6 +3,7 @@ import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
+import VigenciaCards from '@/components/dashboard/VigenciaCards';
 import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
 
 const formatCurrency = (value: number) => {
@@ -94,6 +95,9 @@ const Dashboard = () => {
         <ValueProgressChart stats={stats} />
         <ExecutionChart stats={stats} />
       </div>
+
+      {/* Vigência Cards */}
+      <VigenciaCards />
 
       {/* Recent emendas */}
       {emendas && emendas.length > 0 && <RecentEmendas emendas={emendas} />}

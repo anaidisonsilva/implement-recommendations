@@ -81,6 +81,209 @@ const EmendaDetail = () => {
     }
   };
 
+  const handleExportPDF = () => {
+    if (!emenda) return;
+
+    const valor = Number(emenda.valor);
+    const valorExecutado = Number(emenda.valor_executado);
+    const contrapartida = Number(emenda.contrapartida || 0);
+    const valorTotal = valor + contrapartida;
+    const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Emenda Nº ${emenda.numero}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; }
+          .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1a365d; padding-bottom: 15px; }
+          .header h1 { color: #1a365d; font-size: 18px; margin-bottom: 5px; }
+          .header p { color: #666; font-size: 10px; }
+          .status { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-top: 8px; }
+          .status-pendente { background: #fef3c7; color: #92400e; }
+          .status-aprovado { background: #d1fae5; color: #065f46; }
+          .status-em_execucao { background: #dbeafe; color: #1e40af; }
+          .status-concluido { background: #d1fae5; color: #065f46; }
+          .status-cancelado { background: #fee2e2; color: #991b1b; }
+          .section { margin-bottom: 15px; }
+          .section-title { font-size: 12px; font-weight: bold; color: #1a365d; margin-bottom: 8px; padding-bottom: 3px; border-bottom: 1px solid #e2e8f0; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+          .field { margin-bottom: 6px; }
+          .field-label { font-size: 9px; color: #666; text-transform: uppercase; }
+          .field-value { font-size: 11px; font-weight: 500; }
+          .valores-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+          .valor-box { background: #f8fafc; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; }
+          .valor-label { font-size: 9px; color: #666; }
+          .valor-number { font-size: 14px; font-weight: bold; color: #1a365d; }
+          .progress-container { margin: 15px 0; }
+          .progress-bar { height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+          .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb); border-radius: 6px; }
+          .progress-text { display: flex; justify-content: space-between; font-size: 10px; margin-top: 5px; color: #666; }
+          .footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0; font-size: 9px; color: #666; text-align: center; }
+          @media print { body { padding: 10px; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>FICHA DE EMENDA PARLAMENTAR</h1>
+          <p>Emenda Nº ${emenda.numero}</p>
+          <span class="status status-${emenda.status}">${emenda.status.replace('_', ' ').toUpperCase()}</span>
+        </div>
+
+        <div class="section">
+          <div class="section-title">OBJETO</div>
+          <p>${emenda.objeto}</p>
+        </div>
+
+        <div class="valores-grid">
+          <div class="valor-box">
+            <div class="valor-label">VALOR CONCEDENTE</div>
+            <div class="valor-number">${formatCurrency(valor)}</div>
+          </div>
+          <div class="valor-box">
+            <div class="valor-label">CONTRAPARTIDA</div>
+            <div class="valor-number">${formatCurrency(contrapartida)}</div>
+          </div>
+          <div class="valor-box">
+            <div class="valor-label">VALOR TOTAL</div>
+            <div class="valor-number">${formatCurrency(valorTotal)}</div>
+          </div>
+          <div class="valor-box">
+            <div class="valor-label">EXECUTADO</div>
+            <div class="valor-number">${formatCurrency(valorExecutado)}</div>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+          </div>
+          <div class="progress-text">
+            <span>Execução: ${progressPercent.toFixed(1)}%</span>
+            <span>Restante: ${formatCurrency(valorTotal - valorExecutado)}</span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="section">
+            <div class="section-title">CONCEDENTE</div>
+            <div class="field">
+              <div class="field-label">Tipo</div>
+              <div class="field-value">${tipoConcedenteLabels[emenda.tipo_concedente]}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Nome</div>
+              <div class="field-value">${emenda.nome_concedente || '-'}</div>
+            </div>
+            ${emenda.nome_parlamentar ? `
+            <div class="field">
+              <div class="field-label">Parlamentar</div>
+              <div class="field-value">${emenda.nome_parlamentar}</div>
+            </div>
+            ` : ''}
+          </div>
+
+          <div class="section">
+            <div class="section-title">RECEBEDOR</div>
+            <div class="field">
+              <div class="field-label">Tipo</div>
+              <div class="field-value">${tipoRecebedorLabels[emenda.tipo_recebedor]}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Nome</div>
+              <div class="field-value">${emenda.nome_recebedor}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">CNPJ</div>
+              <div class="field-value">${emenda.cnpj_recebedor}</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">LOCALIZAÇÃO E GESTÃO</div>
+            <div class="field">
+              <div class="field-label">Município/Estado</div>
+              <div class="field-value">${emenda.municipio}/${emenda.estado}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Gestor Responsável</div>
+              <div class="field-value">${emenda.gestor_responsavel}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Data Disponibilização</div>
+              <div class="field-value">${formatDate(emenda.data_disponibilizacao)}</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">DADOS FINANCEIROS</div>
+            <div class="field">
+              <div class="field-label">Grupo Natureza Despesa</div>
+              <div class="field-value">${emenda.grupo_natureza_despesa}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Banco</div>
+              <div class="field-value">${emenda.banco || '-'}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Conta Corrente</div>
+              <div class="field-value">${emenda.conta_corrente || '-'}</div>
+            </div>
+            ${emenda.anuencia_previa_sus !== null ? `
+            <div class="field">
+              <div class="field-label">Anuência Prévia SUS</div>
+              <div class="field-value">${emenda.anuencia_previa_sus ? 'Sim' : 'Não'}</div>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+
+        ${emenda.numero_convenio || emenda.numero_proposta || emenda.numero_plano_acao ? `
+        <div class="section">
+          <div class="section-title">REFERÊNCIAS</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            ${emenda.numero_convenio ? `
+            <div class="field">
+              <div class="field-label">Nº Convênio</div>
+              <div class="field-value">${emenda.numero_convenio}</div>
+            </div>
+            ` : ''}
+            ${emenda.numero_proposta ? `
+            <div class="field">
+              <div class="field-label">Nº Proposta</div>
+              <div class="field-value">${emenda.numero_proposta}</div>
+            </div>
+            ` : ''}
+            ${emenda.numero_plano_acao ? `
+            <div class="field">
+              <div class="field-label">Nº Plano de Ação</div>
+              <div class="field-value">${emenda.numero_plano_acao}</div>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="footer">
+          <p><strong>Conformidade:</strong> Esta emenda está registrada em conformidade com o Art. 2º, §1º da Recomendação MPC-MG nº 01/2025</p>
+          <p style="margin-top: 5px;">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -117,9 +320,9 @@ const EmendaDetail = () => {
           </Link>
         </Button>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => handleExportPDF()}>
             <Download className="mr-2 h-4 w-4" />
-            Exportar
+            Exportar PDF
           </Button>
           <Button size="sm" onClick={() => setEditDialogOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />

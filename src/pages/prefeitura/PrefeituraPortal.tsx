@@ -13,6 +13,8 @@ import {
   X,
   BarChart3,
   Eye,
+  CircleDollarSign,
+  HandCoins,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +34,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import StatusBadge from '@/components/dashboard/StatusBadge';
+import PublicDashboardCharts from '@/components/dashboard/PublicDashboardCharts';
+import PublicVigenciaCards from '@/components/dashboard/PublicVigenciaCards';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -94,11 +98,27 @@ const PrefeituraPortal = () => {
   );
 
   const stats = useMemo(() => {
-    if (!emendas) return { total: 0, valor: 0, executado: 0 };
+    if (!emendas) return { 
+      total: 0, 
+      valorConcedente: 0, 
+      valorContrapartida: 0, 
+      valorTotal: 0, 
+      executado: 0,
+      pendentes: 0,
+      aprovadas: 0,
+      emExecucao: 0,
+      concluidas: 0,
+    };
     return {
       total: emendas.length,
-      valor: emendas.reduce((acc, e) => acc + Number(e.valor), 0),
+      valorConcedente: emendas.reduce((acc, e) => acc + Number(e.valor), 0),
+      valorContrapartida: emendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0),
+      valorTotal: emendas.reduce((acc, e) => acc + Number(e.valor) + Number(e.contrapartida || 0), 0),
       executado: emendas.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      pendentes: emendas.filter(e => e.status === 'pendente').length,
+      aprovadas: emendas.filter(e => e.status === 'aprovado').length,
+      emExecucao: emendas.filter(e => e.status === 'em_execucao').length,
+      concluidas: emendas.filter(e => e.status === 'concluido').length,
     };
   }, [emendas]);
 
@@ -175,42 +195,96 @@ const PrefeituraPortal = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Stats */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <FileText className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total de Emendas</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
-              </div>
+        {/* Stats Cards */}
+        <div className="mb-6 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Total de Emendas</p>
+              <FileText className="h-4 w-4 text-muted-foreground" />
             </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.total}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
-                <Banknote className="h-5 w-5 text-info" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold">{formatCurrency(stats.valor)}</p>
-              </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Valor Total</p>
+              <Banknote className="h-4 w-4 text-muted-foreground" />
             </div>
+            <p className="mt-1 text-xs text-muted-foreground">Concedente + Contrapartida</p>
+            <p className="mt-1 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorTotal)}>{formatCurrency(stats.valorTotal)}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10">
-                <TrendingUp className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Valor Executado</p>
-                <p className="text-2xl font-bold">{formatCurrency(stats.executado)}</p>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Concedente</p>
+              <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorConcedente)}>{formatCurrency(stats.valorConcedente)}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Contrapartida</p>
+              <HandCoins className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorContrapartida)}>{formatCurrency(stats.valorContrapartida)}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Valor Executado</p>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.executado)}>{formatCurrency(stats.executado)}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Pendentes</p>
+              <div className="h-4 w-4 rounded-full bg-warning/20 flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-warning" />
               </div>
             </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.pendentes}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Em Execução</p>
+              <div className="h-4 w-4 rounded-full bg-info/20 flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-info" />
+              </div>
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.emExecucao}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Concluídas</p>
+              <div className="h-4 w-4 rounded-full bg-success/20 flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-success" />
+              </div>
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.concluidas}</p>
           </div>
         </div>
+
+        {/* Charts */}
+        <div className="mb-8">
+          <PublicDashboardCharts
+            stats={{
+              totalEmendas: stats.total,
+              valorTotal: stats.valorTotal,
+              valorConcedente: stats.valorConcedente,
+              valorContrapartida: stats.valorContrapartida,
+              valorExecutado: stats.executado,
+              emendasPendentes: stats.pendentes,
+              emendasAprovadas: stats.aprovadas,
+              emendasEmExecucao: stats.emExecucao,
+              emendasConcluidas: stats.concluidas,
+            }}
+          />
+        </div>
+
+        {/* Vigência Cards */}
+        {emendas && emendas.length > 0 && (
+          <div className="mb-8">
+            <PublicVigenciaCards emendas={emendas} />
+          </div>
+        )}
 
         {/* Filters */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row">

@@ -2,11 +2,14 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle, Clock, AlertCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useEmendas } from '@/hooks/useEmendas';
-import { differenceInDays, parseISO, isAfter, isBefore } from 'date-fns';
+import { EmendaDB } from '@/hooks/useEmendas';
+import { differenceInDays, parseISO, isBefore } from 'date-fns';
 
-const VigenciaCards = () => {
-  const { data: emendas } = useEmendas();
+interface VigenciaCardsProps {
+  emendas?: EmendaDB[];
+}
+
+const VigenciaCards = ({ emendas }: VigenciaCardsProps) => {
   const today = new Date();
 
   // Filter emendas by vigência status

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import { useEmendas } from '@/hooks/useEmendas';
+import { useYearFilter } from '@/hooks/useYearFilter';
 import { useFooterSettings } from '@/hooks/useSystemSettings';
 import StatsCard from '@/components/dashboard/StatsCard';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
@@ -8,6 +9,7 @@ import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
+import YearFilter from '@/components/dashboard/YearFilter';
 import {
   FileText,
   Banknote,
@@ -78,7 +80,7 @@ const DynamicFooter = () => {
 
 const TransparenciaPublica = () => {
   const { data: emendas, isLoading } = useEmendas();
-  const stats = useEmendasStats();
+  const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(emendas);
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,23 +100,21 @@ const TransparenciaPublica = () => {
 
   // Filter emendas
   const filteredEmendas = useMemo(() => {
-    if (!emendas) return [];
-
-    return emendas.filter((emenda) => {
+    return yearFilteredEmendas.filter((emenda) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
         emenda.numero.toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
-        emenda.nome_concedente.toLowerCase().includes(searchLower) ||
+        (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [emendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -170,6 +170,14 @@ const TransparenciaPublica = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <YearFilter 
+                selectedYear={selectedYear}
+                onYearChange={(year) => {
+                  setSelectedYear(year);
+                  setCurrentPage(1);
+                }}
+                availableYears={availableYears}
+              />
               <Button variant="outline" asChild>
                 <Link to="/transparencia/relatorios">
                   <BarChart3 className="mr-2 h-4 w-4" />
@@ -293,10 +301,11 @@ const TransparenciaPublica = () => {
               <div className="flex items-center gap-4">
                 <h3 className="font-semibold text-foreground">Emendas Cadastradas</h3>
                 <span className="text-sm text-muted-foreground">
-                  {filteredEmendas.length === emendas?.length 
-                    ? `${emendas?.length || 0} emendas`
-                    : `${filteredEmendas.length} de ${emendas?.length || 0} emendas`
+                  {filteredEmendas.length === yearFilteredEmendas.length 
+                    ? `${yearFilteredEmendas.length} emendas`
+                    : `${filteredEmendas.length} de ${yearFilteredEmendas.length} emendas`
                   }
+                  {selectedYear !== 'todos' && ` em ${selectedYear}`}
                 </span>
               </div>
               <PublicExportDialog 
@@ -352,7 +361,7 @@ const TransparenciaPublica = () => {
                           <TableCell>
                             <StatusBadge status={emenda.status} />
                           </TableCell>
-                          <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente}>
+                          <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
                             {emenda.nome_concedente}
                           </TableCell>
                           <TableCell>{emenda.municipio}/{emenda.estado}</TableCell>
@@ -397,7 +406,9 @@ const TransparenciaPublica = () => {
               <p className="mt-3 text-lg font-medium text-muted-foreground">
                 {hasActiveFilters 
                   ? 'Nenhuma emenda encontrada com os filtros aplicados'
-                  : 'Nenhuma emenda cadastrada ainda'
+                  : selectedYear !== 'todos'
+                    ? `Nenhuma emenda encontrada para ${selectedYear}`
+                    : 'Nenhuma emenda cadastrada ainda'
                 }
               </p>
               {hasActiveFilters && (

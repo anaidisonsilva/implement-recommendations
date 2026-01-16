@@ -6,7 +6,6 @@ import {
   User,
   MapPin,
   CreditCard,
-  Edit,
   Download,
   Loader2,
   Trash2,
@@ -25,6 +24,8 @@ import {
 } from '@/components/ui/dialog';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
+import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
+import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import EditEmendaDialog from '@/components/emendas/EditEmendaDialog';
@@ -64,6 +65,9 @@ const EmendaDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: emenda, isLoading } = useEmenda(id || '');
+  const { data: empresas } = useEmpresasByEmenda(id || '');
+  const { data: planoTrabalho } = usePlanoTrabalho(id || '');
+  const { data: cronogramaItems } = useCronogramaItems(planoTrabalho?.id || '');
   const deleteEmenda = useDeleteEmenda();
   
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -89,6 +93,46 @@ const EmendaDetail = () => {
     const contrapartida = Number(emenda.contrapartida || 0);
     const valorTotal = valor + contrapartida;
     const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+
+    const planoTrabalhoHtml = planoTrabalho ? `
+      <div class="section" style="margin-top: 20px;">
+        <div class="section-title">PLANO DE TRABALHO</div>
+        <div style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 8px;">
+          <div class="field"><div class="field-label">Objeto</div><div class="field-value">${planoTrabalho.objeto}</div></div>
+          <div class="field"><div class="field-label">Finalidade</div><div class="field-value">${planoTrabalho.finalidade}</div></div>
+          <div class="field"><div class="field-label">Estimativa de Recursos</div><div class="field-value">${formatCurrency(Number(planoTrabalho.estimativa_recursos))}</div></div>
+        </div>
+        ${cronogramaItems?.length ? `
+          <div style="margin-top: 12px;">
+            <div class="field-label">Cronograma</div>
+            <table style="width: 100%; font-size: 10px; border-collapse: collapse; margin-top: 6px;">
+              <thead><tr style="background: #e2e8f0;"><th style="padding: 4px; text-align: left;">Etapa</th><th style="padding: 4px;">Início</th><th style="padding: 4px;">Fim</th><th style="padding: 4px;">% Conclusão</th></tr></thead>
+              <tbody>${cronogramaItems.map(item => `<tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px;">${item.etapa}</td><td style="padding: 4px; text-align: center;">${new Date(item.data_inicio).toLocaleDateString('pt-BR')}</td><td style="padding: 4px; text-align: center;">${new Date(item.data_fim).toLocaleDateString('pt-BR')}</td><td style="padding: 4px; text-align: center;">${item.percentual_conclusao}%</td></tr>`).join('')}</tbody>
+            </table>
+          </div>
+        ` : ''}
+      </div>
+    ` : '';
+
+    const empresasHtml = empresas?.length ? `
+      <div class="section" style="margin-top: 20px;">
+        <div class="section-title">EMPRESAS LICITADAS E PAGAMENTOS</div>
+        ${empresas.map(emp => `
+          <div style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <div><strong>${emp.nome_empresa}</strong><br><span style="font-size: 10px; color: #666;">CNPJ: ${emp.cnpj} | Empenho: ${emp.numero_empenho}</span></div>
+              <div style="text-align: right;"><strong style="color: #1a365d;">${formatCurrency(emp.pagamentos?.reduce((sum, p) => sum + Number(p.valor), 0) || 0)}</strong></div>
+            </div>
+            ${emp.pagamentos?.length ? `
+              <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                <thead><tr style="background: #e2e8f0;"><th style="padding: 4px; text-align: left;">Data</th><th style="padding: 4px; text-align: right;">Valor</th><th style="padding: 4px; text-align: left;">Descrição</th></tr></thead>
+                <tbody>${emp.pagamentos.map(pag => `<tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px;">${new Date(pag.data_pagamento).toLocaleDateString('pt-BR')}</td><td style="padding: 4px; text-align: right;">${formatCurrency(Number(pag.valor))}</td><td style="padding: 4px;">${pag.descricao || '-'}</td></tr>`).join('')}</tbody>
+              </table>
+            ` : '<p style="font-size: 10px; color: #666;">Nenhum pagamento registrado</p>'}
+          </div>
+        `).join('')}
+      </div>
+    ` : '';
 
     const printContent = `
       <!DOCTYPE html>
@@ -129,15 +173,6 @@ const EmendaDetail = () => {
         <div class="header">
           <h1>FICHA DE EMENDA PARLAMENTAR</h1>
           <p>Emenda Nº ${emenda.numero}</p>
-          ${(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) ? `
-            <p style="margin-top: 5px; font-size: 10px;">
-              ${emenda.numero_proposta ? `Proposta: <strong>${emenda.numero_proposta}</strong>` : ''}
-              ${emenda.numero_proposta && (emenda.numero_convenio || emenda.numero_plano_acao) ? ' | ' : ''}
-              ${emenda.numero_convenio ? `Convênio: <strong>${emenda.numero_convenio}</strong>` : ''}
-              ${emenda.numero_convenio && emenda.numero_plano_acao ? ' | ' : ''}
-              ${emenda.numero_plano_acao ? `Plano de Ação: <strong>${emenda.numero_plano_acao}</strong>` : ''}
-            </p>
-          ` : ''}
           <span class="status status-${emenda.status}">${emenda.status.replace('_', ' ').toUpperCase()}</span>
         </div>
 
@@ -147,133 +182,45 @@ const EmendaDetail = () => {
         </div>
 
         <div class="valores-grid">
-          <div class="valor-box">
-            <div class="valor-label">VALOR CONCEDENTE</div>
-            <div class="valor-number">${formatCurrency(valor)}</div>
-          </div>
-          <div class="valor-box">
-            <div class="valor-label">CONTRAPARTIDA</div>
-            <div class="valor-number">${formatCurrency(contrapartida)}</div>
-          </div>
-          <div class="valor-box">
-            <div class="valor-label">VALOR TOTAL</div>
-            <div class="valor-number">${formatCurrency(valorTotal)}</div>
-          </div>
-          <div class="valor-box">
-            <div class="valor-label">EXECUTADO</div>
-            <div class="valor-number">${formatCurrency(valorExecutado)}</div>
-          </div>
+          <div class="valor-box"><div class="valor-label">VALOR CONCEDENTE</div><div class="valor-number">${formatCurrency(valor)}</div></div>
+          <div class="valor-box"><div class="valor-label">CONTRAPARTIDA</div><div class="valor-number">${formatCurrency(contrapartida)}</div></div>
+          <div class="valor-box"><div class="valor-label">VALOR TOTAL</div><div class="valor-number">${formatCurrency(valorTotal)}</div></div>
+          <div class="valor-box"><div class="valor-label">EXECUTADO</div><div class="valor-number">${formatCurrency(valorExecutado)}</div></div>
         </div>
 
         <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${progressPercent}%"></div>
-          </div>
-          <div class="progress-text">
-            <span>Execução: ${progressPercent.toFixed(1)}%</span>
-            <span>Restante: ${formatCurrency(valorTotal - valorExecutado)}</span>
-          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width: ${progressPercent}%"></div></div>
+          <div class="progress-text"><span>Execução: ${progressPercent.toFixed(1)}%</span><span>Restante: ${formatCurrency(valorTotal - valorExecutado)}</span></div>
         </div>
 
         <div class="grid">
           <div class="section">
             <div class="section-title">CONCEDENTE</div>
-            <div class="field">
-              <div class="field-label">Tipo</div>
-              <div class="field-value">${tipoConcedenteLabels[emenda.tipo_concedente]}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Nome</div>
-              <div class="field-value">${emenda.nome_concedente || '-'}</div>
-            </div>
-            ${emenda.nome_parlamentar ? `
-            <div class="field">
-              <div class="field-label">Parlamentar</div>
-              <div class="field-value">${emenda.nome_parlamentar}</div>
-            </div>
-            ` : ''}
+            <div class="field"><div class="field-label">Tipo</div><div class="field-value">${tipoConcedenteLabels[emenda.tipo_concedente]}</div></div>
+            <div class="field"><div class="field-label">Nome</div><div class="field-value">${emenda.nome_concedente || '-'}</div></div>
           </div>
-
           <div class="section">
             <div class="section-title">RECEBEDOR</div>
-            <div class="field">
-              <div class="field-label">Tipo</div>
-              <div class="field-value">${tipoRecebedorLabels[emenda.tipo_recebedor]}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Nome</div>
-              <div class="field-value">${emenda.nome_recebedor}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">CNPJ</div>
-              <div class="field-value">${emenda.cnpj_recebedor}</div>
-            </div>
+            <div class="field"><div class="field-label">Tipo</div><div class="field-value">${tipoRecebedorLabels[emenda.tipo_recebedor]}</div></div>
+            <div class="field"><div class="field-label">Nome</div><div class="field-value">${emenda.nome_recebedor}</div></div>
+            <div class="field"><div class="field-label">CNPJ</div><div class="field-value">${emenda.cnpj_recebedor}</div></div>
           </div>
-
           <div class="section">
             <div class="section-title">LOCALIZAÇÃO E GESTÃO</div>
-            <div class="field">
-              <div class="field-label">Município/Estado</div>
-              <div class="field-value">${emenda.municipio}/${emenda.estado}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Gestor Responsável</div>
-              <div class="field-value">${emenda.gestor_responsavel}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Data Disponibilização</div>
-              <div class="field-value">${formatDate(emenda.data_disponibilizacao)}</div>
-            </div>
+            <div class="field"><div class="field-label">Município/Estado</div><div class="field-value">${emenda.municipio}/${emenda.estado}</div></div>
+            <div class="field"><div class="field-label">Gestor Responsável</div><div class="field-value">${emenda.gestor_responsavel}</div></div>
+            <div class="field"><div class="field-label">Data Disponibilização</div><div class="field-value">${formatDate(emenda.data_disponibilizacao)}</div></div>
           </div>
-
           <div class="section">
             <div class="section-title">DADOS FINANCEIROS</div>
-            <div class="field">
-              <div class="field-label">Grupo Natureza Despesa</div>
-              <div class="field-value">${emenda.grupo_natureza_despesa}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Banco</div>
-              <div class="field-value">${emenda.banco || '-'}</div>
-            </div>
-            <div class="field">
-              <div class="field-label">Conta Corrente</div>
-              <div class="field-value">${emenda.conta_corrente || '-'}</div>
-            </div>
-            ${emenda.anuencia_previa_sus !== null ? `
-            <div class="field">
-              <div class="field-label">Anuência Prévia SUS</div>
-              <div class="field-value">${emenda.anuencia_previa_sus ? 'Sim' : 'Não'}</div>
-            </div>
-            ` : ''}
+            <div class="field"><div class="field-label">Grupo Natureza Despesa</div><div class="field-value">${emenda.grupo_natureza_despesa}</div></div>
+            <div class="field"><div class="field-label">Banco</div><div class="field-value">${emenda.banco || '-'}</div></div>
+            <div class="field"><div class="field-label">Conta Corrente</div><div class="field-value">${emenda.conta_corrente || '-'}</div></div>
           </div>
         </div>
 
-        ${emenda.numero_convenio || emenda.numero_proposta || emenda.numero_plano_acao ? `
-        <div class="section">
-          <div class="section-title">REFERÊNCIAS</div>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-            ${emenda.numero_convenio ? `
-            <div class="field">
-              <div class="field-label">Nº Convênio</div>
-              <div class="field-value">${emenda.numero_convenio}</div>
-            </div>
-            ` : ''}
-            ${emenda.numero_proposta ? `
-            <div class="field">
-              <div class="field-label">Nº Proposta</div>
-              <div class="field-value">${emenda.numero_proposta}</div>
-            </div>
-            ` : ''}
-            ${emenda.numero_plano_acao ? `
-            <div class="field">
-              <div class="field-label">Nº Plano de Ação</div>
-              <div class="field-value">${emenda.numero_plano_acao}</div>
-            </div>
-            ` : ''}
-          </div>
-        </div>
-        ` : ''}
+        ${planoTrabalhoHtml}
+        ${empresasHtml}
 
         <div class="footer">
           <p><strong>Conformidade:</strong> Esta emenda está registrada em conformidade com o Art. 2º, §1º da Recomendação MPC-MG nº 01/2025</p>

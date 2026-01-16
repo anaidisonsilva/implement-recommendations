@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Building2,
-  LogIn,
   Loader2,
   X,
   BarChart3,
@@ -36,6 +35,7 @@ import {
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicDashboardCharts from '@/components/dashboard/PublicDashboardCharts';
 import PublicVigenciaCards from '@/components/dashboard/PublicVigenciaCards';
+import YearFilter from '@/components/dashboard/YearFilter';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -71,25 +71,46 @@ const PrefeituraPortal = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Year filter
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear.toString());
+
+  const availableYears = useMemo(() => {
+    if (!emendas || emendas.length === 0) return [];
+    const years = new Set<number>();
+    emendas.forEach((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      years.add(year);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  const yearFilteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (selectedYear === 'todos') return emendas;
+    return emendas.filter((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      return year === parseInt(selectedYear);
+    });
+  }, [emendas, selectedYear]);
 
   const filteredEmendas = useMemo(() => {
-    if (!emendas) return [];
-
-    return emendas.filter((emenda) => {
+    return yearFilteredEmendas.filter((emenda) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
         emenda.numero.toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
-        emenda.nome_concedente.toLowerCase().includes(searchLower) ||
+        (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [emendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter]);
 
   const totalPages = Math.ceil(filteredEmendas.length / ITEMS_PER_PAGE);
   const paginatedEmendas = filteredEmendas.slice(
@@ -98,7 +119,7 @@ const PrefeituraPortal = () => {
   );
 
   const stats = useMemo(() => {
-    if (!emendas) return { 
+    if (!yearFilteredEmendas || yearFilteredEmendas.length === 0) return { 
       total: 0, 
       valorConcedente: 0, 
       valorContrapartida: 0, 
@@ -110,17 +131,17 @@ const PrefeituraPortal = () => {
       concluidas: 0,
     };
     return {
-      total: emendas.length,
-      valorConcedente: emendas.reduce((acc, e) => acc + Number(e.valor), 0),
-      valorContrapartida: emendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0),
-      valorTotal: emendas.reduce((acc, e) => acc + Number(e.valor) + Number(e.contrapartida || 0), 0),
-      executado: emendas.reduce((acc, e) => acc + Number(e.valor_executado), 0),
-      pendentes: emendas.filter(e => e.status === 'pendente').length,
-      aprovadas: emendas.filter(e => e.status === 'aprovado').length,
-      emExecucao: emendas.filter(e => e.status === 'em_execucao').length,
-      concluidas: emendas.filter(e => e.status === 'concluido').length,
+      total: yearFilteredEmendas.length,
+      valorConcedente: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor), 0),
+      valorContrapartida: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0),
+      valorTotal: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor) + Number(e.contrapartida || 0), 0),
+      executado: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      pendentes: yearFilteredEmendas.filter(e => e.status === 'pendente').length,
+      aprovadas: yearFilteredEmendas.filter(e => e.status === 'aprovado').length,
+      emExecucao: yearFilteredEmendas.filter(e => e.status === 'em_execucao').length,
+      concluidas: yearFilteredEmendas.filter(e => e.status === 'concluido').length,
     };
-  }, [emendas]);
+  }, [yearFilteredEmendas]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -176,12 +197,22 @@ const PrefeituraPortal = () => {
                 </p>
               </div>
             </div>
-            <Button variant="outline" asChild>
-              <Link to={`/p/${slug}/relatorios`}>
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Relatórios
-              </Link>
-            </Button>
+            <div className="flex items-center gap-3">
+              <YearFilter 
+                selectedYear={selectedYear}
+                onYearChange={(year) => {
+                  setSelectedYear(year);
+                  setCurrentPage(1);
+                }}
+                availableYears={availableYears}
+              />
+              <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/relatorios`}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Relatórios
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -272,9 +303,9 @@ const PrefeituraPortal = () => {
         </div>
 
         {/* Vigência Cards */}
-        {emendas && emendas.length > 0 && (
+        {yearFilteredEmendas && yearFilteredEmendas.length > 0 && (
           <div className="mb-8">
-            <PublicVigenciaCards emendas={emendas} />
+            <PublicVigenciaCards emendas={yearFilteredEmendas} />
           </div>
         )}
 
@@ -322,6 +353,7 @@ const PrefeituraPortal = () => {
         {/* Results count */}
         <p className="mb-4 text-sm text-muted-foreground">
           {filteredEmendas.length} emenda(s) encontrada(s)
+          {selectedYear !== 'todos' && ` em ${selectedYear}`}
         </p>
 
         {/* Table */}
@@ -368,7 +400,10 @@ const PrefeituraPortal = () => {
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
             <FileText className="h-12 w-12 text-muted-foreground/50" />
             <p className="mt-4 text-lg font-medium text-muted-foreground">
-              Nenhuma emenda encontrada
+              {selectedYear !== 'todos' 
+                ? `Nenhuma emenda encontrada para ${selectedYear}`
+                : 'Nenhuma emenda encontrada'
+              }
             </p>
           </div>
         )}

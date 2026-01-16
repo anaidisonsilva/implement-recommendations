@@ -4,7 +4,9 @@ import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
 import VigenciaCards from '@/components/dashboard/VigenciaCards';
-import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import YearFilter from '@/components/dashboard/YearFilter';
+import { useEmendas } from '@/hooks/useEmendas';
+import { useYearFilter } from '@/hooks/useYearFilter';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -17,7 +19,7 @@ const formatCurrency = (value: number) => {
 
 const Dashboard = () => {
   const { data: emendas, isLoading } = useEmendas();
-  const stats = useEmendasStats();
+  const { selectedYear, setSelectedYear, availableYears, filteredEmendas, stats } = useYearFilter(emendas);
 
   if (isLoading) {
     return (
@@ -30,11 +32,18 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
-          Visão geral das emendas parlamentares • ADPF 854/DF
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          <p className="mt-1 text-muted-foreground">
+            Visão geral das emendas parlamentares • ADPF 854/DF
+          </p>
+        </div>
+        <YearFilter 
+          selectedYear={selectedYear} 
+          onYearChange={setSelectedYear}
+          availableYears={availableYears}
+        />
       </div>
 
       {/* Stats grid */}
@@ -97,20 +106,26 @@ const Dashboard = () => {
       </div>
 
       {/* Vigência Cards */}
-      <VigenciaCards />
+      <VigenciaCards emendas={filteredEmendas} />
 
       {/* Recent emendas */}
-      {emendas && emendas.length > 0 && <RecentEmendas emendas={emendas} />}
+      {filteredEmendas && filteredEmendas.length > 0 && <RecentEmendas emendas={filteredEmendas} />}
 
       {/* Empty state */}
-      {(!emendas || emendas.length === 0) && (
+      {(!filteredEmendas || filteredEmendas.length === 0) && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
           <FileText className="h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-lg font-medium text-muted-foreground">
-            Nenhuma emenda cadastrada
+            {selectedYear !== 'todos' 
+              ? `Nenhuma emenda encontrada para ${selectedYear}`
+              : 'Nenhuma emenda cadastrada'
+            }
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Comece cadastrando a primeira emenda no sistema
+            {selectedYear !== 'todos' 
+              ? 'Selecione outro ano ou cadastre novas emendas'
+              : 'Comece cadastrando a primeira emenda no sistema'
+            }
           </p>
         </div>
       )}

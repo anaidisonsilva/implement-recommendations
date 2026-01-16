@@ -13,6 +13,8 @@ import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import { useEmenda } from '@/hooks/useEmendas';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
+import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
+import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
 import { toast } from 'sonner';
@@ -59,6 +61,9 @@ const PrefeituraEmendaDetail = () => {
   const { slug, id } = useParams();
   const { data: prefeitura, isLoading: loadingPrefeitura } = usePrefeituraBySlug(slug ?? '');
   const { data: emenda, isLoading: loadingEmenda } = useEmenda(id || '');
+  const { data: empresas } = useEmpresasByEmenda(id || '');
+  const { data: planoTrabalho } = usePlanoTrabalho(id || '');
+  const { data: cronogramaItems } = useCronogramaItems(planoTrabalho?.id || '');
 
   const handleExportPDF = () => {
     if (!emenda) return;
@@ -68,6 +73,101 @@ const PrefeituraEmendaDetail = () => {
     const valorTotal = valor + contrapartida;
     const valorExecutado = Number(emenda.valor_executado);
     const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+
+    // Generate Plano de Trabalho section
+    let planoTrabalhoHtml = '';
+    if (planoTrabalho) {
+      let cronogramaHtml = '';
+      if (cronogramaItems && cronogramaItems.length > 0) {
+        cronogramaHtml = `
+          <div style="margin-top: 15px;">
+            <h4 style="font-size: 12px; color: #0066cc; margin-bottom: 10px;">Cronograma de Execução</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+              <thead>
+                <tr style="background: #f0f0f0;">
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Etapa</th>
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Início</th>
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Fim</th>
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Conclusão</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${cronogramaItems.map(item => `
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 6px;">${item.etapa}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${new Date(item.data_inicio).toLocaleDateString('pt-BR')}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${new Date(item.data_fim).toLocaleDateString('pt-BR')}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">${item.percentual_conclusao}%</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      planoTrabalhoHtml = `
+        <div class="card" style="grid-column: span 2; margin-top: 20px;">
+          <h3>Plano de Trabalho</h3>
+          <div class="field"><div class="label">Objeto</div><div class="value">${planoTrabalho.objeto}</div></div>
+          <div class="field"><div class="label">Finalidade</div><div class="value">${planoTrabalho.finalidade}</div></div>
+          <div class="field"><div class="label">Estimativa de Recursos</div><div class="value">${formatCurrency(Number(planoTrabalho.estimativa_recursos))}</div></div>
+          ${cronogramaHtml}
+        </div>
+      `;
+    }
+
+    // Generate Empresas e Pagamentos section
+    let empresasPagamentosHtml = '';
+    if (empresas && empresas.length > 0) {
+      const empresasHtml = empresas.map(empresa => {
+        let pagamentosHtml = '';
+        if (empresa.pagamentos && empresa.pagamentos.length > 0) {
+          pagamentosHtml = `
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px;">
+              <thead>
+                <tr style="background: #f0f0f0;">
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Data</th>
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: right;">Valor</th>
+                  <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${empresa.pagamentos.map(pag => `
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 6px;">${new Date(pag.data_pagamento).toLocaleDateString('pt-BR')}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${formatCurrency(Number(pag.valor))}</td>
+                    <td style="border: 1px solid #ddd; padding: 6px;">${pag.descricao || '-'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        return `
+          <div style="background: #fff; border: 1px solid #e5e5e5; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <div>
+                <strong>${empresa.nome_empresa}</strong>
+                <div style="font-size: 11px; color: #666;">CNPJ: ${empresa.cnpj}</div>
+              </div>
+              <div style="text-align: right; font-size: 11px; color: #666;">
+                Empenho: ${empresa.numero_empenho}
+              </div>
+            </div>
+            ${pagamentosHtml}
+          </div>
+        `;
+      }).join('');
+
+      empresasPagamentosHtml = `
+        <div class="card" style="grid-column: span 2; margin-top: 20px;">
+          <h3>Empresas Contratadas e Pagamentos</h3>
+          ${empresasHtml}
+        </div>
+      `;
+    }
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -162,6 +262,8 @@ const PrefeituraEmendaDetail = () => {
       <div class="field"><div class="label">Banco</div><div class="value">${emenda.banco || '-'}</div></div>
       <div class="field"><div class="label">Conta Corrente</div><div class="value">${emenda.conta_corrente || '-'}</div></div>
     </div>
+    ${planoTrabalhoHtml}
+    ${empresasPagamentosHtml}
   </div>
 
   <div class="compliance">

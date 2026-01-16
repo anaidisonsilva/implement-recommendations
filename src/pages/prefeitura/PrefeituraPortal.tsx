@@ -196,7 +196,7 @@ const PrefeituraPortal = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Stats Cards */}
-        <div className="mb-6 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8">
+        <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Total de Emendas</p>

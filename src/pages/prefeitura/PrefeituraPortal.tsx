@@ -163,9 +163,6 @@ const PrefeituraPortal = () => {
                   Relatórios
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/">Portal Geral</Link>
-              </Button>
               <Button asChild>
                 <Link to={`/p/${slug}/auth`}>
                   <LogIn className="mr-2 h-4 w-4" />

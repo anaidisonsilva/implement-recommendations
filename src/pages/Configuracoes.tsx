@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Copy, ExternalLink, Loader2, Link as LinkIcon, Settings, Save, Palette, FileText } from 'lucide-react';
+import { Copy, ExternalLink, Loader2, Link as LinkIcon, Settings, Save, Palette, FileText, Globe, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,8 @@ const Configuracoes = () => {
   const [footerCompliance, setFooterCompliance] = useState('');
   const [primaryColor, setPrimaryColor] = useState('');
   const [headerColor, setHeaderColor] = useState('');
+  const [appTitle, setAppTitle] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState('');
 
   // Initialize form values when settings load
   useEffect(() => {
@@ -35,6 +37,8 @@ const Configuracoes = () => {
       setFooterCompliance(getSetting('footer_compliance'));
       setPrimaryColor(getSetting('primary_color'));
       setHeaderColor(getSetting('header_color'));
+      setAppTitle(getSetting('app_title'));
+      setFaviconUrl(getSetting('favicon_url'));
     }
   }, [systemSettings]);
 
@@ -122,12 +126,103 @@ const Configuracoes = () => {
 
       {/* Sistema - apenas para super admin */}
       {isSuperAdmin && (
-        <Tabs defaultValue="sistema" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="geral" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="geral">Geral</TabsTrigger>
             <TabsTrigger value="sistema">Sistema</TabsTrigger>
             <TabsTrigger value="footer">Footer</TabsTrigger>
             <TabsTrigger value="cores">Cores</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="geral">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Configurações Gerais do Site
+                </CardTitle>
+                <CardDescription>
+                  Personalize o título que aparece na aba do navegador e o ícone (favicon) do site
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="appTitle">Título da Aba do Navegador</Label>
+                  <Input
+                    id="appTitle"
+                    value={appTitle}
+                    onChange={(e) => setAppTitle(e.target.value)}
+                    placeholder="Ex: Portal de Emendas"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Este texto aparece na aba do navegador (atualmente mostra "Lovable App")
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="faviconUrl">URL do Favicon (ícone do site)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="faviconUrl"
+                      value={faviconUrl}
+                      onChange={(e) => setFaviconUrl(e.target.value)}
+                      placeholder="https://exemplo.com/favicon.ico"
+                    />
+                    {faviconUrl && (
+                      <div className="h-10 w-10 shrink-0 rounded border border-border flex items-center justify-center bg-muted">
+                        <img 
+                          src={faviconUrl} 
+                          alt="Favicon preview" 
+                          className="h-6 w-6 object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Cole a URL de uma imagem .ico, .png ou .svg (recomendado: 32x32 pixels)
+                  </p>
+                </div>
+                <Button 
+                  onClick={async () => {
+                    const updates: { key: string; value: string }[] = [];
+                    const getSetting = (key: string) => systemSettings?.find(s => s.key === key)?.value || '';
+
+                    if (appTitle !== getSetting('app_title')) updates.push({ key: 'app_title', value: appTitle });
+                    if (faviconUrl !== getSetting('favicon_url')) updates.push({ key: 'favicon_url', value: faviconUrl });
+
+                    for (const update of updates) {
+                      await updateSetting.mutateAsync(update);
+                    }
+                    
+                    if (updates.length === 0) {
+                      toast.info('Nenhuma alteração detectada');
+                    } else {
+                      // Update document title immediately
+                      if (appTitle) document.title = appTitle;
+                      // Update favicon immediately
+                      if (faviconUrl) {
+                        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
+                        link.type = 'image/x-icon';
+                        link.rel = 'shortcut icon';
+                        link.href = faviconUrl;
+                        document.getElementsByTagName('head')[0].appendChild(link);
+                      }
+                    }
+                  }}
+                  disabled={updateSetting.isPending}
+                >
+                  {updateSetting.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Salvar Alterações
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="sistema">
             <Card>

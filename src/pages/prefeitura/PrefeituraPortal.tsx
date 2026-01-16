@@ -12,6 +12,7 @@ import {
   Loader2,
   X,
   BarChart3,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -275,6 +276,7 @@ const PrefeituraPortal = () => {
                   <TableHead>Concedente</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -286,6 +288,13 @@ const PrefeituraPortal = () => {
                     <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>
                     <TableCell>
                       <StatusBadge status={emenda.status} />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/p/${slug}/emenda/${emenda.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

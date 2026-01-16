@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useEmendas, useEmendasStats } from '@/hooks/useEmendas';
+import { useEmendas } from '@/hooks/useEmendas';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
+import YearFilter from '@/components/dashboard/YearFilter';
 import {
   ArrowLeft,
   Loader2,
@@ -67,17 +68,43 @@ const statusOptions = [
 
 const TransparenciaRelatorios = () => {
   const { data: emendas, isLoading } = useEmendas();
-  const stats = useEmendasStats();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [selectedYear, setSelectedYear] = useState<string>('');
+
+  // Calculate available years
+  const availableYears = useMemo(() => {
+    if (!emendas || emendas.length === 0) return [];
+    const years = new Set<number>();
+    emendas.forEach((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      years.add(year);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  // Auto-select the latest year when available years are loaded
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === '') {
+      setSelectedYear(availableYears[0].toString());
+    }
+  }, [availableYears, selectedYear]);
+
+  // Filter by year first
+  const yearFilteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (selectedYear === 'todos') return emendas;
+    return emendas.filter((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      return year === parseInt(selectedYear);
+    });
+  }, [emendas, selectedYear]);
 
   const filteredEmendas = useMemo(() => {
-    if (!emendas) return [];
-
-    return emendas.filter((emenda) => {
+    return yearFilteredEmendas.filter((emenda) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
@@ -90,7 +117,7 @@ const TransparenciaRelatorios = () => {
 
       return matchesSearch && matchesStatus;
     });
-  }, [emendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter]);
 
   // Calculate summary values
   const summaryStats = useMemo(() => {
@@ -150,7 +177,7 @@ const TransparenciaRelatorios = () => {
         <div class="header">
           <h1>RELATÓRIO DE EMENDAS PARLAMENTARES</h1>
           <p>Portal de Transparência - Gerado em ${new Date().toLocaleString('pt-BR')}</p>
-          <p>${filteredEmendas.length} emenda(s) ${hasActiveFilters ? '(filtrado)' : ''}</p>
+          <p>${filteredEmendas.length} emenda(s) ${selectedYear !== 'todos' ? `de ${selectedYear}` : ''} ${hasActiveFilters ? '(filtrado)' : ''}</p>
         </div>
 
         <div class="summary">
@@ -260,6 +287,14 @@ const TransparenciaRelatorios = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <YearFilter 
+                selectedYear={selectedYear}
+                onYearChange={(year) => {
+                  setSelectedYear(year);
+                  setCurrentPage(1);
+                }}
+                availableYears={availableYears}
+              />
               <Button variant="outline" onClick={handlePrint}>
                 <Printer className="mr-2 h-4 w-4" />
                 Imprimir

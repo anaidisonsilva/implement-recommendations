@@ -499,8 +499,10 @@ const Relatorios = () => {
                 <TableRow>
                   <TableHead>Número</TableHead>
                   <TableHead className="min-w-[150px]">Objeto</TableHead>
+                  <TableHead>Parlamentar</TableHead>
+                  <TableHead>Concedente</TableHead>
                   <TableHead>Município</TableHead>
-                  <TableHead className="text-right">Concedente</TableHead>
+                  <TableHead className="text-right">Valor Concedente</TableHead>
                   <TableHead className="text-right">Contrapartida</TableHead>
                   <TableHead className="text-right">Total</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
@@ -516,6 +518,8 @@ const Relatorios = () => {
                     <TableRow key={emenda.id}>
                       <TableCell className="font-medium">{emenda.numero}</TableCell>
                       <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>{emenda.objeto}</TableCell>
+                      <TableCell>{emenda.nome_parlamentar || '-'}</TableCell>
+                      <TableCell>{emenda.nome_concedente || '-'}</TableCell>
                       <TableCell>{emenda.municipio}</TableCell>
                       <TableCell className="text-right">{formatCurrency(valorConc)}</TableCell>
                       <TableCell className="text-right">{formatCurrency(valorContra)}</TableCell>

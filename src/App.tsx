@@ -25,6 +25,7 @@ import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
 import PrefeituraAuth from "./pages/prefeitura/PrefeituraAuth";
 import PrefeturaDashboard from "./pages/prefeitura/PrefeturaDashboard";
+import PrefeituraRelatoriosPublicos from "./pages/prefeitura/PrefeituraRelatoriosPublicos";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             
             {/* Rotas de prefeitura (white-label) */}
             <Route path="/p/:slug" element={<PrefeituraPortal />} />
+            <Route path="/p/:slug/relatorios" element={<PrefeituraRelatoriosPublicos />} />
             <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />
             <Route
               path="/p/:slug/dashboard"

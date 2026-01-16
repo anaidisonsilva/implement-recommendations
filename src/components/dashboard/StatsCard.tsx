@@ -40,16 +40,16 @@ const StatsCard = ({
   return (
     <div
       className={cn(
-        'rounded-xl border p-5 shadow-sm transition-shadow hover:shadow-md',
+        'rounded-xl border p-4 shadow-sm transition-shadow hover:shadow-md min-w-0',
         variantStyles[variant]
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 space-y-1">
+          <p className="text-xs font-medium text-muted-foreground truncate">{title}</p>
+          <p className="text-lg font-bold text-foreground truncate" title={String(value)}>{value}</p>
           {subtitle && (
-            <p className="text-xs text-muted-foreground">{subtitle}</p>
+            <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
           )}
           {trend && (
             <div className="flex items-center gap-1 pt-1">
@@ -68,11 +68,11 @@ const StatsCard = ({
         </div>
         <div
           className={cn(
-            'flex h-12 w-12 items-center justify-center rounded-lg',
+            'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg',
             iconVariantStyles[variant]
           )}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-4 w-4" />
         </div>
       </div>
     </div>

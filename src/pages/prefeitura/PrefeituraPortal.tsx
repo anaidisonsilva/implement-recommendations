@@ -11,6 +11,7 @@ import {
   LogIn,
   Loader2,
   X,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -155,6 +156,12 @@ const PrefeituraPortal = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/relatorios`}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Relatórios
+                </Link>
+              </Button>
               <Button variant="outline" asChild>
                 <Link to="/">Portal Geral</Link>
               </Button>

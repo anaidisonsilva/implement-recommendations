@@ -176,20 +176,12 @@ const PrefeituraPortal = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/relatorios`}>
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Relatórios
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link to={`/p/${slug}/auth`}>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Área Restrita
-                </Link>
-              </Button>
-            </div>
+            <Button variant="outline" asChild>
+              <Link to={`/p/${slug}/relatorios`}>
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Relatórios
+              </Link>
+            </Button>
           </div>
         </div>
       </header>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { FileBarChart, Download, Loader2, Calendar, Filter, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEmendas } from '@/hooks/useEmendas';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
+import YearFilter from '@/components/dashboard/YearFilter';
 import {
   Table,
   TableBody,
@@ -47,6 +48,7 @@ const Relatorios = () => {
   const { data: emendas, isLoading: loadingEmendas } = useEmendas();
   const { data: prefeituras } = usePrefeituras();
 
+  const [selectedYear, setSelectedYear] = useState<string>('');
   const [filters, setFilters] = useState({
     prefeitura: 'todas',
     status: 'todos',
@@ -54,7 +56,35 @@ const Relatorios = () => {
     dataFim: '',
   });
 
-  const filteredEmendas = emendas?.filter((emenda) => {
+  // Calculate available years
+  const availableYears = useMemo(() => {
+    if (!emendas || emendas.length === 0) return [];
+    const years = new Set<number>();
+    emendas.forEach((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      years.add(year);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  // Auto-select the latest year when available years are loaded
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === '') {
+      setSelectedYear(availableYears[0].toString());
+    }
+  }, [availableYears, selectedYear]);
+
+  // Filter by year first
+  const yearFilteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (selectedYear === 'todos') return emendas;
+    return emendas.filter((emenda) => {
+      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      return year === parseInt(selectedYear);
+    });
+  }, [emendas, selectedYear]);
+
+  const filteredEmendas = yearFilteredEmendas?.filter((emenda) => {
     const matchesPrefeitura =
       filters.prefeitura === 'todas' || emenda.prefeitura_id === filters.prefeitura;
     const matchesStatus = filters.status === 'todos' || emenda.status === filters.status;
@@ -361,7 +391,12 @@ const Relatorios = () => {
             Gere relatórios e exporte dados das emendas
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <YearFilter 
+            selectedYear={selectedYear}
+            onYearChange={setSelectedYear}
+            availableYears={availableYears}
+          />
           <Button variant="outline" onClick={handleExportPDF} disabled={!filteredEmendas?.length}>
             <FileText className="mr-2 h-4 w-4" />
             Exportar PDF

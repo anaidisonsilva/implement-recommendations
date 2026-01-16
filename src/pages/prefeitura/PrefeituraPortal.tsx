@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   FileText,
@@ -73,8 +73,7 @@ const PrefeituraPortal = () => {
   const [currentPage, setCurrentPage] = useState(1);
   
   // Year filter
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState<string>(currentYear.toString());
+  const [selectedYear, setSelectedYear] = useState<string>('');
 
   const availableYears = useMemo(() => {
     if (!emendas || emendas.length === 0) return [];
@@ -85,6 +84,13 @@ const PrefeituraPortal = () => {
     });
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
+
+  // Auto-select the latest year when available years are loaded
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === '') {
+      setSelectedYear(availableYears[0].toString());
+    }
+  }, [availableYears, selectedYear]);
 
   const yearFilteredEmendas = useMemo(() => {
     if (!emendas) return [];

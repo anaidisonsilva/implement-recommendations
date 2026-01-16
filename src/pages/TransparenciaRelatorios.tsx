@@ -178,9 +178,10 @@ const TransparenciaRelatorios = () => {
               <th>Número</th>
               <th>Status</th>
               <th>Objeto</th>
+              <th>Parlamentar</th>
               <th>Concedente</th>
               <th>Município</th>
-              <th class="text-right">Concedente</th>
+              <th class="text-right">Valor Concedente</th>
               <th class="text-right">Contrapartida</th>
               <th class="text-right">Total</th>
               <th class="text-right">Executado</th>
@@ -197,6 +198,7 @@ const TransparenciaRelatorios = () => {
                 <td>${emenda.numero}</td>
                 <td>${emenda.status.replace('_', ' ')}</td>
                 <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
+                <td>${emenda.nome_parlamentar || '-'}</td>
                 <td>${emenda.nome_concedente || '-'}</td>
                 <td>${emenda.municipio}/${emenda.estado}</td>
                 <td class="text-right">${formatCurrency(valor)}</td>
@@ -391,9 +393,10 @@ const TransparenciaRelatorios = () => {
                   <TableHead>Número</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Objeto</TableHead>
+                  <TableHead>Parlamentar</TableHead>
                   <TableHead>Concedente</TableHead>
                   <TableHead>Município</TableHead>
-                  <TableHead className="text-right">Concedente</TableHead>
+                  <TableHead className="text-right">Valor Concedente</TableHead>
                   <TableHead className="text-right">Contrapartida</TableHead>
                   <TableHead className="text-right">Total</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
@@ -415,6 +418,9 @@ const TransparenciaRelatorios = () => {
                         <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>
                           {emenda.objeto}
                         </TableCell>
+                        <TableCell className="max-w-[150px] truncate" title={emenda.nome_parlamentar || ''}>
+                          {emenda.nome_parlamentar || '-'}
+                        </TableCell>
                         <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
                           {emenda.nome_concedente || '-'}
                         </TableCell>
@@ -429,7 +435,7 @@ const TransparenciaRelatorios = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={10} className="py-8 text-center text-muted-foreground">
+                    <TableCell colSpan={12} className="py-8 text-center text-muted-foreground">
                       Nenhuma emenda encontrada
                     </TableCell>
                   </TableRow>

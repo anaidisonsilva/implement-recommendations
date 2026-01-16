@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { EmendaDB } from '@/hooks/useEmendas';
 
 export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState<string>(currentYear.toString());
+  const [selectedYear, setSelectedYear] = useState<string>('');
 
   const availableYears = useMemo(() => {
     if (!emendas || emendas.length === 0) return [];
@@ -16,6 +15,13 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
     
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
+
+  // Auto-select the latest year when available years are loaded
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === '') {
+      setSelectedYear(availableYears[0].toString());
+    }
+  }, [availableYears, selectedYear]);
 
   const filteredEmendas = useMemo(() => {
     if (!emendas) return [];

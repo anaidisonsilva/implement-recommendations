@@ -225,8 +225,9 @@ const PrefeituraRelatoriosPublicos = () => {
               <th>Número</th>
               <th>Status</th>
               <th>Objeto</th>
+              <th>Parlamentar</th>
               <th>Concedente</th>
-              <th class="text-right">Concedente</th>
+              <th class="text-right">Valor Concedente</th>
               <th class="text-right">Contrapartida</th>
               <th class="text-right">Total</th>
               <th class="text-right">Executado</th>
@@ -243,6 +244,7 @@ const PrefeituraRelatoriosPublicos = () => {
                 <td>${emenda.numero}</td>
                 <td>${emenda.status.replace('_', ' ')}</td>
                 <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
+                <td>${emenda.nome_parlamentar || '-'}</td>
                 <td>${emenda.nome_concedente || '-'}</td>
                 <td class="text-right">${formatCurrency(valor)}</td>
                 <td class="text-right">${formatCurrency(contrapartida)}</td>
@@ -482,8 +484,9 @@ const PrefeituraRelatoriosPublicos = () => {
                   <TableHead>Número</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Objeto</TableHead>
+                  <TableHead>Parlamentar</TableHead>
                   <TableHead>Concedente</TableHead>
-                  <TableHead className="text-right">Concedente</TableHead>
+                  <TableHead className="text-right">Valor Concedente</TableHead>
                   <TableHead className="text-right">Contrapartida</TableHead>
                   <TableHead className="text-right">Total</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
@@ -505,6 +508,9 @@ const PrefeituraRelatoriosPublicos = () => {
                         <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>
                           {emenda.objeto}
                         </TableCell>
+                        <TableCell className="max-w-[150px] truncate" title={emenda.nome_parlamentar || ''}>
+                          {emenda.nome_parlamentar || '-'}
+                        </TableCell>
                         <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
                           {emenda.nome_concedente || '-'}
                         </TableCell>
@@ -518,7 +524,7 @@ const PrefeituraRelatoriosPublicos = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={9} className="py-8 text-center text-muted-foreground">
+                    <TableCell colSpan={11} className="py-8 text-center text-muted-foreground">
                       Nenhuma emenda encontrada
                     </TableCell>
                   </TableRow>

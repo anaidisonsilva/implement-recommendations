@@ -543,6 +543,12 @@ const PrefeituraEmendaDetail = () => {
                   <span className="text-muted-foreground">Conta Corrente:</span>{' '}
                   <span className="font-medium">{emenda.conta_corrente || '-'}</span>
                 </div>
+                {emenda.anuencia_previa_sus !== null && (
+                  <div>
+                    <span className="text-muted-foreground">Anuência Prévia SUS:</span>{' '}
+                    <span className="font-medium">{emenda.anuencia_previa_sus ? 'Sim' : 'Não'}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

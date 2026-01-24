@@ -15,6 +15,7 @@ import {
   Filter,
   X,
   Printer,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -71,6 +72,7 @@ const TransparenciaRelatorios = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
+  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [selectedYear, setSelectedYear] = useState<string>('');
@@ -114,10 +116,14 @@ const TransparenciaRelatorios = () => {
         emenda.nome_concedente?.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
+      const matchesEspecial = 
+        especialFilter === 'todos' || 
+        (especialFilter === 'sim' && emenda.especial) ||
+        (especialFilter === 'nao' && !emenda.especial);
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesEspecial;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter]);
 
   // Calculate summary values
   const summaryStats = useMemo(() => {
@@ -143,10 +149,11 @@ const TransparenciaRelatorios = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('todos');
+    setEspecialFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos';
 
   const handlePrint = () => {
     const printContent = `
@@ -406,6 +413,24 @@ const TransparenciaRelatorios = () => {
                       {option.label}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+
+              <Select 
+                value={especialFilter} 
+                onValueChange={(value) => {
+                  setEspecialFilter(value as 'todos' | 'sim' | 'nao');
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-40">
+                  <Star className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Especial" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas</SelectItem>
+                  <SelectItem value="sim">⭐ Especiais</SelectItem>
+                  <SelectItem value="nao">Normais</SelectItem>
                 </SelectContent>
               </Select>
 

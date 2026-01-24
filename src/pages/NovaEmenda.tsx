@@ -42,6 +42,7 @@ const NovaEmenda = () => {
     contaCorrente: '',
     anuenciaPreviaSUS: false,
     hasAnuencia: false,
+    especial: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +74,7 @@ const NovaEmenda = () => {
       banco: formData.banco || null,
       conta_corrente: formData.contaCorrente || null,
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
+      especial: formData.especial,
     };
 
     await createEmenda.mutateAsync(input);
@@ -372,6 +374,23 @@ const NovaEmenda = () => {
           <p className="mt-3 text-sm text-muted-foreground">
             * Banco e conta corrente podem ser preenchidos após a aprovação do convênio
           </p>
+        </div>
+
+        {/* Classificação Especial */}
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Classificação</h2>
+          <div className="flex items-center justify-between">
+            <div>
+              <Label>Emenda Especial ⭐</Label>
+              <p className="text-sm text-muted-foreground">
+                Marque se esta emenda possui destaque ou prioridade especial
+              </p>
+            </div>
+            <Switch
+              checked={formData.especial}
+              onCheckedChange={(checked) => handleChange('especial', checked)}
+            />
+          </div>
         </div>
 
         {/* SUS */}

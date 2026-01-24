@@ -55,6 +55,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     numero_proposta: '',
     data_inicio_vigencia: '',
     data_fim_vigencia: '',
+    especial: false,
     status: '' as EmendaDB['status'],
   });
 
@@ -85,6 +86,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         numero_proposta: emenda.numero_proposta || '',
         data_inicio_vigencia: emenda.data_inicio_vigencia || '',
         data_fim_vigencia: emenda.data_fim_vigencia || '',
+        especial: emenda.especial || false,
         status: emenda.status,
       });
     }
@@ -119,6 +121,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       numero_proposta: formData.numero_proposta || null,
       data_inicio_vigencia: formData.data_inicio_vigencia || null,
       data_fim_vigencia: formData.data_fim_vigencia || null,
+      especial: formData.especial,
       status: formData.status,
     });
     
@@ -444,14 +447,24 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
               </div>
             </div>
 
-            {/* Anuência SUS */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="anuencia_previa_sus"
-                checked={formData.anuencia_previa_sus}
-                onCheckedChange={(checked) => setFormData({ ...formData, anuencia_previa_sus: !!checked })}
-              />
-              <Label htmlFor="anuencia_previa_sus">Possui Anuência Prévia SUS</Label>
+            {/* Anuência SUS e Emenda Especial */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="especial"
+                  checked={formData.especial}
+                  onCheckedChange={(checked) => setFormData({ ...formData, especial: !!checked })}
+                />
+                <Label htmlFor="especial" className="font-medium">Emenda Especial ⭐</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="anuencia_previa_sus"
+                  checked={formData.anuencia_previa_sus}
+                  onCheckedChange={(checked) => setFormData({ ...formData, anuencia_previa_sus: !!checked })}
+                />
+                <Label htmlFor="anuencia_previa_sus">Possui Anuência Prévia SUS</Label>
+              </div>
             </div>
 
             {/* Submit */}

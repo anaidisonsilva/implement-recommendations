@@ -25,6 +25,7 @@ import {
   X,
   Eye,
   BarChart3,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -85,6 +86,7 @@ const TransparenciaPublica = () => {
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
+  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -108,13 +110,18 @@ const TransparenciaPublica = () => {
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
         (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
+        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower) ||
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
+      const matchesEspecial = 
+        especialFilter === 'todos' || 
+        (especialFilter === 'sim' && emenda.especial) || 
+        (especialFilter === 'nao' && !emenda.especial);
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesEspecial;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -142,10 +149,11 @@ const TransparenciaPublica = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('todos');
+    setEspecialFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos';
 
   if (isLoading) {
     return (
@@ -281,6 +289,21 @@ const TransparenciaPublica = () => {
                       {option.label}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={especialFilter} onValueChange={(value: 'todos' | 'sim' | 'nao') => {
+                setEspecialFilter(value);
+                setCurrentPage(1);
+              }}>
+                <SelectTrigger className="w-full sm:w-36">
+                  <Star className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Especial" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas</SelectItem>
+                  <SelectItem value="sim">⭐ Especiais</SelectItem>
+                  <SelectItem value="nao">Normais</SelectItem>
                 </SelectContent>
               </Select>
 

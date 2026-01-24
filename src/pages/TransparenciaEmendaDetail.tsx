@@ -191,6 +191,7 @@ const TransparenciaEmendaDetail = () => {
     ` : ''}
     <p>${emenda.objeto}</p>
     <span class="status status-${emenda.status}">${statusLabels[emenda.status]}</span>
+    ${emenda.especial ? '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-left: 8px;">⭐ Especial</span>' : ''}
   </div>
 
   <div class="summary">
@@ -223,7 +224,8 @@ const TransparenciaEmendaDetail = () => {
     <div class="card">
       <h3>Concedente</h3>
       <div class="field"><div class="label">Tipo</div><div class="value">${tipoConcedenteLabels[emenda.tipo_concedente]}</div></div>
-      <div class="field"><div class="label">Nome</div><div class="value">${emenda.nome_concedente}</div></div>
+      ${emenda.nome_parlamentar ? `<div class="field"><div class="label">Parlamentar</div><div class="value">${emenda.nome_parlamentar}</div></div>` : ''}
+      <div class="field"><div class="label">Órgão Concedente</div><div class="value">${emenda.nome_concedente || '-'}</div></div>
     </div>
     <div class="card">
       <h3>Recebedor</h3>
@@ -349,6 +351,11 @@ const TransparenciaEmendaDetail = () => {
                       Emenda Nº {emenda.numero}
                     </h1>
                     <StatusBadge status={emenda.status} />
+                    {emenda.especial && (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                        ⭐ Especial
+                      </span>
+                    )}
                   </div>
                   {/* Números de identificação - apenas se cadastrados */}
                   {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (
@@ -424,9 +431,15 @@ const TransparenciaEmendaDetail = () => {
                     {tipoConcedenteLabels[emenda.tipo_concedente]}
                   </p>
                 </div>
+                {emenda.nome_parlamentar && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Parlamentar</p>
+                    <p className="font-medium text-foreground">{emenda.nome_parlamentar}</p>
+                  </div>
+                )}
                 <div>
-                  <p className="text-sm text-muted-foreground">Nome</p>
-                  <p className="font-medium text-foreground">{emenda.nome_concedente}</p>
+                  <p className="text-sm text-muted-foreground">Órgão Concedente</p>
+                  <p className="font-medium text-foreground">{emenda.nome_concedente || '-'}</p>
                 </div>
               </div>
             </div>

@@ -16,6 +16,7 @@ const EmendasList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
+  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -30,16 +31,21 @@ const EmendasList = () => {
         emenda.numero.toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
-        emenda.nome_concedente.toLowerCase().includes(searchLower) ||
+        (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
+        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower) ||
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
       const matchesConcedente =
         concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
+      const matchesEspecial = 
+        especialFilter === 'todos' || 
+        (especialFilter === 'sim' && emenda.especial) || 
+        (especialFilter === 'nao' && !emenda.especial);
 
-      return matchesSearch && matchesStatus && matchesConcedente;
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
     });
-  }, [emendas, searchTerm, statusFilter, concedenteFilter]);
+  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -57,6 +63,7 @@ const EmendasList = () => {
     setSearchTerm('');
     setStatusFilter('todos');
     setConcedenteFilter('todos');
+    setEspecialFilter('todos');
     setCurrentPage(1);
   };
 
@@ -107,6 +114,11 @@ const EmendasList = () => {
         concedenteFilter={concedenteFilter}
         onConcedenteChange={(value) => {
           setConcedenteFilter(value);
+          setCurrentPage(1);
+        }}
+        especialFilter={especialFilter}
+        onEspecialChange={(value) => {
+          setEspecialFilter(value);
           setCurrentPage(1);
         }}
         onClearFilters={clearFilters}

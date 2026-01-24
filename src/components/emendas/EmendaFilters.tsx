@@ -1,4 +1,4 @@
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,8 @@ interface EmendaFiltersProps {
   onStatusChange: (value: StatusEmenda | 'todos') => void;
   concedenteFilter: TipoConcedente | 'todos';
   onConcedenteChange: (value: TipoConcedente | 'todos') => void;
+  especialFilter?: 'todos' | 'sim' | 'nao';
+  onEspecialChange?: (value: 'todos' | 'sim' | 'nao') => void;
   onClearFilters: () => void;
 }
 
@@ -27,10 +29,12 @@ const EmendaFilters = ({
   onStatusChange,
   concedenteFilter,
   onConcedenteChange,
+  especialFilter = 'todos',
+  onEspecialChange,
   onClearFilters,
 }: EmendaFiltersProps) => {
   const hasActiveFilters =
-    searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos';
+    searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -75,6 +79,21 @@ const EmendaFilters = ({
             <SelectItem value="outro">Outro</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Especial filter */}
+        {onEspecialChange && (
+          <Select value={especialFilter} onValueChange={onEspecialChange}>
+            <SelectTrigger className="w-full lg:w-36">
+              <Star className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="Especial" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todas</SelectItem>
+              <SelectItem value="sim">⭐ Especiais</SelectItem>
+              <SelectItem value="nao">Normais</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
 
         {/* Clear filters */}
         {hasActiveFilters && (

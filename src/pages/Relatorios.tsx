@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { FileBarChart, Download, Loader2, Calendar, Filter, FileText } from 'lucide-react';
+import { FileBarChart, Download, Loader2, Calendar, Filter, FileText, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -52,6 +52,7 @@ const Relatorios = () => {
   const [filters, setFilters] = useState({
     prefeitura: 'todas',
     status: 'todos',
+    especial: 'todos' as 'todos' | 'sim' | 'nao',
     dataInicio: '',
     dataFim: '',
   });
@@ -88,6 +89,10 @@ const Relatorios = () => {
     const matchesPrefeitura =
       filters.prefeitura === 'todas' || emenda.prefeitura_id === filters.prefeitura;
     const matchesStatus = filters.status === 'todos' || emenda.status === filters.status;
+    const matchesEspecial = 
+      filters.especial === 'todos' || 
+      (filters.especial === 'sim' && emenda.especial) ||
+      (filters.especial === 'nao' && !emenda.especial);
     
     let matchesData = true;
     if (filters.dataInicio) {
@@ -97,7 +102,7 @@ const Relatorios = () => {
       matchesData = matchesData && emenda.data_disponibilizacao <= filters.dataFim;
     }
 
-    return matchesPrefeitura && matchesStatus && matchesData;
+    return matchesPrefeitura && matchesStatus && matchesEspecial && matchesData;
   });
 
   const totals = filteredEmendas?.reduce(
@@ -454,6 +459,23 @@ const Relatorios = () => {
                   <SelectItem value="em_execucao">Em Execução</SelectItem>
                   <SelectItem value="concluido">Concluído</SelectItem>
                   <SelectItem value="cancelado">Cancelado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Especial</Label>
+              <Select
+                value={filters.especial}
+                onValueChange={(value) => setFilters({ ...filters, especial: value as 'todos' | 'sim' | 'nao' })}
+              >
+                <SelectTrigger>
+                  <Star className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Todas" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas</SelectItem>
+                  <SelectItem value="sim">⭐ Especiais</SelectItem>
+                  <SelectItem value="nao">Normais</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -14,6 +14,8 @@ import {
   Eye,
   CircleDollarSign,
   HandCoins,
+  Star,
+  Filter,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,6 +72,8 @@ const PrefeituraPortal = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('todos');
+  const [concedenteFilter, setConcedenteFilter] = useState<string>('todos');
+  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   
   // Year filter
@@ -110,13 +114,19 @@ const PrefeituraPortal = () => {
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
         (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
+        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower) ||
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
+      const matchesConcedente = concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
+      const matchesEspecial = 
+        especialFilter === 'todos' || 
+        (especialFilter === 'sim' && emenda.especial) || 
+        (especialFilter === 'nao' && !emenda.especial);
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
 
   const totalPages = Math.ceil(filteredEmendas.length / ITEMS_PER_PAGE);
   const paginatedEmendas = filteredEmendas.slice(
@@ -152,8 +162,12 @@ const PrefeituraPortal = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('todos');
+    setConcedenteFilter('todos');
+    setEspecialFilter('todos');
     setCurrentPage(1);
   };
+
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
 
   if (loadingPrefeitura) {
     return (
@@ -316,44 +330,90 @@ const PrefeituraPortal = () => {
         )}
 
         {/* Filters */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por número, objeto, município..."
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
+        <div className="mb-6 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Filter className="h-4 w-4" />
+              Filtros
+            </div>
+            
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por número, objeto, município, concedente..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+            
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
                 setCurrentPage(1);
               }}
-            />
+            >
+              <SelectTrigger className="w-full lg:w-44">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Status</SelectItem>
+                <SelectItem value="pendente">Pendente</SelectItem>
+                <SelectItem value="aprovado">Aprovado</SelectItem>
+                <SelectItem value="em_execucao">Em Execução</SelectItem>
+                <SelectItem value="concluido">Concluído</SelectItem>
+                <SelectItem value="cancelado">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={concedenteFilter}
+              onValueChange={(value) => {
+                setConcedenteFilter(value);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full lg:w-44">
+                <SelectValue placeholder="Tipo Concedente" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Tipos</SelectItem>
+                <SelectItem value="parlamentar">Parlamentar</SelectItem>
+                <SelectItem value="comissao">Comissão</SelectItem>
+                <SelectItem value="bancada">Bancada</SelectItem>
+                <SelectItem value="outro">Outro</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select 
+              value={especialFilter} 
+              onValueChange={(value: 'todos' | 'sim' | 'nao') => {
+                setEspecialFilter(value);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full lg:w-36">
+                <Star className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Especial" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas</SelectItem>
+                <SelectItem value="sim">⭐ Especiais</SelectItem>
+                <SelectItem value="nao">Normais</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
+                <X className="mr-1 h-4 w-4" />
+                Limpar
+              </Button>
+            )}
           </div>
-          <Select
-            value={statusFilter}
-            onValueChange={(value) => {
-              setStatusFilter(value);
-              setCurrentPage(1);
-            }}
-          >
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os Status</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="aprovado">Aprovado</SelectItem>
-              <SelectItem value="em_execucao">Em Execução</SelectItem>
-              <SelectItem value="concluido">Concluído</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
-            </SelectContent>
-          </Select>
-          {(searchTerm || statusFilter !== 'todos') && (
-            <Button variant="outline" onClick={clearFilters}>
-              <X className="mr-2 h-4 w-4" />
-              Limpar
-            </Button>
-          )}
         </div>
 
         {/* Results count */}

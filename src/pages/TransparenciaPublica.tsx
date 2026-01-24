@@ -59,14 +59,23 @@ const formatDate = (dateString: string) => {
 };
 
 type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
+type TipoConcedente = 'parlamentar' | 'comissao' | 'bancada' | 'outro';
 
 const statusOptions = [
-  { value: 'todos', label: 'Todos os status' },
+  { value: 'todos', label: 'Todos os Status' },
   { value: 'pendente', label: 'Pendente' },
   { value: 'aprovado', label: 'Aprovado' },
   { value: 'em_execucao', label: 'Em Execução' },
   { value: 'concluido', label: 'Concluído' },
   { value: 'cancelado', label: 'Cancelado' },
+];
+
+const concedenteOptions = [
+  { value: 'todos', label: 'Todos os Tipos' },
+  { value: 'parlamentar', label: 'Parlamentar' },
+  { value: 'comissao', label: 'Comissão' },
+  { value: 'bancada', label: 'Bancada' },
+  { value: 'outro', label: 'Outro' },
 ];
 
 const DynamicFooter = () => {
@@ -86,6 +95,7 @@ const TransparenciaPublica = () => {
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
+  const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -114,14 +124,15 @@ const TransparenciaPublica = () => {
         emenda.nome_recebedor.toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
+      const matchesConcedente = concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
       const matchesEspecial = 
         especialFilter === 'todos' || 
         (especialFilter === 'sim' && emenda.especial) || 
         (especialFilter === 'nao' && !emenda.especial);
 
-      return matchesSearch && matchesStatus && matchesEspecial;
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -149,11 +160,12 @@ const TransparenciaPublica = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('todos');
+    setConcedenteFilter('todos');
     setEspecialFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
 
   if (isLoading) {
     return (
@@ -280,11 +292,27 @@ const TransparenciaPublica = () => {
               </div>
               
               <Select value={statusFilter} onValueChange={handleStatusChange}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
                   {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={concedenteFilter} onValueChange={(value: TipoConcedente | 'todos') => {
+                setConcedenteFilter(value);
+                setCurrentPage(1);
+              }}>
+                <SelectTrigger className="w-full sm:w-44">
+                  <SelectValue placeholder="Tipo Concedente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {concedenteOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>

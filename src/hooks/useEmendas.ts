@@ -30,6 +30,7 @@ export interface EmendaDB {
   numero_proposta: string | null;
   data_inicio_vigencia: string | null;
   data_fim_vigencia: string | null;
+  especial: boolean;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;
@@ -61,6 +62,7 @@ export interface CreateEmendaInput {
   numero_proposta?: string | null;
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
+  especial?: boolean;
 }
 
 export const useEmendas = () => {

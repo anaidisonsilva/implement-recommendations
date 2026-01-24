@@ -115,6 +115,7 @@ export type Database = {
           data_disponibilizacao: string
           data_fim_vigencia: string | null
           data_inicio_vigencia: string | null
+          especial: boolean
           estado: string
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -147,6 +148,7 @@ export type Database = {
           data_disponibilizacao: string
           data_fim_vigencia?: string | null
           data_inicio_vigencia?: string | null
+          especial?: boolean
           estado?: string
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -179,6 +181,7 @@ export type Database = {
           data_disponibilizacao?: string
           data_fim_vigencia?: string | null
           data_inicio_vigencia?: string | null
+          especial?: boolean
           estado?: string
           gestor_responsavel?: string
           grupo_natureza_despesa?: string

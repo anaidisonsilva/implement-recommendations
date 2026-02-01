@@ -15,6 +15,7 @@ import EmendasList from "./pages/EmendasList";
 import EmendaDetail from "./pages/EmendaDetail";
 import NovaEmenda from "./pages/NovaEmenda";
 import Auth from "./pages/Auth";
+import LandingPage from "./pages/LandingPage";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
 import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
 import TransparenciaRelatorios from "./pages/TransparenciaRelatorios";
@@ -40,8 +41,10 @@ const App = () => (
           <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Landing page */}
+            <Route path="/" element={<LandingPage />} />
+            
             {/* Rotas públicas de transparência */}
-            <Route path="/" element={<TransparenciaPublica />} />
             <Route path="/transparencia" element={<TransparenciaPublica />} />
             <Route path="/transparencia/relatorios" element={<TransparenciaRelatorios />} />
             <Route path="/transparencia/:id" element={<TransparenciaEmendaDetail />} />

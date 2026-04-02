@@ -26,6 +26,7 @@ export interface EmendaBasic {
   municipio: string;
   estado: string;
   valor: number;
+  valor_executado?: number;
   contrapartida?: number | null;
   status: string;
   tipo_concedente: string;

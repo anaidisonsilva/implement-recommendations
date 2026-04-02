@@ -313,7 +313,7 @@ const TransparenciaPublica = () => {
                         <TableRow key={emenda.id}>
                           <TableCell className="font-medium">{emenda.numero}</TableCell>
                           <TableCell>
-                            <StatusBadge status={emenda.status} />
+                            <StatusBadge status={emenda.status as any} />
                           </TableCell>
                           <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
                             {emenda.nome_concedente}

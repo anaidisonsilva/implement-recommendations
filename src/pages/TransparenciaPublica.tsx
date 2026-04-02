@@ -111,27 +111,8 @@ const TransparenciaPublica = () => {
 
   // Filter emendas
   const filteredEmendas = useMemo(() => {
-    return yearFilteredEmendas.filter((emenda) => {
-      const searchLower = searchTerm.toLowerCase();
-      const matchesSearch =
-        !searchTerm ||
-        emenda.numero.toLowerCase().includes(searchLower) ||
-        emenda.objeto.toLowerCase().includes(searchLower) ||
-        emenda.municipio.toLowerCase().includes(searchLower) ||
-        (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
-        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower) ||
-        emenda.nome_recebedor.toLowerCase().includes(searchLower);
-
-      const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
-      const matchesConcedente = concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
-      const matchesEspecial = 
-        especialFilter === 'todos' || 
-        (especialFilter === 'sim' && emenda.especial) || 
-        (especialFilter === 'nao' && !emenda.especial);
-
-      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
-    });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
+    return applyAdvancedFilters(yearFilteredEmendas, filters);
+  }, [yearFilteredEmendas, filters]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);

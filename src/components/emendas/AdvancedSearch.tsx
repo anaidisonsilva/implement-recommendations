@@ -35,7 +35,7 @@ interface EmendaBasic {
   cnpj_recebedor?: string;
 }
 
-interface AdvancedSearchFilters {
+export interface AdvancedSearchFilters {
   searchTerm: string;
   statusFilter: string;
   concedenteFilter: string;

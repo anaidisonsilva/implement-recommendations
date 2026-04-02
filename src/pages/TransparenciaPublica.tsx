@@ -126,26 +126,12 @@ const TransparenciaPublica = () => {
     setCurrentPage(1);
   };
 
-  // Reset to first page when filters change
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value as StatusEmenda | 'todos');
-    setCurrentPage(1);
-  };
-
   const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('todos');
-    setConcedenteFilter('todos');
-    setEspecialFilter('todos');
+    setFilters(defaultFilters);
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
+  const hasActiveFilters = hasActiveAdvancedFilters(filters);
 
   if (isLoading) {
     return (

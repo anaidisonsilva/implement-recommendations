@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import AppSettingsProvider from "./components/AppSettingsProvider";
+import AccessibilityWidget from "./components/accessibility/AccessibilityWidget";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SuperAdminRoute from "./components/auth/SuperAdminRoute";
 import AdminRoute from "./components/auth/AdminRoute";

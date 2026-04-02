@@ -432,7 +432,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (format === 'csv') {
+    if (format === 'json') {
+      return new Response(JSON.stringify(emendas, null, 2), {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json; charset=utf-8',
+          'Content-Disposition': `attachment; filename="relatorio-emendas-${new Date().toISOString().split('T')[0]}.json"`,
+        },
+      });
+    } else if (format === 'csv') {
       const csv = generateCSV(emendas);
       return new Response(csv, {
         headers: {

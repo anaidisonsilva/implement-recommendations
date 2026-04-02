@@ -380,6 +380,25 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
               </p>
             </div>
           </Button>
+
+          <Button
+            variant="outline"
+            className="h-20 justify-start gap-4"
+            onClick={handleExportJSON}
+            disabled={isExporting !== null}
+          >
+            {isExporting === 'json' ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
+              <FileJson className="h-8 w-8 text-blue-600" />
+            )}
+            <div className="text-left">
+              <p className="font-semibold">JSON</p>
+              <p className="text-sm text-muted-foreground">
+                Dados estruturados para integração
+              </p>
+            </div>
+          </Button>
         </div>
 
         <div className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">

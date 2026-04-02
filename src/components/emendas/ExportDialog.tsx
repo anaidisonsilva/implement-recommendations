@@ -19,7 +19,7 @@ interface ExportDialogProps {
 
 const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | null>(null);
+  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 
   const handleExport = async (format: 'csv' | 'pdf') => {
     setIsExporting(format);

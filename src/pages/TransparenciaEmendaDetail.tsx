@@ -339,6 +339,31 @@ const TransparenciaEmendaDetail = () => {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
           {/* Header Card */}
+          {/* PIX Banner */}
+          {emenda.especial && (
+            <div className="rounded-xl border-2 border-amber-400 bg-amber-50 p-5 shadow-sm dark:border-amber-600 dark:bg-amber-950/30">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-400/20">
+                  <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                    <Zap className="h-5 w-5" />
+                    Emenda Especial — Emenda PIX
+                  </h3>
+                  <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+                    Esta é uma <strong>Emenda Especial (PIX)</strong>, transferência de recurso com execução direta ao ente federativo, 
+                    sem necessidade de convênio ou contrato de repasse, conforme decisão do STF na <strong>ADPF 854/DF</strong>.
+                  </p>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-amber-600 dark:text-amber-500">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>Sujeita a fiscalização e prestação de contas conforme Art. 2º, §1º da Recomendação MPC-MG nº 01/2025</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex items-start gap-4">

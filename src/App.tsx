@@ -51,12 +51,14 @@ const App = () => (
             
             {/* Rotas públicas de transparência */}
             <Route path="/transparencia" element={<TransparenciaPublica />} />
+            <Route path="/transparencia/pix" element={<TransparenciaPix />} />
             <Route path="/transparencia/relatorios" element={<TransparenciaRelatorios />} />
             <Route path="/transparencia/:id" element={<TransparenciaEmendaDetail />} />
             <Route path="/auth" element={<Auth />} />
             
             {/* Rotas de prefeitura (white-label) */}
             <Route path="/p/:slug" element={<PrefeituraPortal />} />
+            <Route path="/p/:slug/pix" element={<PrefeituraPixPublica />} />
             <Route path="/p/:slug/relatorios" element={<PrefeituraRelatoriosPublicos />} />
             <Route path="/p/:slug/emenda/:id" element={<PrefeituraEmendaDetail />} />
             <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />

@@ -28,7 +28,7 @@ const DashboardPix = () => {
     return allEmendas.filter((e) => e.especial === true);
   }, [allEmendas]);
 
-  const { selectedYear, setSelectedYear, availableYears, filteredEmendas, stats } = useYearFilter(emendasPix.length > 0 ? emendasPix : undefined);
+  const { selectedYear, setSelectedYear, availableYears, filteredEmendas, stats } = useYearFilter(emendasPix);
 
   if (isLoading) {
     return (

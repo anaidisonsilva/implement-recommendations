@@ -10,6 +10,7 @@ import {
   Loader2,
   Trash2,
   Pencil,
+  Zap,
 } from 'lucide-react';
 import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';

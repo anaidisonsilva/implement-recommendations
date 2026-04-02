@@ -10,6 +10,7 @@ import {
   Loader2,
   Trash2,
   Pencil,
+  Zap,
 } from 'lucide-react';
 import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';
@@ -328,11 +329,19 @@ const EmendaDetail = () => {
       )}
 
       {/* Header */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <div className={`rounded-xl border bg-card p-6 shadow-sm ${emenda.especial ? 'border-amber-500/50 ring-2 ring-amber-500/20' : 'border-border'}`}>
+        {/* PIX Banner */}
+        {emenda.especial && (
+          <div className="mb-4 -mt-2 -mx-2 rounded-lg bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 border border-amber-500/30 px-4 py-2.5 flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            <span className="font-semibold text-amber-700 dark:text-amber-300 text-sm">Emenda Especial / PIX</span>
+            <span className="text-xs text-amber-600/80 dark:text-amber-400/80 ml-1">— Acompanhamento diferenciado conforme ADPF 854/DF</span>
+          </div>
+        )}
         {/* Título e Status */}
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Building2 className="h-7 w-7" />
+          <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${emenda.especial ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400' : 'bg-primary/10 text-primary'}`}>
+            {emenda.especial ? <Zap className="h-7 w-7" /> : <Building2 className="h-7 w-7" />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
@@ -341,8 +350,9 @@ const EmendaDetail = () => {
               </h1>
               <StatusBadge status={emenda.status} />
               {emenda.especial && (
-                <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                  ⭐ Especial
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                  <Zap className="h-3 w-3" />
+                  PIX / Especial
                 </span>
               )}
             </div>

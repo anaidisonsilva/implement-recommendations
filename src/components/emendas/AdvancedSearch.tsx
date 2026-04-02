@@ -17,6 +17,7 @@ import { Search, Filter, X, Star, SlidersHorizontal, ChevronDown } from 'lucide-
 import { cn } from '@/lib/utils';
 
 export interface EmendaBasic {
+  id?: string;
   numero: string;
   objeto: string;
   nome_concedente: string | null;

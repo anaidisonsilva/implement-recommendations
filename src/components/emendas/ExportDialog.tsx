@@ -48,8 +48,19 @@ const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => 
 
       const data = response.data;
 
-      if (format === 'csv') {
-        // Download CSV file
+      if (format === 'json') {
+        const jsonStr = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success('Relatório JSON exportado com sucesso!');
+      } else if (format === 'csv') {
         const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -61,7 +72,6 @@ const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => 
         URL.revokeObjectURL(url);
         toast.success('Relatório CSV exportado com sucesso!');
       } else {
-        // Open PDF (HTML) in new window for printing
         const printWindow = window.open('', '_blank');
         if (printWindow) {
           printWindow.document.open();
@@ -76,7 +86,6 @@ const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => 
           };
           toast.success('Relatório aberto para impressão/PDF');
         } else {
-          // Fallback: download HTML (usuário pode abrir e imprimir em PDF)
           const blob = new Blob([data], { type: 'text/html;charset=utf-8;' });
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');

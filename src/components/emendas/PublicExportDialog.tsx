@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText, FileJson, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EmendaData {
@@ -53,7 +53,41 @@ const formatDate = (dateString: string) => {
 
 const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | null>(null);
+  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
+
+  const handleExportJSON = () => {
+    setIsExporting('json');
+    try {
+      const jsonData = emendas.map((e) => ({
+        numero: e.numero,
+        objeto: e.objeto,
+        parlamentar: e.nome_parlamentar || null,
+        concedente: e.nome_concedente || null,
+        recebedor: e.nome_recebedor,
+        municipio: `${e.municipio}/${e.estado}`,
+        valor_concedente: Number(e.valor),
+        contrapartida: Number(e.contrapartida || 0),
+        valor_total: Number(e.valor) + Number(e.contrapartida || 0),
+        valor_executado: Number(e.valor_executado),
+        status: statusLabels[e.status] || e.status,
+        data_disponibilizacao: e.data_disponibilizacao,
+      }));
+      const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success('Relatório JSON exportado com sucesso!');
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Erro ao exportar relatório');
+    } finally {
+      setIsExporting(null);
+    }
+  };
 
   const handleExportCSV = () => {
     setIsExporting('csv');
@@ -377,6 +411,25 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
               <p className="font-semibold">PDF / Impressão</p>
               <p className="text-sm text-muted-foreground">
                 Relatório formatado para impressão
+              </p>
+            </div>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-20 justify-start gap-4"
+            onClick={handleExportJSON}
+            disabled={isExporting !== null}
+          >
+            {isExporting === 'json' ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
+              <FileJson className="h-8 w-8 text-blue-600" />
+            )}
+            <div className="text-left">
+              <p className="font-semibold">JSON</p>
+              <p className="text-sm text-muted-foreground">
+                Dados estruturados para integração
               </p>
             </div>
           </Button>

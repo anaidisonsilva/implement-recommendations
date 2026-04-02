@@ -95,10 +95,7 @@ const TransparenciaPublica = () => {
   const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(emendas);
 
   // Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
-  const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
-  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
+  const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 

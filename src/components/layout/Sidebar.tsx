@@ -13,6 +13,7 @@ import {
   Building2,
   Users,
   History,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

@@ -101,6 +101,16 @@ const App = () => (
               }
             />
             <Route
+              path="/dashboard-pix"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <DashboardPix />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin/prefeituras"
               element={
                 <SuperAdminRoute>

@@ -71,10 +71,7 @@ const PrefeituraPortal = () => {
     enabled: !!prefeitura?.id,
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('todos');
-  const [concedenteFilter, setConcedenteFilter] = useState<string>('todos');
-  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
+  const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
   
   // Year filter

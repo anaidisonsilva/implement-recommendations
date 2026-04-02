@@ -347,7 +347,7 @@ const PrefeituraPortal = () => {
                     <TableCell>{emenda.nome_concedente}</TableCell>
                     <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>
                     <TableCell>
-                      <StatusBadge status={emenda.status} />
+                      <StatusBadge status={emenda.status as any} />
                     </TableCell>
                     <TableCell className="text-center">
                       <Button variant="ghost" size="sm" asChild>

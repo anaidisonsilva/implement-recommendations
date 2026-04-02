@@ -12,6 +12,7 @@ import {
   FileBarChart,
   Building2,
   Users,
+  History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ const menuItems = [
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
   { icon: FileBarChart, label: 'Relatórios', path: '/relatorios' },
+  { icon: History, label: 'Auditoria', path: '/auditoria' },
 ];
 
 const bottomMenuItems = [

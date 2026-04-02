@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import {
   FileText,
   TrendingUp,

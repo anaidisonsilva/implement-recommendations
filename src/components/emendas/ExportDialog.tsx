@@ -21,7 +21,7 @@ const ExportDialog = ({ statusFilter, concedenteFilter }: ExportDialogProps) => 
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 
-  const handleExport = async (format: 'csv' | 'pdf') => {
+  const handleExport = async (format: 'csv' | 'pdf' | 'json') => {
     setIsExporting(format);
 
     try {

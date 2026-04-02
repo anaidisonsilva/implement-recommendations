@@ -12,6 +12,7 @@ import AdminRoute from "./components/auth/AdminRoute";
 import MainLayout from "./components/layout/MainLayout";
 import PrefeituraLayout from "./components/layout/PrefeituraLayout";
 import Dashboard from "./pages/Dashboard";
+import DashboardPix from "./pages/DashboardPix";
 import EmendasList from "./pages/EmendasList";
 import EmendaDetail from "./pages/EmendaDetail";
 import NovaEmenda from "./pages/NovaEmenda";

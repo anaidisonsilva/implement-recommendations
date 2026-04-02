@@ -11,6 +11,7 @@ import {
   Trash2,
   Pencil,
 } from 'lucide-react';
+import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -277,10 +278,7 @@ const EmendaDetail = () => {
           </Link>
         </Button>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleExportPDF()}>
-            <Download className="mr-2 h-4 w-4" />
-            Exportar PDF
-          </Button>
+          <EmendaExportDropdown emenda={emenda} onExportPDF={handleExportPDF} size="sm" />
           <Button size="sm" onClick={() => setEditDialogOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
             Editar Emenda

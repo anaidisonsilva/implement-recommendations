@@ -8,6 +8,7 @@ import {
   Loader2,
   Download,
 } from 'lucide-react';
+import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
@@ -355,10 +356,7 @@ const PrefeituraEmendaDetail = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleExportPDF}>
-                <Download className="mr-2 h-4 w-4" />
-                Exportar PDF
-              </Button>
+              <EmendaExportDropdown emenda={emenda} onExportPDF={handleExportPDF} />
               <Button variant="outline" asChild>
                 <Link to={`/p/${slug}`}>
                   <ArrowLeft className="mr-2 h-4 w-4" />

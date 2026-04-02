@@ -8,6 +8,7 @@ import {
   Loader2,
   Download,
 } from 'lucide-react';
+import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';

@@ -7,6 +7,8 @@ import {
   CreditCard,
   Loader2,
   Download,
+  Zap,
+  AlertTriangle,
 } from 'lucide-react';
 import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';

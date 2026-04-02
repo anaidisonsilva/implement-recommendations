@@ -17,6 +17,7 @@ import {
   HandCoins,
   Star,
   Filter,
+  Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -202,6 +203,12 @@ const PrefeituraPortal = () => {
                 }}
                 availableYears={availableYears}
               />
+              <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/pix`}>
+                  <Zap className="mr-2 h-4 w-4" />
+                  Dashboard PIX
+                </Link>
+              </Button>
               <Button variant="outline" asChild>
                 <Link to={`/p/${slug}/relatorios`}>
                   <BarChart3 className="mr-2 h-4 w-4" />

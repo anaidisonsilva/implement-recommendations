@@ -165,6 +165,12 @@ const TransparenciaPublica = () => {
                 availableYears={availableYears}
               />
               <Button variant="outline" asChild>
+                <Link to="/transparencia/pix">
+                  <Star className="mr-2 h-4 w-4" />
+                  Dashboard PIX
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
                 <Link to="/transparencia/relatorios">
                   <BarChart3 className="mr-2 h-4 w-4" />
                   Relatórios

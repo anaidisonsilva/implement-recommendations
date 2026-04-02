@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useEmendas } from '@/hooks/useEmendas';
+import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters } from '@/components/emendas/AdvancedSearch';
+import type { AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import { useYearFilter } from '@/hooks/useYearFilter';
 import { useFooterSettings } from '@/hooks/useSystemSettings';
 import StatsCard from '@/components/dashboard/StatsCard';
@@ -93,10 +95,7 @@ const TransparenciaPublica = () => {
   const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(emendas);
 
   // Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
-  const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
-  const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
+  const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -112,27 +111,8 @@ const TransparenciaPublica = () => {
 
   // Filter emendas
   const filteredEmendas = useMemo(() => {
-    return yearFilteredEmendas.filter((emenda) => {
-      const searchLower = searchTerm.toLowerCase();
-      const matchesSearch =
-        !searchTerm ||
-        emenda.numero.toLowerCase().includes(searchLower) ||
-        emenda.objeto.toLowerCase().includes(searchLower) ||
-        emenda.municipio.toLowerCase().includes(searchLower) ||
-        (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||
-        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower) ||
-        emenda.nome_recebedor.toLowerCase().includes(searchLower);
-
-      const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
-      const matchesConcedente = concedenteFilter === 'todos' || emenda.tipo_concedente === concedenteFilter;
-      const matchesEspecial = 
-        especialFilter === 'todos' || 
-        (especialFilter === 'sim' && emenda.especial) || 
-        (especialFilter === 'nao' && !emenda.especial);
-
-      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
-    });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
+    return applyAdvancedFilters(yearFilteredEmendas, filters);
+  }, [yearFilteredEmendas, filters]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -146,26 +126,12 @@ const TransparenciaPublica = () => {
     setCurrentPage(1);
   };
 
-  // Reset to first page when filters change
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value as StatusEmenda | 'todos');
-    setCurrentPage(1);
-  };
-
   const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('todos');
-    setConcedenteFilter('todos');
-    setEspecialFilter('todos');
+    setFilters(defaultFilters);
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
+  const hasActiveFilters = hasActiveAdvancedFilters(filters);
 
   if (isLoading) {
     return (
@@ -272,77 +238,14 @@ const TransparenciaPublica = () => {
           <ExecutionChart stats={dashboardStats} />
         </div>
 
-        {/* Filters */}
-        <div className="mb-6 rounded-xl border border-border bg-card p-4 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Filter className="h-4 w-4" />
-              Filtros
-            </div>
-            
-            <div className="flex flex-1 flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por número, objeto, município, concedente..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              
-              <Select value={statusFilter} onValueChange={handleStatusChange}>
-                <SelectTrigger className="w-full sm:w-44">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={concedenteFilter} onValueChange={(value: TipoConcedente | 'todos') => {
-                setConcedenteFilter(value);
-                setCurrentPage(1);
-              }}>
-                <SelectTrigger className="w-full sm:w-44">
-                  <SelectValue placeholder="Tipo Concedente" />
-                </SelectTrigger>
-                <SelectContent>
-                  {concedenteOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={especialFilter} onValueChange={(value: 'todos' | 'sim' | 'nao') => {
-                setEspecialFilter(value);
-                setCurrentPage(1);
-              }}>
-                <SelectTrigger className="w-full sm:w-36">
-                  <Star className="mr-2 h-4 w-4" />
-                  <SelectValue placeholder="Especial" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todas</SelectItem>
-                  <SelectItem value="sim">⭐ Especiais</SelectItem>
-                  <SelectItem value="nao">Normais</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {hasActiveFilters && (
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
-                  <X className="mr-1 h-4 w-4" />
-                  Limpar
-                </Button>
-              )}
-            </div>
-          </div>
+        {/* Advanced Search */}
+        <div className="mb-6">
+          <AdvancedSearch
+            emendas={yearFilteredEmendas}
+            filters={filters}
+            onFiltersChange={setFilters}
+            onResetPage={() => setCurrentPage(1)}
+          />
         </div>
 
         {/* Table with results count */}
@@ -410,7 +313,7 @@ const TransparenciaPublica = () => {
                         <TableRow key={emenda.id}>
                           <TableCell className="font-medium">{emenda.numero}</TableCell>
                           <TableCell>
-                            <StatusBadge status={emenda.status} />
+                            <StatusBadge status={emenda.status as any} />
                           </TableCell>
                           <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
                             {emenda.nome_concedente}

@@ -21,6 +21,7 @@ import LandingPage from "./pages/LandingPage";
 import TransparenciaPublica from "./pages/TransparenciaPublica";
 import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
 import TransparenciaRelatorios from "./pages/TransparenciaRelatorios";
+import TransparenciaPix from "./pages/TransparenciaPix";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
@@ -30,6 +31,7 @@ import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
 import PrefeituraAuth from "./pages/prefeitura/PrefeituraAuth";
 import PrefeturaDashboard from "./pages/prefeitura/PrefeturaDashboard";
+import PrefeituraPixPublica from "./pages/prefeitura/PrefeituraPixPublica";
 import PrefeituraRelatoriosPublicos from "./pages/prefeitura/PrefeituraRelatoriosPublicos";
 import PrefeituraEmendaDetail from "./pages/prefeitura/PrefeituraEmendaDetail";
 

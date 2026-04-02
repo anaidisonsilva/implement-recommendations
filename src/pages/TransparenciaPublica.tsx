@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useEmendas } from '@/hooks/useEmendas';
+import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters } from '@/components/emendas/AdvancedSearch';
+import type { AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import { useYearFilter } from '@/hooks/useYearFilter';
 import { useFooterSettings } from '@/hooks/useSystemSettings';
 import StatsCard from '@/components/dashboard/StatsCard';

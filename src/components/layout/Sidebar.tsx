@@ -13,6 +13,7 @@ import {
   Building2,
   Users,
   History,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: Zap, label: 'Dashboard PIX', path: '/dashboard-pix' },
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
   { icon: FileBarChart, label: 'Relatórios', path: '/relatorios' },

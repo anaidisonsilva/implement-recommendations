@@ -29,6 +29,7 @@ const menuItems = [
   { icon: FileText, label: 'Emendas', path: '/emendas' },
   { icon: PlusCircle, label: 'Nova Emenda', path: '/emendas/nova' },
   { icon: FileBarChart, label: 'Relatórios', path: '/relatorios' },
+  { icon: History, label: 'Auditoria', path: '/auditoria' },
 ];
 
 const bottomMenuItems = [

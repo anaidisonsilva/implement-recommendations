@@ -169,6 +169,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/auditoria"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <AuditLogs />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <AccessibilityWidget />

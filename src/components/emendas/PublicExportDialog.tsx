@@ -53,7 +53,7 @@ const formatDate = (dateString: string) => {
 
 const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | null>(null);
+  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 
   const handleExportCSV = () => {
     setIsExporting('csv');

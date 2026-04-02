@@ -139,14 +139,11 @@ const PrefeituraPortal = () => {
   }, [yearFilteredEmendas]);
 
   const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('todos');
-    setConcedenteFilter('todos');
-    setEspecialFilter('todos');
+    setFilters(defaultFilters);
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
+  const hasActiveFilters = hasActiveAdvancedFilters(filters);
 
   if (loadingPrefeitura) {
     return (

@@ -11,6 +11,7 @@ import {
   Trash2,
   Pencil,
 } from 'lucide-react';
+import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {

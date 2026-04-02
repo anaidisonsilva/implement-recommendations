@@ -55,6 +55,40 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 
+  const handleExportJSON = () => {
+    setIsExporting('json');
+    try {
+      const jsonData = emendas.map((e) => ({
+        numero: e.numero,
+        objeto: e.objeto,
+        parlamentar: e.nome_parlamentar || null,
+        concedente: e.nome_concedente || null,
+        recebedor: e.nome_recebedor,
+        municipio: `${e.municipio}/${e.estado}`,
+        valor_concedente: Number(e.valor),
+        contrapartida: Number(e.contrapartida || 0),
+        valor_total: Number(e.valor) + Number(e.contrapartida || 0),
+        valor_executado: Number(e.valor_executado),
+        status: statusLabels[e.status] || e.status,
+        data_disponibilizacao: e.data_disponibilizacao,
+      }));
+      const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-emendas-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success('Relatório JSON exportado com sucesso!');
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Erro ao exportar relatório');
+    } finally {
+      setIsExporting(null);
+    }
+  };
+
   const handleExportCSV = () => {
     setIsExporting('csv');
 

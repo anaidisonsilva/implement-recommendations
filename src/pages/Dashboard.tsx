@@ -86,6 +86,12 @@ const Dashboard = () => {
           variant="warning"
         />
         <StatsCard
+          title="Aprovadas"
+          value={stats.emendasAprovadas}
+          icon={ThumbsUp}
+          variant="default"
+        />
+        <StatsCard
           title="Em Execução"
           value={stats.emendasEmExecucao}
           icon={PlayCircle}
@@ -96,6 +102,12 @@ const Dashboard = () => {
           value={stats.emendasConcluidas}
           icon={CheckCircle2}
           variant="success"
+        />
+        <StatsCard
+          title="Canceladas"
+          value={stats.emendasCanceladas}
+          icon={XCircle}
+          variant="warning"
         />
       </div>
 

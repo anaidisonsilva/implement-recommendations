@@ -124,6 +124,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       data_inicio_vigencia: formData.data_inicio_vigencia || null,
       data_fim_vigencia: formData.data_fim_vigencia || null,
       especial: formData.especial,
+      programa: formData.programa,
       status: formData.status,
     });
     

@@ -1,4 +1,4 @@
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, Zap } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, Zap, ThumbsUp, XCircle } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';

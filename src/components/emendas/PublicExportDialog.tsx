@@ -27,9 +27,18 @@ interface EmendaData {
   data_disponibilizacao: string;
 }
 
+interface PrefeituraInfo {
+  nome?: string;
+  cnpj?: string | null;
+  logo_url?: string | null;
+  municipio?: string;
+  estado?: string;
+}
+
 interface PublicExportDialogProps {
   emendas: EmendaData[];
   title?: string;
+  prefeitura?: PrefeituraInfo | null;
 }
 
 const statusLabels: Record<string, string> = {

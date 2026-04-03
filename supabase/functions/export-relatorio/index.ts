@@ -154,7 +154,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
   }, {} as Record<string, number>);
 
   const logoSection = prefeitura?.logo_url 
-    ? `<img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;" />`
+    ? `<img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 50px; max-width: 120px;" />`
     : '';
 
   const prefeituraName = prefeitura?.nome || '';

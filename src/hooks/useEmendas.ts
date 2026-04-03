@@ -63,6 +63,7 @@ export interface CreateEmendaInput {
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
   especial?: boolean;
+  programa?: boolean;
 }
 
 export const useEmendas = () => {

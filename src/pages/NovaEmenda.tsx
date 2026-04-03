@@ -109,15 +109,27 @@ const NovaEmenda = () => {
         {/* Identificação */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-foreground">Identificação</h2>
+          <div className="mb-4 flex items-center justify-between rounded-lg border border-border bg-muted/50 p-4">
+            <div>
+              <Label>Emenda de Programa</Label>
+              <p className="text-sm text-muted-foreground">
+                Marque se esta emenda é de programa (número não obrigatório)
+              </p>
+            </div>
+            <Switch
+              checked={formData.programa}
+              onCheckedChange={(checked) => handleChange('programa', checked)}
+            />
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="numero">Número da Emenda *</Label>
+              <Label htmlFor="numero">Número da Emenda {!formData.programa && '*'}</Label>
               <Input
                 id="numero"
-                placeholder="Ex: 2026.0001"
+                placeholder={formData.programa ? "Opcional para programas" : "Ex: 2026.0001"}
                 value={formData.numero}
                 onChange={(e) => handleChange('numero', e.target.value)}
-                required
+                required={!formData.programa}
               />
             </div>
             <div className="space-y-2">

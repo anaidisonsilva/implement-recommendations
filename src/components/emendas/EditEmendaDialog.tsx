@@ -142,14 +142,23 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
             {/* Identificação */}
             <div className="space-y-4">
               <h4 className="font-medium text-foreground">Identificação</h4>
+              <div className="flex items-center space-x-2 mb-3">
+                <Checkbox
+                  id="programa"
+                  checked={formData.programa}
+                  onCheckedChange={(checked) => setFormData({ ...formData, programa: !!checked })}
+                />
+                <Label htmlFor="programa" className="font-medium">Emenda de Programa (número não obrigatório)</Label>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="numero">Número da Emenda *</Label>
+                  <Label htmlFor="numero">Número da Emenda {!formData.programa && '*'}</Label>
                   <Input
                     id="numero"
+                    placeholder={formData.programa ? "Opcional para programas" : ""}
                     value={formData.numero}
                     onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-                    required
+                    required={!formData.programa}
                   />
                 </div>
                 <div className="space-y-2">

@@ -174,7 +174,7 @@ const EmendaDetail = () => {
       <body>
         <div class="header">
           <h1>FICHA DE EMENDA PARLAMENTAR</h1>
-          <p>Emenda Nº ${emenda.numero}${emenda.especial ? ' ⭐ ESPECIAL' : ''}</p>
+          <p>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}${emenda.especial ? ' ⭐ ESPECIAL' : ''}</p>
           <span class="status status-${emenda.status}">${emenda.status.replace('_', ' ').toUpperCase()}</span>
         </div>
 

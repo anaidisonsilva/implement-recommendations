@@ -56,6 +56,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     data_inicio_vigencia: '',
     data_fim_vigencia: '',
     especial: false,
+    programa: false,
     status: '' as EmendaDB['status'],
   });
 

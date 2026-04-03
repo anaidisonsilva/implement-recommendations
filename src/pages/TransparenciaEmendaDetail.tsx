@@ -150,7 +150,7 @@ const TransparenciaEmendaDetail = () => {
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Emenda Nº ${emenda.numero}</title>
+  <title>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.5; }

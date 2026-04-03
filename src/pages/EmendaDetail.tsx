@@ -140,7 +140,7 @@ const EmendaDetail = () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Emenda Nº ${emenda.numero}</title>
+        <title>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; }
@@ -174,7 +174,7 @@ const EmendaDetail = () => {
       <body>
         <div class="header">
           <h1>FICHA DE EMENDA PARLAMENTAR</h1>
-          <p>Emenda Nº ${emenda.numero}${emenda.especial ? ' ⭐ ESPECIAL' : ''}</p>
+          <p>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}${emenda.especial ? ' ⭐ ESPECIAL' : ''}</p>
           <span class="status status-${emenda.status}">${emenda.status.replace('_', ' ').toUpperCase()}</span>
         </div>
 
@@ -297,7 +297,7 @@ const EmendaDetail = () => {
               <DialogHeader>
                 <DialogTitle>Excluir Emenda</DialogTitle>
                 <DialogDescription>
-                  Tem certeza que deseja excluir a emenda Nº {emenda.numero}? Esta ação não pode ser desfeita.
+                  Tem certeza que deseja excluir a emenda {emenda.numero ? `Nº ${emenda.numero}` : 'de Programa'}? Esta ação não pode ser desfeita.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="gap-2 sm:gap-0">
@@ -346,7 +346,7 @@ const EmendaDetail = () => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-xl font-bold text-foreground">
-                Emenda Nº {emenda.numero}
+                {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
               </h1>
               <StatusBadge status={emenda.status} />
               {emenda.especial && (

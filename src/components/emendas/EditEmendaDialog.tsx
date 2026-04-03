@@ -56,13 +56,14 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     data_inicio_vigencia: '',
     data_fim_vigencia: '',
     especial: false,
+    programa: false,
     status: '' as EmendaDB['status'],
   });
 
   useEffect(() => {
     if (emenda && open) {
       setFormData({
-        numero: emenda.numero,
+        numero: emenda.numero || '',
         tipo_concedente: emenda.tipo_concedente,
         nome_concedente: emenda.nome_concedente || '',
         nome_parlamentar: emenda.nome_parlamentar || '',
@@ -87,6 +88,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         data_inicio_vigencia: emenda.data_inicio_vigencia || '',
         data_fim_vigencia: emenda.data_fim_vigencia || '',
         especial: emenda.especial || false,
+        programa: emenda.programa || false,
         status: emenda.status,
       });
     }
@@ -97,7 +99,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     
     await updateEmenda.mutateAsync({
       id: emenda.id,
-      numero: formData.numero,
+      numero: formData.programa ? (formData.numero || null) : formData.numero,
       tipo_concedente: formData.tipo_concedente,
       nome_concedente: formData.nome_concedente || null,
       nome_parlamentar: formData.nome_parlamentar || null,
@@ -122,6 +124,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       data_inicio_vigencia: formData.data_inicio_vigencia || null,
       data_fim_vigencia: formData.data_fim_vigencia || null,
       especial: formData.especial,
+      programa: formData.programa,
       status: formData.status,
     });
     
@@ -139,14 +142,23 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
             {/* Identificação */}
             <div className="space-y-4">
               <h4 className="font-medium text-foreground">Identificação</h4>
+              <div className="flex items-center space-x-2 mb-3">
+                <Checkbox
+                  id="programa"
+                  checked={formData.programa}
+                  onCheckedChange={(checked) => setFormData({ ...formData, programa: !!checked })}
+                />
+                <Label htmlFor="programa" className="font-medium">Emenda de Programa (número não obrigatório)</Label>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="numero">Número da Emenda *</Label>
+                  <Label htmlFor="numero">Número da Emenda {!formData.programa && '*'}</Label>
                   <Input
                     id="numero"
+                    placeholder={formData.programa ? "Opcional para programas" : ""}
                     value={formData.numero}
                     onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-                    required
+                    required={!formData.programa}
                   />
                 </div>
                 <div className="space-y-2">

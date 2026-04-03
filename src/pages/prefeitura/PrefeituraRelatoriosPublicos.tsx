@@ -129,7 +129,7 @@ const PrefeituraRelatoriosPublicos = () => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
-        emenda.numero.toLowerCase().includes(searchLower) ||
+        (emenda.numero || '').toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
         emenda.nome_concedente?.toLowerCase().includes(searchLower);
@@ -248,7 +248,7 @@ const PrefeituraRelatoriosPublicos = () => {
               const total = valor + contrapartida;
               return `
               <tr>
-                <td>${emenda.numero}</td>
+                <td>${emenda.numero || 'Programa'}</td>
                 <td>${emenda.status.replace('_', ' ')}</td>
                 <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
                 <td>${emenda.nome_parlamentar || '-'}</td>
@@ -526,7 +526,7 @@ const PrefeituraRelatoriosPublicos = () => {
                     const total = valor + contrapartida;
                     return (
                       <TableRow key={emenda.id}>
-                        <TableCell className="font-medium">{emenda.numero}</TableCell>
+                        <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                         <TableCell>
                           <StatusBadge status={emenda.status} />
                         </TableCell>

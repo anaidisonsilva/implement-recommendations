@@ -130,7 +130,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     const data = buildEmendaObject(emenda);
     downloadFile(
       JSON.stringify(data, null, 2),
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.json`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.json`,
       'application/json;charset=utf-8;'
     );
     toast.success('JSON exportado com sucesso!');
@@ -143,7 +143,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     const csvContent = '\ufeff' + headers.join(';') + '\n' + values.join(';');
     downloadFile(
       csvContent,
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.csv`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.csv`,
       'text/csv;charset=utf-8;'
     );
     toast.success('CSV exportado com sucesso!');
@@ -196,7 +196,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     `;
     downloadFile(
       html,
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.xls`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.xls`,
       'application/vnd.ms-excel;charset=utf-8;'
     );
     toast.success('Excel exportado com sucesso!');

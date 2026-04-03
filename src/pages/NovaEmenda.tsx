@@ -43,6 +43,7 @@ const NovaEmenda = () => {
     anuenciaPreviaSUS: false,
     hasAnuencia: false,
     especial: false,
+    programa: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +54,7 @@ const NovaEmenda = () => {
     }
 
     const input: CreateEmendaInput = {
-      numero: formData.numero,
+      numero: formData.programa ? (formData.numero || null) : formData.numero,
       numero_convenio: formData.numeroConvenio || null,
       numero_plano_acao: formData.numeroPlanoAcao || null,
       numero_proposta: formData.numeroProposta || null,
@@ -75,6 +76,7 @@ const NovaEmenda = () => {
       conta_corrente: formData.contaCorrente || null,
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
       especial: formData.especial,
+      programa: formData.programa,
     };
 
     await createEmenda.mutateAsync(input);
@@ -107,15 +109,27 @@ const NovaEmenda = () => {
         {/* Identificação */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-foreground">Identificação</h2>
+          <div className="mb-4 flex items-center justify-between rounded-lg border border-border bg-muted/50 p-4">
+            <div>
+              <Label>Emenda de Programa</Label>
+              <p className="text-sm text-muted-foreground">
+                Marque se esta emenda é de programa (número não obrigatório)
+              </p>
+            </div>
+            <Switch
+              checked={formData.programa}
+              onCheckedChange={(checked) => handleChange('programa', checked)}
+            />
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="numero">Número da Emenda *</Label>
+              <Label htmlFor="numero">Número da Emenda {!formData.programa && '*'}</Label>
               <Input
                 id="numero"
-                placeholder="Ex: 2026.0001"
+                placeholder={formData.programa ? "Opcional para programas" : "Ex: 2026.0001"}
                 value={formData.numero}
                 onChange={(e) => handleChange('numero', e.target.value)}
-                required
+                required={!formData.programa}
               />
             </div>
             <div className="space-y-2">

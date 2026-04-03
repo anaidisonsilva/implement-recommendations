@@ -150,7 +150,7 @@ const TransparenciaEmendaDetail = () => {
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Emenda Nº ${emenda.numero}</title>
+  <title>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.5; }
@@ -182,7 +182,7 @@ const TransparenciaEmendaDetail = () => {
 </head>
 <body>
   <div class="header">
-    <h1>Emenda Nº ${emenda.numero}</h1>
+    <h1>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</h1>
     ${(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) ? `
       <p style="font-size: 12px; margin: 5px 0;">
         ${emenda.numero_proposta ? `Proposta: <strong>${emenda.numero_proposta}</strong>` : ''}
@@ -373,7 +373,7 @@ const TransparenciaEmendaDetail = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-xl font-bold text-foreground">
-                      Emenda Nº {emenda.numero}
+                      {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
                     </h1>
                     <StatusBadge status={emenda.status} />
                     {emenda.especial && (

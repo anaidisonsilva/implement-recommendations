@@ -73,7 +73,7 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
     const searchLower = filters.searchTerm.toLowerCase();
     const matchesSearch =
       !filters.searchTerm ||
-      emenda.numero.toLowerCase().includes(searchLower) ||
+      (emenda.numero || '').toLowerCase().includes(searchLower) ||
       emenda.objeto.toLowerCase().includes(searchLower) ||
       emenda.municipio.toLowerCase().includes(searchLower) ||
       (emenda.nome_concedente || '').toLowerCase().includes(searchLower) ||

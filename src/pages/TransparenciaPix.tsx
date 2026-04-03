@@ -180,7 +180,7 @@ const TransparenciaPix = () => {
                       <TableRow key={emenda.id}>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            <span>{emenda.numero}</span>
+                            <span>{emenda.numero || 'Programa'}</span>
                             <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
                               <Zap className="h-3 w-3" /> PIX
                             </span>

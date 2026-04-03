@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 export interface EmendaDB {
   id: string;
-  numero: string;
+  numero: string | null;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
   nome_concedente: string | null;
   nome_parlamentar: string | null;
@@ -31,6 +31,7 @@ export interface EmendaDB {
   data_inicio_vigencia: string | null;
   data_fim_vigencia: string | null;
   especial: boolean;
+  programa: boolean;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;
@@ -39,7 +40,7 @@ export interface EmendaDB {
 }
 
 export interface CreateEmendaInput {
-  numero: string;
+  numero?: string | null;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
   nome_concedente?: string | null;
   nome_parlamentar?: string | null;
@@ -63,6 +64,7 @@ export interface CreateEmendaInput {
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
   especial?: boolean;
+  programa?: boolean;
 }
 
 export const useEmendas = () => {

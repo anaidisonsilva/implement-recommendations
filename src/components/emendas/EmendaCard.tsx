@@ -39,7 +39,7 @@ const EmendaCard = ({ emenda }: EmendaCardProps) => {
               {emenda.objeto}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Emenda Nº {emenda.numero}
+              {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
             </p>
           </div>
         </div>

@@ -355,6 +355,11 @@ const EmendaDetail = () => {
                   PIX / Especial
                 </span>
               )}
+              {(emenda as any).programa && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 border border-blue-500/30 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                  📋 Programa
+                </span>
+              )}
             </div>
             {/* Números de identificação - apenas se cadastrados */}
             {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (

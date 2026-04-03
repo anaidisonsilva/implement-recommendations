@@ -200,20 +200,19 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       padding: 20mm;
     }
     .header { 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      text-align: center; 
       margin-bottom: 30px;
       padding-bottom: 20px;
       border-bottom: 2px solid #1e40af;
     }
-    .header-text {
-      text-align: center;
-      flex: 1;
+    .header-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 8px;
     }
     .header .logo-container {
       flex-shrink: 0;
-      margin-right: 20px;
     }
     .header .prefeitura-name {
       font-size: 14pt;

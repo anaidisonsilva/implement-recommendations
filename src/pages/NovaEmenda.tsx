@@ -43,6 +43,7 @@ const NovaEmenda = () => {
     anuenciaPreviaSUS: false,
     hasAnuencia: false,
     especial: false,
+    programa: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

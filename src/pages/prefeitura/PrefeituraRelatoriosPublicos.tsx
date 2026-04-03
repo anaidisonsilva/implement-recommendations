@@ -526,7 +526,7 @@ const PrefeituraRelatoriosPublicos = () => {
                     const total = valor + contrapartida;
                     return (
                       <TableRow key={emenda.id}>
-                        <TableCell className="font-medium">{emenda.numero}</TableCell>
+                        <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                         <TableCell>
                           <StatusBadge status={emenda.status} />
                         </TableCell>

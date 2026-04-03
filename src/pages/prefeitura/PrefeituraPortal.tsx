@@ -349,7 +349,7 @@ const PrefeituraPortal = () => {
               <TableBody>
                 {paginatedEmendas.map((emenda) => (
                   <TableRow key={emenda.id}>
-                    <TableCell className="font-medium">{emenda.numero}</TableCell>
+                    <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                     <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
                     <TableCell>{emenda.nome_concedente}</TableCell>
                     <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>

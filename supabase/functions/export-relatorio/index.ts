@@ -200,16 +200,20 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       padding: 20mm;
     }
     .header { 
-      position: relative;
-      text-align: center; 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 30px;
       padding-bottom: 20px;
       border-bottom: 2px solid #1e40af;
     }
+    .header-text {
+      text-align: center;
+      flex: 1;
+    }
     .header .logo-container {
-      position: absolute;
-      top: 0;
-      right: 0;
+      flex-shrink: 0;
+      margin-left: 20px;
     }
     .header .prefeitura-name {
       font-size: 14pt;
@@ -328,21 +332,21 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
 </head>
 <body>
   <div class="header">
-    <div class="logo-container">
-      ${logoSection}
+    <div class="header-text">
+      ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
+      ${prefeituraCnpj}
+      ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
+      <h1>Relatório de Emendas Parlamentares</h1>
+      <h2>Prestação de Contas - TCE-MG</h2>
+      <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })}</p>
     </div>
-    ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
-    ${prefeituraCnpj}
-    ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
-    <h1>Relatório de Emendas Parlamentares</h1>
-    <h2>Prestação de Contas - TCE-MG</h2>
-    <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })}</p>
+    ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
   </div>
 
   <div class="summary">

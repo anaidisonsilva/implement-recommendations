@@ -171,16 +171,20 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       line-height: 1.5;
     }
     .header { 
-      position: relative;
-      text-align: center; 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 30px; 
       padding-bottom: 20px;
       border-bottom: 2px solid #0066cc;
     }
+    .header-text {
+      text-align: center;
+      flex: 1;
+    }
     .header .logo-right {
-      position: absolute;
-      top: 0;
-      right: 0;
+      flex-shrink: 0;
+      margin-left: 20px;
     }
     .header h1 { 
       color: #0066cc; 
@@ -272,12 +276,14 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
 </head>
 <body>
   <div class="header">
+    <div class="header-text">
+      ${prefeitura?.nome ? `<p style="font-size: 14pt; font-weight: bold; color: #374151; margin-bottom: 2px;">${prefeitura.nome}</p>` : ''}
+      ${prefeitura?.cnpj ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 4px;">CNPJ: ${prefeitura.cnpj}</p>` : ''}
+      ${prefeitura?.municipio ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 10px;">${prefeitura.municipio}/${prefeitura.estado || 'MG'}</p>` : ''}
+      <h1>Relatório de Emendas Parlamentares</h1>
+      <p>Portal de Transparência - Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+    </div>
     ${prefeitura?.logo_url ? `<div class="logo-right"><img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 50px; max-width: 120px;" /></div>` : ''}
-    ${prefeitura?.nome ? `<p style="font-size: 14pt; font-weight: bold; color: #374151; margin-bottom: 2px;">${prefeitura.nome}</p>` : ''}
-    ${prefeitura?.cnpj ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 4px;">CNPJ: ${prefeitura.cnpj}</p>` : ''}
-    ${prefeitura?.municipio ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 10px;">${prefeitura.municipio}/${prefeitura.estado || 'MG'}</p>` : ''}
-    <h1>Relatório de Emendas Parlamentares</h1>
-    <p>Portal de Transparência - Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
   </div>
 
   <div class="summary">

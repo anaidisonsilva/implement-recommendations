@@ -63,55 +63,16 @@ const DashboardPix = () => {
 
       {/* Stats grid */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8">
-        <StatsCard
-          title="Emendas PIX"
-          value={stats.totalEmendas}
-          icon={Zap}
-          variant="primary"
-        />
-        <StatsCard
-          title="Valor Total"
-          value={formatCurrency(stats.valorTotal)}
-          subtitle="Concedente + Contrapartida"
-          icon={Banknote}
-          variant="info"
-        />
-        <StatsCard
-          title="Concedente"
-          value={formatCurrency(stats.valorConcedente)}
-          icon={Banknote}
-          variant="default"
-        />
-        <StatsCard
-          title="Contrapartida"
-          value={formatCurrency(stats.valorContrapartida)}
-          icon={HandCoins}
-          variant="warning"
-        />
-        <StatsCard
-          title="Valor Executado"
-          value={formatCurrency(stats.valorExecutado)}
-          icon={TrendingUp}
-          variant="success"
-        />
-        <StatsCard
-          title="Pendentes"
-          value={stats.emendasPendentes}
-          icon={Clock}
-          variant="warning"
-        />
-        <StatsCard
-          title="Em Execução"
-          value={stats.emendasEmExecucao}
-          icon={PlayCircle}
-          variant="info"
-        />
-        <StatsCard
-          title="Concluídas"
-          value={stats.emendasConcluidas}
-          icon={CheckCircle2}
-          variant="success"
-        />
+        <StatsCard title="Emendas PIX" value={stats.totalEmendas} icon={Zap} variant="primary" />
+        <StatsCard title="Valor Total" value={formatCurrency(stats.valorTotal)} subtitle="Concedente + Contrapartida" icon={Banknote} variant="info" />
+        <StatsCard title="Concedente" value={formatCurrency(stats.valorConcedente)} icon={Banknote} variant="default" />
+        <StatsCard title="Contrapartida" value={formatCurrency(stats.valorContrapartida)} icon={HandCoins} variant="warning" />
+        <StatsCard title="Valor Executado" value={formatCurrency(stats.valorExecutado)} icon={TrendingUp} variant="success" />
+        <StatsCard title="Pendentes" value={stats.emendasPendentes} icon={Clock} variant="warning" />
+        <StatsCard title="Aprovadas" value={stats.emendasAprovadas} icon={ThumbsUp} variant="info" />
+        <StatsCard title="Em Execução" value={stats.emendasEmExecucao} icon={PlayCircle} variant="info" />
+        <StatsCard title="Concluídas" value={stats.emendasConcluidas} icon={CheckCircle2} variant="success" />
+        <StatsCard title="Canceladas" value={stats.emendasCanceladas} icon={XCircle} variant="destructive" />
       </div>
 
       {/* Charts section */}

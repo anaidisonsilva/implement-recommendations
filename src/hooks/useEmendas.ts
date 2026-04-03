@@ -31,6 +31,7 @@ export interface EmendaDB {
   data_inicio_vigencia: string | null;
   data_fim_vigencia: string | null;
   especial: boolean;
+  programa: boolean;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;

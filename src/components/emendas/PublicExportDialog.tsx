@@ -345,7 +345,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
   </div>
 
   <div class="footer">
-    <p>Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
+    <p>${prefeitura?.nome ? `${prefeitura.nome} - ` : ''}Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
     <p>Em conformidade com a Recomendação MPC-MG nº 01/2025</p>
   </div>
 </body>

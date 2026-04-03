@@ -129,7 +129,7 @@ const PrefeituraRelatoriosPublicos = () => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
-        emenda.numero.toLowerCase().includes(searchLower) ||
+        (emenda.numero || '').toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
         emenda.nome_concedente?.toLowerCase().includes(searchLower);

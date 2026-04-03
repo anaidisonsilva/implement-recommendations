@@ -63,7 +63,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
   useEffect(() => {
     if (emenda && open) {
       setFormData({
-        numero: emenda.numero,
+        numero: emenda.numero || '',
         tipo_concedente: emenda.tipo_concedente,
         nome_concedente: emenda.nome_concedente || '',
         nome_parlamentar: emenda.nome_parlamentar || '',

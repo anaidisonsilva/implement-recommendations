@@ -130,7 +130,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     const data = buildEmendaObject(emenda);
     downloadFile(
       JSON.stringify(data, null, 2),
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.json`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.json`,
       'application/json;charset=utf-8;'
     );
     toast.success('JSON exportado com sucesso!');

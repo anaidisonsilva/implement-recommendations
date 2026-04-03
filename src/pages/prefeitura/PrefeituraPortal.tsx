@@ -126,12 +126,14 @@ const PrefeituraPortal = () => {
       emExecucao: 0,
       concluidas: 0,
     };
+    // Excluir emendas pendentes e canceladas dos cálculos de valores
+    const emendasComValor = yearFilteredEmendas.filter(e => e.status !== 'pendente' && e.status !== 'cancelado');
     return {
       total: yearFilteredEmendas.length,
-      valorConcedente: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor), 0),
-      valorContrapartida: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0),
-      valorTotal: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor) + Number(e.contrapartida || 0), 0),
-      executado: yearFilteredEmendas.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      valorConcedente: emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0),
+      valorContrapartida: emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0),
+      valorTotal: emendasComValor.reduce((acc, e) => acc + Number(e.valor) + Number(e.contrapartida || 0), 0),
+      executado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
       pendentes: yearFilteredEmendas.filter(e => e.status === 'pendente').length,
       aprovadas: yearFilteredEmendas.filter(e => e.status === 'aprovado').length,
       emExecucao: yearFilteredEmendas.filter(e => e.status === 'em_execucao').length,

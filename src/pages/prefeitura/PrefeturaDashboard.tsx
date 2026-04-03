@@ -52,15 +52,17 @@ const PrefeturaDashboard = () => {
       };
     }
 
-    const valorConcedente = emendas.reduce((acc, e) => acc + Number(e.valor), 0);
-    const valorContrapartida = emendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
+    // Excluir emendas pendentes e canceladas dos cálculos de valores
+    const emendasComValor = emendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+    const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
+    const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
     const valorTotal = valorConcedente + valorContrapartida;
 
     return {
       totalEmendas: emendas.length,
       valorConcedente,
       valorTotal,
-      valorExecutado: emendas.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      valorExecutado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
       valorContrapartida,
       emendasPendentes: emendas.filter((e) => e.status === 'pendente').length,
       emendasAprovadas: emendas.filter((e) => e.status === 'aprovado').length,

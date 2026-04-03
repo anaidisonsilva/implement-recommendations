@@ -194,15 +194,17 @@ export const useDeleteEmenda = () => {
 export const useEmendasStats = () => {
   const { data: emendas } = useEmendas();
 
-  const valorConcedente = emendas?.reduce((acc, e) => acc + Number(e.valor), 0) ?? 0;
-  const valorContrapartida = emendas?.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0) ?? 0;
+  // Excluir emendas pendentes e canceladas dos cálculos de valores
+  const emendasComValor = emendas?.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+  const valorConcedente = emendasComValor?.reduce((acc, e) => acc + Number(e.valor), 0) ?? 0;
+  const valorContrapartida = emendasComValor?.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0) ?? 0;
   const valorTotal = valorConcedente + valorContrapartida;
 
   return {
     totalEmendas: emendas?.length ?? 0,
     valorConcedente,
     valorTotal,
-    valorExecutado: emendas?.reduce((acc, e) => acc + Number(e.valor_executado), 0) ?? 0,
+    valorExecutado: emendasComValor?.reduce((acc, e) => acc + Number(e.valor_executado), 0) ?? 0,
     valorContrapartida,
     emendasPendentes: emendas?.filter((e) => e.status === 'pendente').length ?? 0,
     emendasAprovadas: emendas?.filter((e) => e.status === 'aprovado').length ?? 0,

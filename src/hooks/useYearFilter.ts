@@ -35,15 +35,17 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
 
   const stats = useMemo(() => {
     const data = filteredEmendas;
-    const valorConcedente = data.reduce((acc, e) => acc + Number(e.valor), 0);
-    const valorContrapartida = data.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
+    // Excluir emendas pendentes e canceladas dos cálculos de valores
+    const emendasComValor = data.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+    const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
+    const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
     const valorTotal = valorConcedente + valorContrapartida;
 
     return {
       totalEmendas: data.length,
       valorConcedente,
       valorTotal,
-      valorExecutado: data.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      valorExecutado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
       valorContrapartida,
       emendasPendentes: data.filter((e) => e.status === 'pendente').length,
       emendasAprovadas: data.filter((e) => e.status === 'aprovado').length,

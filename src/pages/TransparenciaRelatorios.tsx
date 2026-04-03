@@ -229,7 +229,7 @@ const TransparenciaRelatorios = () => {
               const total = valor + contrapartida;
               return `
               <tr>
-                <td>${emenda.numero}</td>
+                <td>${emenda.numero || 'Programa'}</td>
                 <td>${emenda.status.replace('_', ' ')}</td>
                 <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
                 <td>${emenda.nome_parlamentar || '-'}</td>

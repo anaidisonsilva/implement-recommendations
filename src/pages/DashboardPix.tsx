@@ -72,7 +72,7 @@ const DashboardPix = () => {
         <StatsCard title="Aprovadas" value={stats.emendasAprovadas} icon={ThumbsUp} variant="info" />
         <StatsCard title="Em Execução" value={stats.emendasEmExecucao} icon={PlayCircle} variant="info" />
         <StatsCard title="Concluídas" value={stats.emendasConcluidas} icon={CheckCircle2} variant="success" />
-        <StatsCard title="Canceladas" value={stats.emendasCanceladas} icon={XCircle} variant="destructive" />
+        <StatsCard title="Canceladas" value={stats.emendasCanceladas} icon={XCircle} variant="warning" />
       </div>
 
       {/* Charts section */}

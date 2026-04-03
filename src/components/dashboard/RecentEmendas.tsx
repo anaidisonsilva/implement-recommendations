@@ -47,7 +47,7 @@ const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
                     {emenda.objeto}
                   </p>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    Nº {emenda.numero} • {emenda.municipio}
+                    Nº {emenda.numero || 'Programa'} • {emenda.municipio}
                   </p>
                 </div>
                 <StatusBadge status={emenda.status} size="sm" />

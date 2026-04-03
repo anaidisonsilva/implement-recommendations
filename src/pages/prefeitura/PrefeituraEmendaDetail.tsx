@@ -407,7 +407,7 @@ const PrefeituraEmendaDetail = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-xl font-bold text-foreground">
-                      Emenda Nº {emenda.numero}
+                      {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
                     </h1>
                     <StatusBadge status={emenda.status} />
                     {emenda.especial && (

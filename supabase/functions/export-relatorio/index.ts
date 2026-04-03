@@ -27,6 +27,16 @@ interface Emenda {
   anuencia_previa_sus: boolean | null;
   status: string;
   created_at: string;
+  prefeitura_id: string | null;
+}
+
+interface Prefeitura {
+  id: string;
+  nome: string;
+  cnpj: string | null;
+  logo_url: string | null;
+  municipio: string;
+  estado: string;
 }
 
 const tipoConcedenteLabels: Record<string, string> = {
@@ -131,7 +141,7 @@ function generateCSV(emendas: Emenda[]): string {
   return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
 }
 
-function generateHTML(emendas: Emenda[]): string {
+function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string {
   const totalConcedente = emendas.reduce((acc, e) => acc + Number(e.valor), 0);
   const totalContrapartida = emendas.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
   const totalValor = totalConcedente + totalContrapartida;
@@ -143,6 +153,14 @@ function generateHTML(emendas: Emenda[]): string {
     return acc;
   }, {} as Record<string, number>);
 
+  const logoSection = prefeitura?.logo_url 
+    ? `<img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;" />`
+    : '';
+
+  const prefeituraName = prefeitura?.nome || '';
+  const prefeituraCnpj = prefeitura?.cnpj ? `<p class="cnpj">CNPJ: ${prefeitura.cnpj}</p>` : '';
+  const prefeituraMunicipio = prefeitura ? `${prefeitura.municipio}/${prefeitura.estado}` : '';
+
   const tableRows = emendas
     .map((e) => {
       const valorConc = Number(e.valor);
@@ -150,9 +168,9 @@ function generateHTML(emendas: Emenda[]): string {
       const valorTotal = valorConc + valorContra;
       return `
     <tr>
-      <td>${e.numero}</td>
+      <td>${e.numero || 'Programa'}</td>
       <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
-      <td>${e.nome_concedente}</td>
+      <td>${e.nome_concedente || '-'}</td>
       <td>${e.nome_recebedor}</td>
       <td>${e.municipio}/${e.estado}</td>
       <td class="text-right">${formatCurrency(valorConc)}</td>
@@ -186,6 +204,25 @@ function generateHTML(emendas: Emenda[]): string {
       margin-bottom: 30px;
       padding-bottom: 20px;
       border-bottom: 2px solid #1e40af;
+    }
+    .header .logo-container {
+      margin-bottom: 10px;
+    }
+    .header .prefeitura-name {
+      font-size: 14pt;
+      font-weight: bold;
+      color: #374151;
+      margin-bottom: 2px;
+    }
+    .header .cnpj {
+      font-size: 10pt;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .header .municipio-info {
+      font-size: 10pt;
+      color: #6b7280;
+      margin-bottom: 10px;
     }
     .header h1 { 
       font-size: 18pt; 
@@ -288,6 +325,12 @@ function generateHTML(emendas: Emenda[]): string {
 </head>
 <body>
   <div class="header">
+    <div class="logo-container">
+      ${logoSection}
+    </div>
+    ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
+    ${prefeituraCnpj}
+    ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
     <h1>Relatório de Emendas Parlamentares</h1>
     <h2>Prestação de Contas - TCE-MG</h2>
     <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {
@@ -372,7 +415,7 @@ function generateHTML(emendas: Emenda[]): string {
       Art. 2º, §1º, conforme ADPF 854/DF e Lei Complementar 210/2024, garantindo transparência e rastreabilidade 
       das emendas parlamentares.
     </div>
-    <p>Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
+    <p>${prefeituraName ? `${prefeituraName} - ` : ''}Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
   </div>
 </body>
 </html>
@@ -380,13 +423,11 @@ function generateHTML(emendas: Emenda[]): string {
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get auth token from request
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('No authorization header provided');
@@ -396,24 +437,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Parse request body
     const { format, filters } = await req.json();
     console.log('Export request:', { format, filters });
 
-    // Build query
     let query = supabase.from('emendas').select('*').order('created_at', { ascending: false });
 
-    // Apply filters if provided
     if (filters?.status && filters.status !== 'todos') {
       query = query.eq('status', filters.status);
     }
     if (filters?.tipoConcedente && filters.tipoConcedente !== 'todos') {
       query = query.eq('tipo_concedente', filters.tipoConcedente);
+    }
+    if (filters?.prefeituraId) {
+      query = query.eq('prefeitura_id', filters.prefeituraId);
     }
 
     const { data: emendas, error } = await query;
@@ -430,6 +470,18 @@ Deno.serve(async (req) => {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Fetch prefeitura data if available
+    let prefeitura: Prefeitura | null = null;
+    const prefeituraId = filters?.prefeituraId || emendas[0]?.prefeitura_id;
+    if (prefeituraId) {
+      const { data: prefData } = await supabase
+        .from('prefeituras')
+        .select('id, nome, cnpj, logo_url, municipio, estado')
+        .eq('id', prefeituraId)
+        .single();
+      prefeitura = prefData;
     }
 
     if (format === 'json') {
@@ -450,7 +502,7 @@ Deno.serve(async (req) => {
         },
       });
     } else if (format === 'pdf') {
-      const html = generateHTML(emendas);
+      const html = generateHTML(emendas, prefeitura);
       return new Response(html, {
         headers: {
           ...corsHeaders,

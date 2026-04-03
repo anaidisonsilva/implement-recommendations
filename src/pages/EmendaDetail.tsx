@@ -297,7 +297,7 @@ const EmendaDetail = () => {
               <DialogHeader>
                 <DialogTitle>Excluir Emenda</DialogTitle>
                 <DialogDescription>
-                  Tem certeza que deseja excluir a emenda Nº {emenda.numero}? Esta ação não pode ser desfeita.
+                  Tem certeza que deseja excluir a emenda {emenda.numero ? `Nº ${emenda.numero}` : 'de Programa'}? Esta ação não pode ser desfeita.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="gap-2 sm:gap-0">

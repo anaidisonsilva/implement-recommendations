@@ -209,7 +209,7 @@ const PrefeituraEmendaDetail = () => {
 </head>
 <body>
   <div class="header">
-    <h1>Emenda Nº ${emenda.numero}</h1>
+    <h1>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</h1>
     <h2 style="font-size: 16px; color: #666; margin-bottom: 10px;">${prefeitura?.nome || ''}</h2>
     <p>${emenda.objeto}</p>
     <span class="status status-${emenda.status}">${statusLabels[emenda.status]}</span>

@@ -52,6 +52,7 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
       emendasEmExecucao: data.filter((e) => e.status === 'em_execucao').length,
       emendasConcluidas: data.filter((e) => e.status === 'concluido').length,
       emendasCanceladas: data.filter((e) => e.status === 'cancelado').length,
+    };
   }, [filteredEmendas]);
 
   return {

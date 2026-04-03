@@ -176,15 +176,6 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       padding-bottom: 20px;
       border-bottom: 2px solid #0066cc;
     }
-    .header-top {
-      display: inline-flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 8px;
-    }
-    .header .logo-right {
-      flex-shrink: 0;
-    }
     .header h1 { 
       color: #0066cc; 
       font-size: 24px; 

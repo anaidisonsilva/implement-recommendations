@@ -163,12 +163,13 @@ export type Database = {
           nome_concedente: string | null
           nome_parlamentar: string | null
           nome_recebedor: string
-          numero: string
+          numero: string | null
           numero_convenio: string | null
           numero_plano_acao: string | null
           numero_proposta: string | null
           objeto: string
           prefeitura_id: string | null
+          programa: boolean
           status: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
@@ -196,12 +197,13 @@ export type Database = {
           nome_concedente?: string | null
           nome_parlamentar?: string | null
           nome_recebedor: string
-          numero: string
+          numero?: string | null
           numero_convenio?: string | null
           numero_plano_acao?: string | null
           numero_proposta?: string | null
           objeto: string
           prefeitura_id?: string | null
+          programa?: boolean
           status?: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
@@ -229,12 +231,13 @@ export type Database = {
           nome_concedente?: string | null
           nome_parlamentar?: string | null
           nome_recebedor?: string
-          numero?: string
+          numero?: string | null
           numero_convenio?: string | null
           numero_plano_acao?: string | null
           numero_proposta?: string | null
           objeto?: string
           prefeitura_id?: string | null
+          programa?: boolean
           status?: Database["public"]["Enums"]["status_emenda"]
           tipo_concedente?: Database["public"]["Enums"]["tipo_concedente"]
           tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"]

@@ -276,6 +276,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
 </head>
 <body>
   <div class="header">
+    ${prefeitura?.logo_url ? `<div class="logo-right"><img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 50px; max-width: 120px;" /></div>` : ''}
     <div class="header-text">
       ${prefeitura?.nome ? `<p style="font-size: 14pt; font-weight: bold; color: #374151; margin-bottom: 2px;">${prefeitura.nome}</p>` : ''}
       ${prefeitura?.cnpj ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 4px;">CNPJ: ${prefeitura.cnpj}</p>` : ''}
@@ -283,7 +284,6 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       <h1>Relatório de Emendas Parlamentares</h1>
       <p>Portal de Transparência - Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
     </div>
-    ${prefeitura?.logo_url ? `<div class="logo-right"><img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 50px; max-width: 120px;" /></div>` : ''}
   </div>
 
   <div class="summary">

@@ -23,6 +23,8 @@ import {
   Eye,
   Zap,
   HandCoins,
+  ThumbsUp,
+  XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {

@@ -415,6 +415,11 @@ const PrefeituraEmendaDetail = () => {
                         <Zap className="h-3 w-3" /> Emenda PIX
                       </span>
                     )}
+                    {(emenda as any).programa && (
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        📋 Programa
+                      </span>
+                    )}
                   </div>
                   {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

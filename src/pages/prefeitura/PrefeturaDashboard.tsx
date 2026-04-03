@@ -49,7 +49,7 @@ const PrefeturaDashboard = () => {
         emendasAprovadas: 0,
         emendasEmExecucao: 0,
         emendasConcluidas: 0,
-      };
+        emendasCanceladas: 0,
     }
 
     // Excluir emendas pendentes e canceladas dos cálculos de valores

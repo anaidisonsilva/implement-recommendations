@@ -88,6 +88,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         data_inicio_vigencia: emenda.data_inicio_vigencia || '',
         data_fim_vigencia: emenda.data_fim_vigencia || '',
         especial: emenda.especial || false,
+        programa: emenda.programa || false,
         status: emenda.status,
       });
     }

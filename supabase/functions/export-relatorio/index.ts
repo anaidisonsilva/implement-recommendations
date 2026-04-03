@@ -200,20 +200,19 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       padding: 20mm;
     }
     .header { 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      text-align: center; 
       margin-bottom: 30px;
       padding-bottom: 20px;
       border-bottom: 2px solid #1e40af;
     }
-    .header-text {
-      text-align: center;
-      flex: 1;
+    .header-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 8px;
     }
     .header .logo-container {
       flex-shrink: 0;
-      margin-right: 20px;
     }
     .header .prefeitura-name {
       font-size: 14pt;
@@ -332,21 +331,23 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
 </head>
 <body>
   <div class="header">
-    ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
-    <div class="header-text">
-      ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
-      ${prefeituraCnpj}
-      ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
-      <h1>Relatório de Emendas Parlamentares</h1>
-      <h2>Prestação de Contas - TCE-MG</h2>
-      <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })}</p>
+    <div class="header-top">
+      ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
+      <div>
+        ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
+        ${prefeituraCnpj}
+        ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
+      </div>
     </div>
+    <h1>Relatório de Emendas Parlamentares</h1>
+    <h2>Prestação de Contas - TCE-MG</h2>
+    <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}</p>
   </div>
 
   <div class="summary">

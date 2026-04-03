@@ -213,7 +213,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
     }
     .header .logo-container {
       flex-shrink: 0;
-      margin-left: 20px;
+      margin-right: 20px;
     }
     .header .prefeitura-name {
       font-size: 14pt;
@@ -332,6 +332,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
 </head>
 <body>
   <div class="header">
+    ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
     <div class="header-text">
       ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
       ${prefeituraCnpj}
@@ -346,7 +347,6 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
         minute: '2-digit',
       })}</p>
     </div>
-    ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
   </div>
 
   <div class="summary">

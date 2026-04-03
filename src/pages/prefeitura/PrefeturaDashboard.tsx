@@ -50,7 +50,7 @@ const PrefeturaDashboard = () => {
         emendasEmExecucao: 0,
         emendasConcluidas: 0,
         emendasCanceladas: 0,
-    }
+      };
 
     // Excluir emendas pendentes e canceladas dos cálculos de valores
     const emendasComValor = emendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');

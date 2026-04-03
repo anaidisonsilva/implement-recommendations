@@ -125,6 +125,7 @@ const PrefeituraPortal = () => {
       aprovadas: 0,
       emExecucao: 0,
       concluidas: 0,
+      canceladas: 0,
     };
     // Excluir emendas pendentes e canceladas dos cálculos de valores
     const emendasComValor = yearFilteredEmendas.filter(e => e.status !== 'pendente' && e.status !== 'cancelado');
@@ -138,6 +139,7 @@ const PrefeituraPortal = () => {
       aprovadas: yearFilteredEmendas.filter(e => e.status === 'aprovado').length,
       emExecucao: yearFilteredEmendas.filter(e => e.status === 'em_execucao').length,
       concluidas: yearFilteredEmendas.filter(e => e.status === 'concluido').length,
+      canceladas: yearFilteredEmendas.filter(e => e.status === 'cancelado').length,
     };
   }, [yearFilteredEmendas]);
 
@@ -224,7 +226,7 @@ const PrefeituraPortal = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Stats Cards */}
-        <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-5">
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Total de Emendas</p>
@@ -272,6 +274,15 @@ const PrefeituraPortal = () => {
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Aprovadas</p>
+              <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-primary" />
+              </div>
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.aprovadas}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Em Execução</p>
               <div className="h-4 w-4 rounded-full bg-info/20 flex items-center justify-center">
                 <div className="h-2 w-2 rounded-full bg-info" />
@@ -287,6 +298,15 @@ const PrefeituraPortal = () => {
               </div>
             </div>
             <p className="mt-2 text-lg font-bold text-foreground">{stats.concluidas}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground truncate">Canceladas</p>
+              <div className="h-4 w-4 rounded-full bg-destructive/20 flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-destructive" />
+              </div>
+            </div>
+            <p className="mt-2 text-lg font-bold text-foreground">{stats.canceladas}</p>
           </div>
         </div>
 

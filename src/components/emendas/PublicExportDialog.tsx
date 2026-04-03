@@ -184,7 +184,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     }
     .header .logo-right {
       flex-shrink: 0;
-      margin-left: 20px;
+      margin-right: 20px;
     }
     .header h1 { 
       color: #0066cc; 

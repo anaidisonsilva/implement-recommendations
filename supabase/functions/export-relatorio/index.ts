@@ -213,7 +213,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
     }
     .header .logo-container {
       flex-shrink: 0;
-      margin-left: 20px;
+      margin-right: 20px;
     }
     .header .prefeitura-name {
       font-size: 14pt;

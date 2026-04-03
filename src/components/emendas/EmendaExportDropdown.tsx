@@ -196,7 +196,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     `;
     downloadFile(
       html,
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.xls`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.xls`,
       'application/vnd.ms-excel;charset=utf-8;'
     );
     toast.success('Excel exportado com sucesso!');

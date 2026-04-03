@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, XCircle, ThumbsUp } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';

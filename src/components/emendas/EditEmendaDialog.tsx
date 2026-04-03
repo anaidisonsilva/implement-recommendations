@@ -99,7 +99,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     
     await updateEmenda.mutateAsync({
       id: emenda.id,
-      numero: formData.numero,
+      numero: formData.programa ? (formData.numero || null) : formData.numero,
       tipo_concedente: formData.tipo_concedente,
       nome_concedente: formData.nome_concedente || null,
       nome_parlamentar: formData.nome_parlamentar || null,

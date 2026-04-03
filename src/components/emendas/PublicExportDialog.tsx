@@ -27,9 +27,18 @@ interface EmendaData {
   data_disponibilizacao: string;
 }
 
+interface PrefeituraInfo {
+  nome?: string;
+  cnpj?: string | null;
+  logo_url?: string | null;
+  municipio?: string;
+  estado?: string;
+}
+
 interface PublicExportDialogProps {
   emendas: EmendaData[];
   title?: string;
+  prefeitura?: PrefeituraInfo | null;
 }
 
 const statusLabels: Record<string, string> = {
@@ -51,7 +60,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('pt-BR');
 };
 
-const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicExportDialogProps) => {
+const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura }: PublicExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 
@@ -257,6 +266,10 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
 </head>
 <body>
   <div class="header">
+    ${prefeitura?.logo_url ? `<img src="${prefeitura.logo_url}" alt="Logo" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;" />` : ''}
+    ${prefeitura?.nome ? `<p style="font-size: 14pt; font-weight: bold; color: #374151; margin-bottom: 2px;">${prefeitura.nome}</p>` : ''}
+    ${prefeitura?.cnpj ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 4px;">CNPJ: ${prefeitura.cnpj}</p>` : ''}
+    ${prefeitura?.municipio ? `<p style="font-size: 10pt; color: #6b7280; margin-bottom: 10px;">${prefeitura.municipio}/${prefeitura.estado || 'MG'}</p>` : ''}
     <h1>Relatório de Emendas Parlamentares</h1>
     <p>Portal de Transparência - Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
   </div>
@@ -332,7 +345,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicEx
   </div>
 
   <div class="footer">
-    <p>Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
+    <p>${prefeitura?.nome ? `${prefeitura.nome} - ` : ''}Portal de Emendas Parlamentares - Sistema de Gestão e Transparência</p>
     <p>Em conformidade com a Recomendação MPC-MG nº 01/2025</p>
   </div>
 </body>

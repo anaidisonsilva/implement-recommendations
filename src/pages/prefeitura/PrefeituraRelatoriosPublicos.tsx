@@ -378,6 +378,7 @@ const PrefeituraRelatoriosPublicos = () => {
                   data_disponibilizacao: e.data_disponibilizacao,
                 }))}
                 title="Exportar Relatório"
+                prefeitura={prefeitura ? { nome: prefeitura.nome, cnpj: prefeitura.cnpj, logo_url: prefeitura.logo_url, municipio: prefeitura.municipio, estado: prefeitura.estado } : null}
               />
             </div>
           </div>

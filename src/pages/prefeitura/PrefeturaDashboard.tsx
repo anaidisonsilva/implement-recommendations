@@ -69,6 +69,7 @@ const PrefeturaDashboard = () => {
       emendasEmExecucao: emendas.filter((e) => e.status === 'em_execucao').length,
       emendasConcluidas: emendas.filter((e) => e.status === 'concluido').length,
       emendasCanceladas: emendas.filter((e) => e.status === 'cancelado').length,
+    };
   }, [emendas]);
 
   if (isLoading) {

@@ -140,7 +140,7 @@ const EmendaDetail = () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Emenda Nº ${emenda.numero}</title>
+        <title>${emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: Arial, sans-serif; padding: 20px; color: #333; font-size: 11px; }

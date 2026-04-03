@@ -60,7 +60,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('pt-BR');
 };
 
-const PublicExportDialog = ({ emendas, title = 'Exportar Relatório' }: PublicExportDialogProps) => {
+const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura }: PublicExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
 

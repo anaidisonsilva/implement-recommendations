@@ -40,7 +40,7 @@ export interface EmendaDB {
 }
 
 export interface CreateEmendaInput {
-  numero: string;
+  numero?: string | null;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
   nome_concedente?: string | null;
   nome_parlamentar?: string | null;

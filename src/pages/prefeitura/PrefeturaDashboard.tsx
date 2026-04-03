@@ -90,7 +90,7 @@ const PrefeturaDashboard = () => {
       </div>
 
       {/* Stats grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <StatsCard
           title="Total de Emendas"
           value={stats.totalEmendas}
@@ -129,6 +129,12 @@ const PrefeturaDashboard = () => {
           variant="warning"
         />
         <StatsCard
+          title="Aprovadas"
+          value={stats.emendasAprovadas}
+          icon={ThumbsUp}
+          variant="default"
+        />
+        <StatsCard
           title="Em Execução"
           value={stats.emendasEmExecucao}
           icon={PlayCircle}
@@ -139,6 +145,12 @@ const PrefeturaDashboard = () => {
           value={stats.emendasConcluidas}
           icon={CheckCircle2}
           variant="success"
+        />
+        <StatsCard
+          title="Canceladas"
+          value={stats.emendasCanceladas}
+          icon={XCircle}
+          variant="warning"
         />
       </div>
 

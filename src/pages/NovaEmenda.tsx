@@ -54,7 +54,7 @@ const NovaEmenda = () => {
     }
 
     const input: CreateEmendaInput = {
-      numero: formData.numero,
+      numero: formData.programa ? (formData.numero || null) : formData.numero,
       numero_convenio: formData.numeroConvenio || null,
       numero_plano_acao: formData.numeroPlanoAcao || null,
       numero_proposta: formData.numeroProposta || null,

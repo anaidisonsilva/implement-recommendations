@@ -143,7 +143,7 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
     const csvContent = '\ufeff' + headers.join(';') + '\n' + values.join(';');
     downloadFile(
       csvContent,
-      `emenda-${emenda.numero}-${new Date().toISOString().split('T')[0]}.csv`,
+      `emenda-${emenda.numero || 'programa'}-${new Date().toISOString().split('T')[0]}.csv`,
       'text/csv;charset=utf-8;'
     );
     toast.success('CSV exportado com sucesso!');

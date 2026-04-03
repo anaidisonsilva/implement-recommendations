@@ -23,6 +23,8 @@ import {
   Eye,
   Zap,
   HandCoins,
+  ThumbsUp,
+  XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -133,11 +135,13 @@ const TransparenciaPix = () => {
           <StatsCard title="Concedente" value={formatCurrency(stats.valorConcedente)} icon={Banknote} variant="default" />
           <StatsCard title="Contrapartida" value={formatCurrency(stats.valorContrapartida)} icon={HandCoins} variant="warning" />
         </div>
-        <div className="mb-8 grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           <StatsCard title="Valor Executado" value={formatCurrency(stats.valorExecutado)} icon={TrendingUp} variant="success" />
           <StatsCard title="Pendentes" value={stats.emendasPendentes} icon={Clock} variant="warning" />
+          <StatsCard title="Aprovadas" value={stats.emendasAprovadas} icon={ThumbsUp} variant="info" />
           <StatsCard title="Em Execução" value={stats.emendasEmExecucao} icon={PlayCircle} variant="info" />
           <StatsCard title="Concluídas" value={stats.emendasConcluidas} icon={CheckCircle2} variant="success" />
+          <StatsCard title="Canceladas" value={stats.emendasCanceladas} icon={XCircle} variant="warning" />
         </div>
 
         <div className="mb-8 grid gap-6 lg:grid-cols-2">

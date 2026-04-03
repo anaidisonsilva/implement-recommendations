@@ -76,6 +76,7 @@ const NovaEmenda = () => {
       conta_corrente: formData.contaCorrente || null,
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
       especial: formData.especial,
+      programa: formData.programa,
     };
 
     await createEmenda.mutateAsync(input);

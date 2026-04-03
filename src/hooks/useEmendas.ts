@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 export interface EmendaDB {
   id: string;
-  numero: string;
+  numero: string | null;
   tipo_concedente: 'parlamentar' | 'comissao' | 'bancada' | 'outro';
   nome_concedente: string | null;
   nome_parlamentar: string | null;

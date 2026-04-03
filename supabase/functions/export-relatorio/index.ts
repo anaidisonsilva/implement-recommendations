@@ -319,14 +319,9 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
 </head>
 <body>
   <div class="header">
-    <div class="header-top">
-      ${logoSection ? `<div class="logo-container">${logoSection}</div>` : ''}
-      <div>
-        ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
-        ${prefeituraCnpj}
-        ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
-      </div>
-    </div>
+    ${prefeituraName ? `<p class="prefeitura-name">${prefeituraName}</p>` : ''}
+    ${prefeituraCnpj}
+    ${prefeituraMunicipio ? `<p class="municipio-info">${prefeituraMunicipio}</p>` : ''}
     <h1>Relatório de Emendas Parlamentares</h1>
     <h2>Prestação de Contas - TCE-MG</h2>
     <p class="date">Gerado em ${new Date().toLocaleDateString('pt-BR', {

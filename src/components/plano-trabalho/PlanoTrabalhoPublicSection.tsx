@@ -112,7 +112,7 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
 
       {/* Documentos */}
       <div>
-        <h4 className="flex items-center justify-center gap-2 font-semibold text-foreground">
+        <h4 className="flex items-center gap-2 font-semibold text-foreground">
           <Download className="h-5 w-5 text-primary" />
           Documentos Anexados
         </h4>

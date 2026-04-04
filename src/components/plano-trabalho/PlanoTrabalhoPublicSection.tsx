@@ -46,7 +46,7 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
     <div className="space-y-6 text-center">
       {/* Detalhes do Plano */}
       <div>
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+        <h3 className="flex items-center justify-center gap-2 text-lg font-semibold text-foreground">
           <FileText className="h-5 w-5 text-primary" />
           Plano de Trabalho
         </h3>

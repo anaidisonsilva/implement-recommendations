@@ -43,10 +43,10 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-center">
       {/* Detalhes do Plano */}
       <div>
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+        <h3 className="flex items-center justify-center gap-2 text-lg font-semibold text-foreground">
           <FileText className="h-5 w-5 text-primary" />
           Plano de Trabalho
         </h3>
@@ -70,7 +70,7 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
 
       {/* Cronograma */}
       <div>
-        <h4 className="flex items-center gap-2 font-semibold text-foreground">
+        <h4 className="flex items-center justify-center gap-2 font-semibold text-foreground">
           <Calendar className="h-5 w-5 text-primary" />
           Cronograma de Execução
         </h4>
@@ -112,7 +112,7 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
 
       {/* Documentos */}
       <div>
-        <h4 className="flex items-center gap-2 font-semibold text-foreground">
+        <h4 className="flex items-center justify-center gap-2 font-semibold text-foreground">
           <Download className="h-5 w-5 text-primary" />
           Documentos Anexados
         </h4>

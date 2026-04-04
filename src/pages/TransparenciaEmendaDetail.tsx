@@ -352,8 +352,7 @@ const TransparenciaEmendaDetail = () => {
                     Emenda Especial — Emenda PIX
                   </h3>
                   <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
-                    Esta é uma <strong>Emenda Especial (PIX)</strong>, transferência de recurso com execução direta ao ente federativo, 
-                    sem necessidade de convênio ou contrato de repasse, conforme decisão do STF na <strong>ADPF 854/DF</strong>.
+                    Esta é uma <strong>Emenda Especial (PIX)</strong>, transferência de recurso com execução direta ao ente federativo.
                   </p>
                   <div className="mt-3 flex items-center gap-2 text-xs text-amber-600 dark:text-amber-500">
                     <AlertTriangle className="h-4 w-4" />

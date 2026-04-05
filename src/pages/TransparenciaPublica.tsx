@@ -196,13 +196,30 @@ const TransparenciaPublica = () => {
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Compliance Banner */}
-        <div className="mb-8 rounded-xl border border-info/30 bg-info/5 p-4">
+        {/* Compliance Banner + Last Updated */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-info/30 bg-info/5 p-4">
           <p className="text-sm text-muted-foreground">
             <strong className="text-info">Conformidade Legal:</strong> Este portal atende aos 
             requisitos de transparência da Recomendação MPC-MG nº 01/2025, ADPF 854/DF e 
             Lei Complementar 210/2024.
           </p>
+          {emendas && emendas.length > 0 && (() => {
+            const lastUpdate = emendas.reduce((latest, e) => {
+              const d = new Date(e.updated_at);
+              return d > latest ? d : latest;
+            }, new Date(0));
+            return (
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground shrink-0">
+                <Clock className="h-3.5 w-3.5 text-primary" />
+                <span>
+                  Última atualização:{' '}
+                  <strong className="text-foreground">
+                    {lastUpdate.toLocaleDateString('pt-BR')} às {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  </strong>
+                </span>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Stats Cards - Same as Dashboard */}

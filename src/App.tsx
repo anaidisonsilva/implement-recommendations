@@ -98,6 +98,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/p/:slug/faturas"
+              element={
+                <ProtectedRoute>
+                  <PrefeituraLayout>
+                    <PrefeituraFaturas />
+                  </PrefeituraLayout>
+                </ProtectedRoute>
+              }
+            />
             
             {/* Rotas protegidas - Super Admin */}
             <Route

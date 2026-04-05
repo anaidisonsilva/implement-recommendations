@@ -45,19 +45,20 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
+  ];
+
+  const adminNavigation = isPrefeituraAdmin ? [
+    {
+      name: 'Usuários',
+      href: `/p/${slug}/usuarios`,
+      icon: Users,
+    },
     {
       name: 'Faturas',
       href: `/p/${slug}/faturas`,
       icon: Receipt,
     },
-    ...(isPrefeituraAdmin ? [
-      {
-        name: 'Usuários',
-        href: `/p/${slug}/usuarios`,
-        icon: Users,
-      },
-    ] : []),
-  ];
+  ] : [];
 
   const isActive = (href: string) => location.pathname === href;
 

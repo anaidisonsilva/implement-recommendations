@@ -372,10 +372,12 @@ const PrefeituraPortal = () => {
                 {paginatedEmendas.map((emenda) => (
                   <TableRow key={emenda.id}>
                     <TableCell className="font-medium">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span>{emenda.programa ? 'Programa' : 'Emenda'} Nº {emenda.numero || '-'}</span>
+                      <div className="flex items-center gap-2 flex-wrap animate-fade-in">
+                        <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-foreground border border-border hover-scale">
+                          {emenda.programa ? '📋 Programa' : '📄 Emenda'} Nº {emenda.numero || '-'}
+                        </span>
                         {emenda.especial && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning hover-scale animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
                             <Zap className="h-3 w-3" /> PIX
                           </span>
                         )}

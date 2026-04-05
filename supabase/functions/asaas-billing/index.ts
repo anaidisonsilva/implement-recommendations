@@ -79,21 +79,35 @@ serve(async (req) => {
       case "create_customer": {
         const { prefeitura_id, nome, cnpj, email } = params;
         if (!prefeitura_id || !nome || !cnpj) {
-          return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
+          return new Response(JSON.stringify({ error: "Missing required fields: prefeitura_id, nome, cnpj" }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
         }
+        const cleanCnpj = cnpj.replace(/\D/g, "");
+        if (cleanCnpj.length !== 14 && cleanCnpj.length !== 11) {
+          return new Response(JSON.stringify({ error: `CNPJ/CPF inválido (${cleanCnpj.length} dígitos). Esperado 11 (CPF) ou 14 (CNPJ).` }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
+        }
+        console.log("Creating Asaas customer:", { nome, cleanCnpj, email, prefeitura_id });
+        const customerBody = {
+          name: nome,
+          cpfCnpj: cleanCnpj,
+          email: email || undefined,
+          notificationDisabled: false,
+        };
         const customerRes = await fetch(`${ASAAS_BASE_URL}/customers`, {
           method: "POST",
           headers: { "Content-Type": "application/json", access_token: ASAAS_API_KEY },
-          body: JSON.stringify({
-            name: nome,
-            cpfCnpj: cnpj.replace(/\D/g, ""),
-            email: email || undefined,
-            notificationDisabled: false,
-          }),
+          body: JSON.stringify(customerBody),
         });
-        const customer = await customerRes.json();
+        const customerText = await customerRes.text();
+        console.log("Asaas customer response:", customerRes.status, customerText);
+        let customer;
+        try {
+          customer = JSON.parse(customerText);
+        } catch {
+          return new Response(JSON.stringify({ error: "Asaas returned invalid response", details: customerText }), { status: 502, headers: { ...CORS, "Content-Type": "application/json" } });
+        }
         if (!customerRes.ok) {
-          return new Response(JSON.stringify({ error: "Asaas error", details: customer }), { status: 400, headers: CORS });
+          const errorMsg = customer?.errors?.[0]?.description || customer?.message || "Erro desconhecido do Asaas";
+          return new Response(JSON.stringify({ error: `Erro Asaas: ${errorMsg}`, details: customer }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
         }
         await supabase
           .from("prefeituras")

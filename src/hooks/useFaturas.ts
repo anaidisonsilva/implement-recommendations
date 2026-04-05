@@ -75,9 +75,10 @@ export const useCreateAsaasCustomer = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prefeituras'] });
-      toast.success('Cliente cadastrado no Asaas!');
+      toast.success('Cliente cadastrado com sucesso!');
     },
     onError: (error: Error) => {
+      console.error('Asaas customer creation error:', error);
       toast.error(`Erro ao cadastrar cliente: ${error.message}`);
     },
   });

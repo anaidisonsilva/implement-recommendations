@@ -27,12 +27,13 @@ const AdminFaturamento = () => {
   const [selectedPrefeitura, setSelectedPrefeitura] = useState('');
   const [invoiceValue, setInvoiceValue] = useState('');
   const [invoiceMonth, setInvoiceMonth] = useState('');
+  const [invoiceDueDate, setInvoiceDueDate] = useState('');
   const [showSetPlan, setShowSetPlan] = useState(false);
   const [planPrefeitura, setPlanPrefeitura] = useState('');
   const [planValue, setPlanValue] = useState('');
 
   const handleGenerateInvoice = async () => {
-    if (!selectedPrefeitura || !invoiceValue || !invoiceMonth) {
+    if (!selectedPrefeitura || !invoiceValue || !invoiceMonth || !invoiceDueDate) {
       toast.error('Preencha todos os campos');
       return;
     }
@@ -57,12 +58,14 @@ const AdminFaturamento = () => {
       prefeitura_id: selectedPrefeitura,
       valor: parseFloat(invoiceValue),
       mes_referencia: invoiceMonth,
+      data_vencimento: invoiceDueDate,
     }, {
       onSuccess: () => {
         setShowNewInvoice(false);
         setSelectedPrefeitura('');
         setInvoiceValue('');
         setInvoiceMonth('');
+        setInvoiceDueDate('');
       }
     });
   };
@@ -126,7 +129,7 @@ const AdminFaturamento = () => {
             <CreditCard className="h-4 w-4 mr-2" />
             Definir Plano
           </Button>
-          <Button onClick={() => { setShowNewInvoice(true); setInvoiceMonth(currentMonth); }}>
+          <Button onClick={() => { setShowNewInvoice(true); setInvoiceMonth(currentMonth); setInvoiceDueDate(''); }}>
             <Plus className="h-4 w-4 mr-2" />
             Gerar Fatura
           </Button>
@@ -292,6 +295,10 @@ const AdminFaturamento = () => {
             <div className="space-y-2">
               <Label>Mês de Referência</Label>
               <Input type="month" value={invoiceMonth} onChange={(e) => setInvoiceMonth(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Data de Vencimento</Label>
+              <Input type="date" value={invoiceDueDate} onChange={(e) => setInvoiceDueDate(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Valor (R$)</Label>

@@ -5,6 +5,7 @@ import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import DadosAbertosSection from '@/components/dados-abertos/DadosAbertosSection';
 import { Button } from '@/components/ui/button';
 import { Loader2, Building2, ArrowLeft, BarChart3, Zap } from 'lucide-react';
+import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 
 const PrefeturaDadosAbertos = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -111,6 +112,7 @@ const PrefeturaDadosAbertos = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <LastUpdatedBanner emendas={emendas} />
         {loadingEmendas ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />

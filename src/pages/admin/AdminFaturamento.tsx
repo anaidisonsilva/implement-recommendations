@@ -297,6 +297,10 @@ const AdminFaturamento = () => {
               <Input type="month" value={invoiceMonth} onChange={(e) => setInvoiceMonth(e.target.value)} />
             </div>
             <div className="space-y-2">
+              <Label>Data de Vencimento</Label>
+              <Input type="date" value={invoiceDueDate} onChange={(e) => setInvoiceDueDate(e.target.value)} />
+            </div>
+            <div className="space-y-2">
               <Label>Valor (R$)</Label>
               <Input type="number" step="0.01" value={invoiceValue} onChange={(e) => setInvoiceValue(e.target.value)} placeholder="0.00" />
             </div>

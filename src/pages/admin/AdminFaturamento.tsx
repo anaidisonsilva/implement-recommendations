@@ -27,12 +27,13 @@ const AdminFaturamento = () => {
   const [selectedPrefeitura, setSelectedPrefeitura] = useState('');
   const [invoiceValue, setInvoiceValue] = useState('');
   const [invoiceMonth, setInvoiceMonth] = useState('');
+  const [invoiceDueDate, setInvoiceDueDate] = useState('');
   const [showSetPlan, setShowSetPlan] = useState(false);
   const [planPrefeitura, setPlanPrefeitura] = useState('');
   const [planValue, setPlanValue] = useState('');
 
   const handleGenerateInvoice = async () => {
-    if (!selectedPrefeitura || !invoiceValue || !invoiceMonth) {
+    if (!selectedPrefeitura || !invoiceValue || !invoiceMonth || !invoiceDueDate) {
       toast.error('Preencha todos os campos');
       return;
     }
@@ -57,6 +58,7 @@ const AdminFaturamento = () => {
       prefeitura_id: selectedPrefeitura,
       valor: parseFloat(invoiceValue),
       mes_referencia: invoiceMonth,
+      data_vencimento: invoiceDueDate,
     }, {
       onSuccess: () => {
         setShowNewInvoice(false);

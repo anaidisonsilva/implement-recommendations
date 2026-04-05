@@ -296,6 +296,62 @@ export type Database = {
           },
         ]
       }
+      faturas: {
+        Row: {
+          asaas_payment_id: string | null
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string
+          id: string
+          linha_digitavel: string | null
+          mes_referencia: string
+          prefeitura_id: string
+          status: string
+          updated_at: string
+          url_boleto: string | null
+          url_boleto_pdf: string | null
+          valor: number
+        }
+        Insert: {
+          asaas_payment_id?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento: string
+          id?: string
+          linha_digitavel?: string | null
+          mes_referencia: string
+          prefeitura_id: string
+          status?: string
+          updated_at?: string
+          url_boleto?: string | null
+          url_boleto_pdf?: string | null
+          valor: number
+        }
+        Update: {
+          asaas_payment_id?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string
+          id?: string
+          linha_digitavel?: string | null
+          mes_referencia?: string
+          prefeitura_id?: string
+          status?: string
+          updated_at?: string
+          url_boleto?: string | null
+          url_boleto_pdf?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faturas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pagamentos: {
         Row: {
           created_at: string
@@ -380,40 +436,49 @@ export type Database = {
       }
       prefeituras: {
         Row: {
+          asaas_customer_id: string | null
           ativo: boolean
           cnpj: string | null
           created_at: string
           estado: string
           id: string
+          is_teste: boolean
           logo_url: string | null
           municipio: string
           nome: string
           slug: string
           updated_at: string
+          valor_plano: number | null
         }
         Insert: {
+          asaas_customer_id?: string | null
           ativo?: boolean
           cnpj?: string | null
           created_at?: string
           estado?: string
           id?: string
+          is_teste?: boolean
           logo_url?: string | null
           municipio: string
           nome: string
           slug: string
           updated_at?: string
+          valor_plano?: number | null
         }
         Update: {
+          asaas_customer_id?: string | null
           ativo?: boolean
           cnpj?: string | null
           created_at?: string
           estado?: string
           id?: string
+          is_teste?: boolean
           logo_url?: string | null
           municipio?: string
           nome?: string
           slug?: string
           updated_at?: string
+          valor_plano?: number | null
         }
         Relationships: []
       }

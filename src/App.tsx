@@ -29,6 +29,8 @@ import Configuracoes from "./pages/Configuracoes";
 import AuditLogs from "./pages/AuditLogs";
 import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
 import AdminUsuarios from "./pages/admin/AdminUsuarios";
+import AdminFaturamento from "./pages/admin/AdminFaturamento";
+import PrefeituraFaturas from "./pages/prefeitura/PrefeituraFaturas";
 import PrefeituraPortal from "./pages/prefeitura/PrefeituraPortal";
 import PrefeituraAuth from "./pages/prefeitura/PrefeituraAuth";
 import PrefeturaDashboard from "./pages/prefeitura/PrefeturaDashboard";
@@ -96,6 +98,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/p/:slug/faturas"
+              element={
+                <ProtectedRoute>
+                  <PrefeituraLayout>
+                    <PrefeituraFaturas />
+                  </PrefeituraLayout>
+                </ProtectedRoute>
+              }
+            />
             
             {/* Rotas protegidas - Super Admin */}
             <Route
@@ -124,6 +136,16 @@ const App = () => (
                 <SuperAdminRoute>
                   <MainLayout>
                     <AdminPrefeituras />
+                  </MainLayout>
+                </SuperAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/faturamento"
+              element={
+                <SuperAdminRoute>
+                  <MainLayout>
+                    <AdminFaturamento />
                   </MainLayout>
                 </SuperAdminRoute>
               }

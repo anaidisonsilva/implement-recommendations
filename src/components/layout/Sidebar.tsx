@@ -14,6 +14,7 @@ import {
   Users,
   History,
   Zap,
+  Receipt,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -144,6 +145,23 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     >
                       <Building2 className="h-5 w-5" />
                       Prefeituras
+                    </Link>
+                  </li>
+                )}
+                {isSuperAdmin && (
+                  <li>
+                    <Link
+                      to="/admin/faturamento"
+                      onClick={onClose}
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        location.pathname === '/admin/faturamento'
+                          ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                      )}
+                    >
+                      <Receipt className="h-5 w-5" />
+                      Faturamento
                     </Link>
                   </li>
                 )}

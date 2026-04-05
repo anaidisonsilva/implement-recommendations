@@ -7,14 +7,17 @@ import {
   LogOut,
   Menu,
   Users,
+  Receipt,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { usePrefeituraBlockStatus } from '@/hooks/useFaturas';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import BlockBanner from '@/components/billing/BlockBanner';
 
 interface PrefeituraLayoutProps {
   children: ReactNode;
@@ -29,6 +32,7 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin' || r.role === 'super_admin');
+  const { data: blockStatus } = usePrefeituraBlockStatus(prefeitura?.id);
 
   const navigation = [
     {
@@ -41,11 +45,18 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
-    ...(isPrefeituraAdmin ? [{
-      name: 'Usuários',
-      href: `/p/${slug}/usuarios`,
-      icon: Users,
-    }] : []),
+    ...(isPrefeituraAdmin ? [
+      {
+        name: 'Usuários',
+        href: `/p/${slug}/usuarios`,
+        icon: Users,
+      },
+      {
+        name: 'Faturas',
+        href: `/p/${slug}/faturas`,
+        icon: Receipt,
+      },
+    ] : []),
   ];
 
   const isActive = (href: string) => location.pathname === href;
@@ -150,7 +161,10 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 p-4 lg:p-8">{children}</main>
+        <main className="flex-1 p-4 lg:p-8">
+          {blockStatus?.blocked && <BlockBanner reason={blockStatus.reason!} />}
+          {children}
+        </main>
       </div>
     </div>
   );

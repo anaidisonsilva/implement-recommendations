@@ -373,12 +373,7 @@ const PrefeituraPortal = () => {
                   <TableRow key={emenda.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {emenda.programa ? (
-                          <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-700 dark:text-blue-400 border border-blue-500/20">Programa</span>
-                        ) : (
-                          <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary border border-primary/20">Emenda</span>
-                        )}
-                        <span>{emenda.numero || '-'}</span>
+                        <span>{emenda.programa ? 'Programa' : 'Emenda'} Nº {emenda.numero || '-'}</span>
                         {emenda.especial && (
                           <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
                             <Zap className="h-3 w-3" /> PIX

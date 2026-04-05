@@ -31,6 +31,7 @@ export interface EmendaBasic {
   status: string;
   tipo_concedente: string;
   especial?: boolean;
+  programa?: boolean;
   data_disponibilizacao: string;
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;

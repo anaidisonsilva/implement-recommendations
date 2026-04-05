@@ -177,6 +177,12 @@ const TransparenciaPublica = () => {
                   Relatórios
                 </Link>
               </Button>
+              <Button variant="outline" asChild>
+                <Link to="/transparencia/dados-abertos">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Dados Abertos
+                </Link>
+              </Button>
               <Button asChild>
                 <Link to="/auth">
                   <LogIn className="mr-2 h-4 w-4" />

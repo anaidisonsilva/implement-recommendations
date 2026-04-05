@@ -65,6 +65,7 @@ const AdminFaturamento = () => {
         setSelectedPrefeitura('');
         setInvoiceValue('');
         setInvoiceMonth('');
+        setInvoiceDueDate('');
       }
     });
   };

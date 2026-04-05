@@ -45,19 +45,20 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
+  ];
+
+  const adminNavigation = isPrefeituraAdmin ? [
+    {
+      name: 'Usuários',
+      href: `/p/${slug}/usuarios`,
+      icon: Users,
+    },
     {
       name: 'Faturas',
       href: `/p/${slug}/faturas`,
       icon: Receipt,
     },
-    ...(isPrefeituraAdmin ? [
-      {
-        name: 'Usuários',
-        href: `/p/${slug}/usuarios`,
-        icon: Users,
-      },
-    ] : []),
-  ];
+  ] : [];
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -106,6 +107,30 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
             {item.name}
           </Link>
         ))}
+
+        {adminNavigation.length > 0 && (
+          <div className="mt-6">
+            <p className="mb-2 px-3 text-xs font-semibold uppercase text-muted-foreground/50">
+              Administração
+            </p>
+            {adminNavigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isActive(item.href)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* User section */}

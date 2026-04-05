@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUserRoles } from '@/hooks/useUserRoles';
+import { useIsPrefeituraAdmin } from '@/hooks/useUserRoles';
 import { usePrefeituraBlockStatus } from '@/hooks/useFaturas';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -27,11 +27,10 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura } = usePrefeituraBySlug(slug ?? '');
   const { signOut, profile } = useAuth();
-  const { data: roles } = useUserRoles();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isPrefeituraAdmin } = useIsPrefeituraAdmin(prefeitura?.id);
 
-  const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin' || r.role === 'super_admin');
   const { data: blockStatus } = usePrefeituraBlockStatus(prefeitura?.id);
 
   const navigation = [
@@ -54,7 +53,7 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       icon: Users,
     },
     {
-      name: 'Faturas',
+      name: 'Faturamento',
       href: `/p/${slug}/faturas`,
       icon: Receipt,
     },

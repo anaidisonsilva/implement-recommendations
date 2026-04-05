@@ -1,13 +1,16 @@
-import { useParams } from 'react-router-dom';
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, XCircle, ThumbsUp } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, XCircle, ThumbsUp, Receipt, Users } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
 import ValueProgressChart from '@/components/dashboard/ValueProgressChart';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
+import { useIsPrefeituraAdmin } from '@/hooks/useUserRoles';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -21,6 +24,7 @@ const formatCurrency = (value: number) => {
 const PrefeturaDashboard = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura } = usePrefeituraBySlug(slug ?? '');
+  const { isPrefeituraAdmin } = useIsPrefeituraAdmin(prefeitura?.id);
 
   const { data: emendas, isLoading } = useQuery({
     queryKey: ['emendas', 'prefeitura', prefeitura?.id],
@@ -161,6 +165,28 @@ const PrefeturaDashboard = () => {
         <ValueProgressChart stats={stats} />
         <ExecutionChart stats={stats} />
       </div>
+
+      {isPrefeituraAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Administração</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 sm:flex-row">
+            <Button asChild>
+              <Link to={`/p/${slug}/usuarios`}>
+                <Users className="h-4 w-4" />
+                Usuários
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to={`/p/${slug}/faturas`}>
+                <Receipt className="h-4 w-4" />
+                Faturamento
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recent emendas */}
       {emendas && emendas.length > 0 && (

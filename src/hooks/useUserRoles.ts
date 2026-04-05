@@ -54,6 +54,22 @@ export const useUserPrefeitura = () => {
   };
 };
 
+export const useIsPrefeituraAdmin = (prefeituraId?: string | null) => {
+  const { data: roles, isLoading } = useUserRoles();
+
+  const isPrefeituraAdmin = roles?.some((role) => {
+    if (role.role === 'super_admin') return true;
+    if (role.role !== 'prefeitura_admin') return false;
+    if (!prefeituraId) return true;
+    return role.prefeitura_id === prefeituraId;
+  }) ?? false;
+
+  return {
+    isPrefeituraAdmin,
+    isLoading,
+  };
+};
+
 export const useAllUserRoles = () => {
   return useQuery({
     queryKey: ['all_user_roles'],

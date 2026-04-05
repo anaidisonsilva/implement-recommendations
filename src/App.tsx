@@ -9,6 +9,7 @@ import AccessibilityWidget from "./components/accessibility/AccessibilityWidget"
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SuperAdminRoute from "./components/auth/SuperAdminRoute";
 import AdminRoute from "./components/auth/AdminRoute";
+import PrefeituraAdminRoute from "./components/auth/PrefeituraAdminRoute";
 import MainLayout from "./components/layout/MainLayout";
 import PrefeituraLayout from "./components/layout/PrefeituraLayout";
 import Dashboard from "./pages/Dashboard";
@@ -91,21 +92,21 @@ const App = () => (
             <Route
               path="/p/:slug/usuarios"
               element={
-                <ProtectedRoute>
+                <PrefeituraAdminRoute>
                   <PrefeituraLayout>
                     <AdminUsuarios />
                   </PrefeituraLayout>
-                </ProtectedRoute>
+                </PrefeituraAdminRoute>
               }
             />
             <Route
               path="/p/:slug/faturas"
               element={
-                <ProtectedRoute>
+                <PrefeituraAdminRoute>
                   <PrefeituraLayout>
                     <PrefeituraFaturas />
                   </PrefeituraLayout>
-                </ProtectedRoute>
+                </PrefeituraAdminRoute>
               }
             />
             

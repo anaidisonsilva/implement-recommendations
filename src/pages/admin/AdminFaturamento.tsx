@@ -129,7 +129,7 @@ const AdminFaturamento = () => {
             <CreditCard className="h-4 w-4 mr-2" />
             Definir Plano
           </Button>
-          <Button onClick={() => { setShowNewInvoice(true); setInvoiceMonth(currentMonth); }}>
+          <Button onClick={() => { setShowNewInvoice(true); setInvoiceMonth(currentMonth); setInvoiceDueDate(''); }}>
             <Plus className="h-4 w-4 mr-2" />
             Gerar Fatura
           </Button>

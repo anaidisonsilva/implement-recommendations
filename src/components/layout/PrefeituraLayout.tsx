@@ -129,13 +129,13 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-border bg-card lg:block">
+      <aside className="hidden w-64 flex-shrink-0 border-r border-border bg-card md:block">
         <NavContent />
       </aside>
 
       {/* Mobile header */}
       <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border bg-card px-4 py-3 lg:hidden">
+        <header className="flex items-center justify-between border-b border-border bg-card px-4 py-3 md:hidden">
           <div className="flex items-center gap-3">
             {prefeitura?.logo_url ? (
               <img

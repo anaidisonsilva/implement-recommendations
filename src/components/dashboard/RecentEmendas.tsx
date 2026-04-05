@@ -46,8 +46,11 @@ const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
                   <p className="font-medium text-foreground truncate max-w-full">
                     {emenda.objeto}
                   </p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {emenda.programa ? 'Programa' : 'Emenda'} Nº {emenda.numero || '-'} • {emenda.municipio}
+                  <p className="mt-0.5 text-sm text-muted-foreground animate-fade-in">
+                    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-foreground border border-border hover-scale mr-1">
+                      {emenda.programa ? '📋 Programa' : '📄 Emenda'}
+                    </span>
+                    Nº {emenda.numero || '-'} • {emenda.municipio}
                   </p>
                 </div>
                 <StatusBadge status={emenda.status} size="sm" />

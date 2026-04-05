@@ -24,6 +24,13 @@ serve(async (req) => {
     // Check if this is a webhook call from Asaas
     const url = new URL(req.url);
     if (url.searchParams.get("webhook") === "true") {
+      // Validate webhook token
+      const WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN");
+      const authToken = req.headers.get("asaas-access-token") || url.searchParams.get("token");
+      if (WEBHOOK_TOKEN && authToken !== WEBHOOK_TOKEN) {
+        return new Response(JSON.stringify({ error: "Unauthorized webhook" }), { status: 401, headers: CORS });
+      }
+
       const webhookData = await req.json();
       const { event, payment } = webhookData;
       if (!payment?.id) {

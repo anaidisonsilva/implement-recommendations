@@ -43,11 +43,22 @@ const RecentEmendas = ({ emendas, basePath = '' }: RecentEmendasProps) => {
             <div className="min-w-0 flex-1 overflow-hidden">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-foreground truncate max-w-full">
-                    {emenda.objeto}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-foreground truncate max-w-full">
+                      {emenda.objeto}
+                    </p>
+                    {emenda.programa ? (
+                      <span className="shrink-0 inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-400 border border-blue-500/20">
+                        Programa
+                      </span>
+                    ) : (
+                      <span className="shrink-0 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary border border-primary/20">
+                        Emenda
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    Nº {emenda.numero || 'Programa'} • {emenda.municipio}
+                    {emenda.numero ? `Nº ${emenda.numero}` : 'Sem número'} • {emenda.municipio}
                   </p>
                 </div>
                 <StatusBadge status={emenda.status} size="sm" />

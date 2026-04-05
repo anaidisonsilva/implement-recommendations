@@ -43,7 +43,7 @@ export const useGenerateInvoice = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (params: { prefeitura_id: string; valor: number; mes_referencia: string }) => {
+    mutationFn: async (params: { prefeitura_id: string; valor: number; mes_referencia: string; data_vencimento: string }) => {
       const { data, error } = await supabase.functions.invoke('asaas-billing', {
         body: { action: 'generate_invoice', ...params },
       });

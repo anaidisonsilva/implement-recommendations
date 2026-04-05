@@ -4,6 +4,7 @@ import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useYearFilter } from '@/hooks/useYearFilter';
+import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicDashboardCharts from '@/components/dashboard/PublicDashboardCharts';
 import YearFilter from '@/components/dashboard/YearFilter';
@@ -145,6 +146,7 @@ const PrefeituraPixPublica = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <LastUpdatedBanner emendas={emendas} />
         <div className="mb-8 rounded-xl border border-warning/30 bg-warning/10 p-4">
           <p className="text-sm text-muted-foreground">
             <strong className="text-warning">Painel público PIX:</strong> exibe apenas emendas especiais / PIX desta prefeitura.

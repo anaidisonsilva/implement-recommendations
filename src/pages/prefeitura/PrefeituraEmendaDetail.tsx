@@ -11,6 +11,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
+import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import StatusBadge from '@/components/dashboard/StatusBadge';
@@ -371,6 +372,7 @@ const PrefeituraEmendaDetail = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <LastUpdatedBanner emendas={emenda ? [emenda] : null} />
         <div className="space-y-6">
           {/* PIX Banner */}
           {emenda.especial && (

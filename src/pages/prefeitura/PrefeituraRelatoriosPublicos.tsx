@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
+import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
 import {
   ArrowLeft,
@@ -386,6 +387,7 @@ const PrefeituraRelatoriosPublicos = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <LastUpdatedBanner emendas={emendas} />
         {/* Summary Cards */}
         <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>

@@ -53,8 +53,9 @@ serve(async (req) => {
       }
 
       case "generate_invoice": {
-        const { prefeitura_id, valor, mes_referencia } = params;
-        if (!prefeitura_id || !valor || !mes_referencia) {
+        const { prefeitura_id, valor, mes_referencia, data_vencimento } = params;
+        if (!prefeitura_id || !valor || !mes_referencia || !data_vencimento) {
+          return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
           return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
         }
         // Get prefeitura data
@@ -79,9 +80,7 @@ serve(async (req) => {
         if (existing) {
           return new Response(JSON.stringify({ error: "Invoice already exists for this period" }), { status: 409, headers: CORS });
         }
-        // Calculate due date (10th of the reference month)
-        const [year, month] = mes_referencia.split("-");
-        const dueDate = `${year}-${month}-10`;
+        const dueDate = data_vencimento;
         // Create payment in Asaas
         const paymentRes = await fetch(`${ASAAS_BASE_URL}/payments`, {
           method: "POST",

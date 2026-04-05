@@ -21,6 +21,51 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // Check if this is a webhook call from Asaas
+    const url = new URL(req.url);
+    if (url.searchParams.get("webhook") === "true") {
+      const webhookData = await req.json();
+      const { event, payment } = webhookData;
+      if (!payment?.id) {
+        return new Response(JSON.stringify({ error: "Invalid webhook" }), { status: 400, headers: CORS });
+      }
+      const { data: fatura } = await supabase
+        .from("faturas")
+        .select("*")
+        .eq("asaas_payment_id", payment.id)
+        .maybeSingle();
+      if (!fatura) {
+        return new Response(JSON.stringify({ ok: true, message: "Invoice not found" }), { headers: { ...CORS, "Content-Type": "application/json" } });
+      }
+      let newStatus = fatura.status;
+      let dataPagamento = fatura.data_pagamento;
+      switch (event) {
+        case "PAYMENT_CONFIRMED":
+        case "PAYMENT_RECEIVED":
+          newStatus = "CONFIRMED";
+          dataPagamento = payment.confirmedDate || payment.paymentDate || new Date().toISOString().split("T")[0];
+          break;
+        case "PAYMENT_OVERDUE":
+          newStatus = "OVERDUE";
+          break;
+        case "PAYMENT_DELETED":
+        case "PAYMENT_REFUNDED":
+          newStatus = "CANCELLED";
+          break;
+      }
+      await supabase
+        .from("faturas")
+        .update({
+          status: newStatus,
+          data_pagamento: dataPagamento,
+          url_boleto: payment.bankSlipUrl || fatura.url_boleto,
+          linha_digitavel: payment.nossoNumero || fatura.linha_digitavel,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", fatura.id);
+      return new Response(JSON.stringify({ success: true }), { headers: { ...CORS, "Content-Type": "application/json" } });
+    }
+
     const { action, ...params } = await req.json();
 
     switch (action) {
@@ -29,7 +74,6 @@ serve(async (req) => {
         if (!prefeitura_id || !nome || !cnpj) {
           return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
         }
-        // Create customer in Asaas
         const customerRes = await fetch(`${ASAAS_BASE_URL}/customers`, {
           method: "POST",
           headers: { "Content-Type": "application/json", access_token: ASAAS_API_KEY },
@@ -44,7 +88,6 @@ serve(async (req) => {
         if (!customerRes.ok) {
           return new Response(JSON.stringify({ error: "Asaas error", details: customer }), { status: 400, headers: CORS });
         }
-        // Save customer ID
         await supabase
           .from("prefeituras")
           .update({ asaas_customer_id: customer.id })
@@ -55,10 +98,8 @@ serve(async (req) => {
       case "generate_invoice": {
         const { prefeitura_id, valor, mes_referencia, data_vencimento } = params;
         if (!prefeitura_id || !valor || !mes_referencia || !data_vencimento) {
-          return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
-          return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: CORS });
+          return new Response(JSON.stringify({ error: "Missing required fields (prefeitura_id, valor, mes_referencia, data_vencimento)" }), { status: 400, headers: CORS });
         }
-        // Get prefeitura data
         const { data: pref } = await supabase
           .from("prefeituras")
           .select("*")
@@ -70,7 +111,6 @@ serve(async (req) => {
         if (!pref.asaas_customer_id) {
           return new Response(JSON.stringify({ error: "Customer not registered in Asaas. Create customer first." }), { status: 400, headers: CORS });
         }
-        // Check if invoice already exists for this month
         const { data: existing } = await supabase
           .from("faturas")
           .select("id")
@@ -81,7 +121,6 @@ serve(async (req) => {
           return new Response(JSON.stringify({ error: "Invoice already exists for this period" }), { status: 409, headers: CORS });
         }
         const dueDate = data_vencimento;
-        // Create payment in Asaas
         const paymentRes = await fetch(`${ASAAS_BASE_URL}/payments`, {
           method: "POST",
           headers: { "Content-Type": "application/json", access_token: ASAAS_API_KEY },
@@ -98,7 +137,6 @@ serve(async (req) => {
         if (!paymentRes.ok) {
           return new Response(JSON.stringify({ error: "Asaas payment error", details: payment }), { status: 400, headers: CORS });
         }
-        // Save invoice
         const { data: fatura, error: faturaError } = await supabase
           .from("faturas")
           .insert({
@@ -118,51 +156,7 @@ serve(async (req) => {
         return new Response(JSON.stringify({ success: true, fatura }), { headers: { ...CORS, "Content-Type": "application/json" } });
       }
 
-      case "webhook": {
-        // Process Asaas webhook
-        const { event, payment } = params;
-        if (!payment?.id) {
-          return new Response(JSON.stringify({ error: "Invalid webhook" }), { status: 400, headers: CORS });
-        }
-        const { data: fatura } = await supabase
-          .from("faturas")
-          .select("*")
-          .eq("asaas_payment_id", payment.id)
-          .maybeSingle();
-        if (!fatura) {
-          return new Response(JSON.stringify({ ok: true, message: "Invoice not found, ignoring" }), { headers: { ...CORS, "Content-Type": "application/json" } });
-        }
-        let newStatus = fatura.status;
-        let dataPagamento = fatura.data_pagamento;
-        switch (event) {
-          case "PAYMENT_CONFIRMED":
-          case "PAYMENT_RECEIVED":
-            newStatus = "CONFIRMED";
-            dataPagamento = new Date().toISOString().split("T")[0];
-            break;
-          case "PAYMENT_OVERDUE":
-            newStatus = "OVERDUE";
-            break;
-          case "PAYMENT_DELETED":
-          case "PAYMENT_REFUNDED":
-            newStatus = "CANCELLED";
-            break;
-        }
-        await supabase
-          .from("faturas")
-          .update({
-            status: newStatus,
-            data_pagamento: dataPagamento,
-            url_boleto: payment.bankSlipUrl || fatura.url_boleto,
-            linha_digitavel: payment.nossoNumero || fatura.linha_digitavel,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", fatura.id);
-        return new Response(JSON.stringify({ success: true }), { headers: { ...CORS, "Content-Type": "application/json" } });
-      }
-
       case "check_status": {
-        // Check payment status in Asaas for a specific invoice
         const { fatura_id } = params;
         if (!fatura_id) {
           return new Response(JSON.stringify({ error: "Missing fatura_id" }), { status: 400, headers: CORS });
@@ -205,7 +199,6 @@ serve(async (req) => {
       }
 
       case "manual_confirm": {
-        // Manual confirmation by super admin
         const { fatura_id } = params;
         if (!fatura_id) {
           return new Response(JSON.stringify({ error: "Missing fatura_id" }), { status: 400, headers: CORS });

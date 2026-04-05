@@ -1,0 +1,1 @@
+UPDATE public.user_roles SET prefeitura_id = 'e42fe3b1-9fc4-40c1-b8c2-934358d03449' WHERE user_id = '165a7e46-be48-42bb-b278-a6e2eaf2593b' AND prefeitura_id = '6b194bdd-bece-4630-8fcd-c0287e97f972';

@@ -7,14 +7,17 @@ import {
   LogOut,
   Menu,
   Users,
+  Receipt,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { usePrefeituraBlockStatus } from '@/hooks/useFaturas';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import BlockBanner from '@/components/billing/BlockBanner';
 
 interface PrefeituraLayoutProps {
   children: ReactNode;

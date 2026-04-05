@@ -32,6 +32,7 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin' || r.role === 'super_admin');
+  const { data: blockStatus } = usePrefeituraBlockStatus(prefeitura?.id);
 
   const navigation = [
     {
@@ -44,11 +45,18 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
-    ...(isPrefeituraAdmin ? [{
-      name: 'Usuários',
-      href: `/p/${slug}/usuarios`,
-      icon: Users,
-    }] : []),
+    ...(isPrefeituraAdmin ? [
+      {
+        name: 'Usuários',
+        href: `/p/${slug}/usuarios`,
+        icon: Users,
+      },
+      {
+        name: 'Faturas',
+        href: `/p/${slug}/faturas`,
+        icon: Receipt,
+      },
+    ] : []),
   ];
 
   const isActive = (href: string) => location.pathname === href;

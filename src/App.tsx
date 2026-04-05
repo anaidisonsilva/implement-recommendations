@@ -22,6 +22,7 @@ import TransparenciaPublica from "./pages/TransparenciaPublica";
 import TransparenciaEmendaDetail from "./pages/TransparenciaEmendaDetail";
 import TransparenciaRelatorios from "./pages/TransparenciaRelatorios";
 import TransparenciaPix from "./pages/TransparenciaPix";
+import TransparenciaDadosAbertos from "./pages/TransparenciaDadosAbertos";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
@@ -34,6 +35,7 @@ import PrefeturaDashboard from "./pages/prefeitura/PrefeturaDashboard";
 import PrefeituraPixPublica from "./pages/prefeitura/PrefeituraPixPublica";
 import PrefeituraRelatoriosPublicos from "./pages/prefeitura/PrefeituraRelatoriosPublicos";
 import PrefeituraEmendaDetail from "./pages/prefeitura/PrefeituraEmendaDetail";
+import PrefeturaDadosAbertos from "./pages/prefeitura/PrefeturaDadosAbertos";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,7 @@ const App = () => (
             <Route path="/transparencia" element={<TransparenciaPublica />} />
             <Route path="/transparencia/pix" element={<TransparenciaPix />} />
             <Route path="/transparencia/relatorios" element={<TransparenciaRelatorios />} />
+            <Route path="/transparencia/dados-abertos" element={<TransparenciaDadosAbertos />} />
             <Route path="/transparencia/:id" element={<TransparenciaEmendaDetail />} />
             <Route path="/auth" element={<Auth />} />
             
@@ -60,6 +63,7 @@ const App = () => (
             <Route path="/p/:slug" element={<PrefeituraPortal />} />
             <Route path="/p/:slug/pix" element={<PrefeituraPixPublica />} />
             <Route path="/p/:slug/relatorios" element={<PrefeituraRelatoriosPublicos />} />
+            <Route path="/p/:slug/dados-abertos" element={<PrefeturaDadosAbertos />} />
             <Route path="/p/:slug/emenda/:id" element={<PrefeituraEmendaDetail />} />
             <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />
             <Route

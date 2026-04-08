@@ -57,11 +57,6 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/usuarios`,
       icon: Users,
     },
-    {
-      name: 'Faturamento',
-      href: `/p/${slug}/faturas`,
-      icon: Receipt,
-    },
   ] : [];
 
   const isActive = (href: string) => location.pathname === href;

@@ -151,14 +151,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     </Link>
                   </li>
                 )}
-                {isSuperAdmin && (
+                {(isSuperAdmin || (isPrefeituraAdmin && prefeitura?.slug)) && (
                   <li>
                     <Link
-                      to="/admin/faturamento"
+                      to={isSuperAdmin ? '/admin/faturamento' : `/p/${prefeitura.slug}/faturas`}
                       onClick={onClose}
                       className={cn(
                         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                        location.pathname === '/admin/faturamento'
+                        location.pathname === '/admin/faturamento' || location.pathname === `/p/${prefeitura?.slug}/faturas`
                           ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       )}

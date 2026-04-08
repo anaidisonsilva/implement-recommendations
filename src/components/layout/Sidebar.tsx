@@ -45,6 +45,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const { signOut, profile } = useAuth();
   const { data: roles } = useUserRoles();
+  const { prefeituraId } = useUserPrefeitura();
+  const { data: prefeitura } = usePrefeitura(prefeituraId ?? '');
   
   const isSuperAdmin = roles?.some(r => r.role === 'super_admin') ?? false;
   const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin') ?? false;

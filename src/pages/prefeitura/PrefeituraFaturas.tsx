@@ -1,14 +1,16 @@
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useFaturas } from '@/hooks/useFaturas';
-import { useUserPrefeitura } from '@/hooks/useUserRoles';
+import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { Receipt, ExternalLink, FileText } from 'lucide-react';
 
 const PrefeituraFaturas = () => {
-  const { prefeituraId } = useUserPrefeitura();
-  const { data: faturas, isLoading } = useFaturas(prefeituraId ?? undefined);
+  const { slug } = useParams<{ slug: string }>();
+  const { data: prefeitura } = usePrefeituraBySlug(slug ?? '');
+  const { data: faturas, isLoading } = useFaturas(prefeitura?.id);
 
   const statusColor = (status: string) => {
     switch (status) {

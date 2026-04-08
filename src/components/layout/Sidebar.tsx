@@ -19,8 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUserPrefeitura, useUserRoles } from '@/hooks/useUserRoles';
-import { usePrefeitura } from '@/hooks/usePrefeituras';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -45,8 +44,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const { signOut, profile } = useAuth();
   const { data: roles } = useUserRoles();
-  const { prefeituraId } = useUserPrefeitura();
-  const { data: prefeitura } = usePrefeitura(prefeituraId ?? '');
   
   const isSuperAdmin = roles?.some(r => r.role === 'super_admin') ?? false;
   const isPrefeituraAdmin = roles?.some(r => r.role === 'prefeitura_admin') ?? false;
@@ -151,14 +148,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     </Link>
                   </li>
                 )}
-                {(isSuperAdmin || (isPrefeituraAdmin && prefeitura?.slug)) && (
+                {(isSuperAdmin || isPrefeituraAdmin) && (
                   <li>
                     <Link
-                      to={isSuperAdmin ? '/admin/faturamento' : `/p/${prefeitura.slug}/faturas`}
+                      to={isSuperAdmin ? '/admin/faturamento' : '/faturas'}
                       onClick={onClose}
                       className={cn(
                         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                        location.pathname === '/admin/faturamento' || location.pathname === `/p/${prefeitura?.slug}/faturas`
+                        (location.pathname === '/admin/faturamento' || location.pathname === '/faturas')
                           ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       )}

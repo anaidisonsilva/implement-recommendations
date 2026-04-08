@@ -172,6 +172,16 @@ const App = () => (
               }
             />
             <Route
+              path="/faturas"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <PrefeituraFaturas />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/emendas"
               element={
                 <ProtectedRoute>

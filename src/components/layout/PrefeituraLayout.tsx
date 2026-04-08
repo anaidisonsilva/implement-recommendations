@@ -44,6 +44,11 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       href: `/p/${slug}/emendas`,
       icon: FileText,
     },
+    {
+      name: 'Faturamento',
+      href: `/p/${slug}/faturas`,
+      icon: Receipt,
+    },
   ];
 
   const adminNavigation = isPrefeituraAdmin ? [
@@ -51,11 +56,6 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
       name: 'Usuários',
       href: `/p/${slug}/usuarios`,
       icon: Users,
-    },
-    {
-      name: 'Faturamento',
-      href: `/p/${slug}/faturas`,
-      icon: Receipt,
     },
   ] : [];
 

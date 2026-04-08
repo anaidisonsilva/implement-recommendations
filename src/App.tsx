@@ -102,11 +102,11 @@ const App = () => (
             <Route
               path="/p/:slug/faturas"
               element={
-                <PrefeituraAdminRoute>
+                <ProtectedRoute>
                   <PrefeituraLayout>
                     <PrefeituraFaturas />
                   </PrefeituraLayout>
-                </PrefeituraAdminRoute>
+                </ProtectedRoute>
               }
             />
             

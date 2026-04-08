@@ -19,8 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUserPrefeitura, useUserRoles } from '@/hooks/useUserRoles';
-import { usePrefeitura } from '@/hooks/usePrefeituras';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 interface SidebarProps {
   isOpen: boolean;

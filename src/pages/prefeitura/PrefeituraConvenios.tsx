@@ -253,7 +253,7 @@ const PrefeituraConvenios = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedEmendas.map((emenda) => (
+                  {paginatedEmendas.map((emenda: any) => (
                     <TableRow key={emenda.id}>
                       <TableCell className="font-medium">{emenda.numero_convenio}</TableCell>
                       <TableCell>
@@ -294,6 +294,7 @@ const PrefeituraConvenios = () => {
                 <PaginationControls
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  totalItems={filteredEmendas.length}
                   itemsPerPage={itemsPerPage}
                   onPageChange={setCurrentPage}
                   onItemsPerPageChange={(val) => {

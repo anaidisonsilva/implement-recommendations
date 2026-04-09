@@ -39,6 +39,7 @@ import PrefeituraPixPublica from "./pages/prefeitura/PrefeituraPixPublica";
 import PrefeituraRelatoriosPublicos from "./pages/prefeitura/PrefeituraRelatoriosPublicos";
 import PrefeituraEmendaDetail from "./pages/prefeitura/PrefeituraEmendaDetail";
 import PrefeturaDadosAbertos from "./pages/prefeitura/PrefeturaDadosAbertos";
+import PrefeituraConvenios from "./pages/prefeitura/PrefeituraConvenios";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/p/:slug/pix" element={<PrefeituraPixPublica />} />
             <Route path="/p/:slug/relatorios" element={<PrefeituraRelatoriosPublicos />} />
             <Route path="/p/:slug/dados-abertos" element={<PrefeturaDadosAbertos />} />
+            <Route path="/p/:slug/convenios" element={<PrefeituraConvenios />} />
             <Route path="/p/:slug/emenda/:id" element={<PrefeituraEmendaDetail />} />
             <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />
             <Route

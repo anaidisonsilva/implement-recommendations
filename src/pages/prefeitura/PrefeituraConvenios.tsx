@@ -63,8 +63,11 @@ const PrefeituraConvenios = () => {
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();
-    // Sempre incluir o ano atual
-    years.add(new Date().getFullYear());
+    // Incluir anos de 2020 até o ano atual
+    const currentYear = new Date().getFullYear();
+    for (let y = 2020; y <= currentYear; y++) {
+      years.add(y);
+    }
     if (emendas && emendas.length > 0) {
       emendas.forEach((emenda) => {
         const year = new Date(emenda.data_disponibilizacao).getFullYear();
@@ -317,7 +320,12 @@ const PrefeituraConvenios = () => {
             <p className="mt-1 text-sm text-muted-foreground text-center max-w-lg">
               {hasActiveAdvancedFilters(filters)
                 ? 'Tente alterar os filtros de busca'
-                : `Não foram recebidas transferências voluntárias no período de 01/01/${selectedYear !== 'todos' ? selectedYear : new Date().getFullYear()} até ${new Date().toLocaleDateString('pt-BR')}.`}
+                : (() => {
+                    const ano = selectedYear !== 'todos' ? parseInt(selectedYear) : new Date().getFullYear();
+                    const currentYear = new Date().getFullYear();
+                    const dataFim = ano < currentYear ? `31/12/${ano}` : new Date().toLocaleDateString('pt-BR');
+                    return `Não foram recebidas transferências voluntárias no período de 01/01/${ano} até ${dataFim}.`;
+                  })()}
             </p>
           </div>
         )}

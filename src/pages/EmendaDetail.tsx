@@ -29,6 +29,7 @@ import { useEmenda, useDeleteEmenda } from '@/hooks/useEmendas';
 import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
 import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import PlanoTrabalhoSection from '@/components/plano-trabalho/PlanoTrabalhoSection';
+import EmendaDocumentosSection from '@/components/emendas/EmendaDocumentosSection';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import EditEmendaDialog from '@/components/emendas/EditEmendaDialog';
 import { toast } from 'sonner';
@@ -541,6 +542,11 @@ const EmendaDetail = () => {
       {/* Plano de Trabalho */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
         <PlanoTrabalhoSection emendaId={emenda.id} />
+      </div>
+
+      {/* Documentos Anexados */}
+      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <EmendaDocumentosSection emendaId={emenda.id} />
       </div>
 
       {/* Empresas Licitadas */}

@@ -226,6 +226,74 @@ export const useDocumentos = (planoTrabalhoId: string) => {
   });
 };
 
+export const useDocumentosByEmenda = (emendaId: string) => {
+  return useQuery({
+    queryKey: ['documentos-emenda', emendaId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('documentos')
+        .select('*')
+        .eq('emenda_id', emendaId)
+        .is('plano_trabalho_id', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as DocumentoDB[];
+    },
+    enabled: !!emendaId,
+  });
+};
+
+export const useAddDocumentoLink = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({ emendaId, nome, tipo, url }: { emendaId: string; nome: string; tipo: string; url: string }) => {
+      const { data, error } = await supabase
+        .from('documentos')
+        .insert({
+          emenda_id: emendaId,
+          nome,
+          tipo,
+          url,
+          uploaded_by: user?.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['documentos-emenda', data.emenda_id] });
+      toast.success('Documento vinculado com sucesso!');
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao vincular documento: ${error.message}`);
+    },
+  });
+};
+
+export const useDeleteDocumentoEmenda = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, emendaId }: { id: string; emendaId: string }) => {
+      const { error } = await supabase.from('documentos').delete().eq('id', id);
+      if (error) throw error;
+      return emendaId;
+    },
+    onSuccess: (emendaId) => {
+      queryClient.invalidateQueries({ queryKey: ['documentos-emenda', emendaId] });
+      toast.success('Documento removido!');
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao remover documento: ${error.message}`);
+    },
+  });
+};
+
 export const useUploadDocumento = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
+import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
 import PaginationControls from '@/components/ui/pagination-controls';
@@ -159,6 +160,25 @@ const PrefeituraConvenios = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <PublicExportDialog
+                emendas={filteredEmendas.map((e: any) => ({
+                  id: e.id,
+                  numero: e.numero_convenio || e.numero || '-',
+                  objeto: e.objeto,
+                  nome_concedente: e.nome_concedente,
+                  nome_parlamentar: e.nome_parlamentar,
+                  nome_recebedor: e.nome_recebedor,
+                  municipio: e.municipio,
+                  estado: e.estado,
+                  valor: Number(e.valor),
+                  valor_executado: Number(e.valor_executado),
+                  contrapartida: Number(e.contrapartida || 0),
+                  status: e.status,
+                  data_disponibilizacao: e.data_disponibilizacao,
+                }))}
+                title="Exportar Relatório de Convênios"
+                prefeitura={prefeitura}
+              />
               <YearFilter
                 selectedYear={selectedYear}
                 onYearChange={(year) => {

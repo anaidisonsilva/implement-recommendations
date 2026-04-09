@@ -314,10 +314,10 @@ const PrefeituraConvenios = () => {
             <p className="mt-4 text-lg font-medium text-muted-foreground">
               Nenhum convênio encontrado
             </p>
-            <p className="mt-1 text-sm text-muted-foreground text-center max-w-md">
+            <p className="mt-1 text-sm text-muted-foreground text-center max-w-lg">
               {hasActiveAdvancedFilters(filters)
                 ? 'Tente alterar os filtros de busca'
-                : `Não existem emendas com número de convênio cadastrado${selectedYear !== 'todos' ? ` para o ano de ${selectedYear}` : ''}. Quando um convênio for registrado no painel administrativo, ele aparecerá automaticamente aqui.`}
+                : `Não foram recebidas transferências voluntárias no período de 01/01/${selectedYear !== 'todos' ? selectedYear : new Date().getFullYear()} até ${new Date().toLocaleDateString('pt-BR')}.`}
             </p>
           </div>
         )}

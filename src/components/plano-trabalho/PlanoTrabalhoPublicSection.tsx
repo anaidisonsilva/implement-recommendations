@@ -1,5 +1,5 @@
 import { Loader2, FileText, Calendar, Download, ExternalLink } from 'lucide-react';
-import { usePlanoTrabalho, useCronogramaItems, useDocumentos } from '@/hooks/usePlanoTrabalho';
+import { usePlanoTrabalho, useCronogramaItems, useDocumentos, useDocumentosByEmenda } from '@/hooks/usePlanoTrabalho';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 
@@ -21,7 +21,14 @@ const formatDate = (dateString: string) => {
 const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProps) => {
   const { data: plano, isLoading: loadingPlano } = usePlanoTrabalho(emendaId);
   const { data: cronograma, isLoading: loadingCronograma } = useCronogramaItems(plano?.id || '');
-  const { data: documentos, isLoading: loadingDocumentos } = useDocumentos(plano?.id || '');
+  const { data: documentosPlano, isLoading: loadingDocumentosPlano } = useDocumentos(plano?.id || '');
+  const { data: documentosEmenda, isLoading: loadingDocumentosEmenda } = useDocumentosByEmenda(emendaId);
+
+  const allDocumentos = [
+    ...(documentosEmenda || []),
+    ...(documentosPlano || []),
+  ];
+  const loadingDocumentos = loadingDocumentosPlano || loadingDocumentosEmenda;
 
   if (loadingPlano) {
     return (
@@ -31,12 +38,12 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
     );
   }
 
-  if (!plano) {
+  if (!plano && (!documentosEmenda || documentosEmenda.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <FileText className="h-10 w-10 text-muted-foreground/50" />
         <p className="mt-3 text-sm text-muted-foreground">
-          Nenhum plano de trabalho cadastrado para esta emenda
+          Nenhum plano de trabalho ou documento cadastrado para esta emenda
         </p>
       </div>
     );
@@ -45,70 +52,74 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
   return (
     <div className="space-y-6 text-justify">
       {/* Detalhes do Plano */}
-      <div>
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <FileText className="h-5 w-5 text-primary" />
-          Plano de Trabalho
-        </h3>
-        <div className="mt-4 space-y-4">
+      {plano && (
+        <>
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Objeto</p>
-            <p className="mt-1 text-foreground">{plano.objeto}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Finalidade</p>
-            <p className="mt-1 text-foreground">{plano.finalidade}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Estimativa de Recursos</p>
-            <p className="mt-1 text-lg font-semibold text-primary">
-              {formatCurrency(Number(plano.estimativa_recursos))}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Cronograma */}
-      <div>
-        <h4 className="flex items-center gap-2 font-semibold text-foreground">
-          <Calendar className="h-5 w-5 text-primary" />
-          Cronograma de Execução
-        </h4>
-        
-        {loadingCronograma ? (
-          <div className="flex items-center justify-center py-4">
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          </div>
-        ) : cronograma && cronograma.length > 0 ? (
-          <div className="mt-4 space-y-3">
-            {cronograma.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-lg border border-border bg-muted/30 p-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="font-medium text-foreground">{item.etapa}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {formatDate(item.data_inicio)} a {formatDate(item.data_fim)}
-                    </p>
-                  </div>
-                  <span className="text-sm font-medium text-primary">
-                    {item.percentual_conclusao}%
-                  </span>
-                </div>
-                <div className="mt-3">
-                  <Progress value={item.percentual_conclusao} className="h-2" />
-                </div>
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+              <FileText className="h-5 w-5 text-primary" />
+              Plano de Trabalho
+            </h3>
+            <div className="mt-4 space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Objeto</p>
+                <p className="mt-1 text-foreground">{plano.objeto}</p>
               </div>
-            ))}
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Finalidade</p>
+                <p className="mt-1 text-foreground">{plano.finalidade}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Estimativa de Recursos</p>
+                <p className="mt-1 text-lg font-semibold text-primary">
+                  {formatCurrency(Number(plano.estimativa_recursos))}
+                </p>
+              </div>
+            </div>
           </div>
-        ) : (
-          <p className="mt-4 text-sm text-muted-foreground">
-            Nenhuma etapa cadastrada no cronograma
-          </p>
-        )}
-      </div>
+
+          {/* Cronograma */}
+          <div>
+            <h4 className="flex items-center gap-2 font-semibold text-foreground">
+              <Calendar className="h-5 w-5 text-primary" />
+              Cronograma de Execução
+            </h4>
+            
+            {loadingCronograma ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              </div>
+            ) : cronograma && cronograma.length > 0 ? (
+              <div className="mt-4 space-y-3">
+                {cronograma.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-border bg-muted/30 p-4"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground">{item.etapa}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {formatDate(item.data_inicio)} a {formatDate(item.data_fim)}
+                        </p>
+                      </div>
+                      <span className="text-sm font-medium text-primary">
+                        {item.percentual_conclusao}%
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <Progress value={item.percentual_conclusao} className="h-2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Nenhuma etapa cadastrada no cronograma
+              </p>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Documentos */}
       <div>
@@ -121,9 +132,9 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
           <div className="flex items-center justify-center py-4">
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
-        ) : documentos && documentos.length > 0 ? (
+        ) : allDocumentos.length > 0 ? (
           <div className="mt-4 space-y-2">
-            {documentos.map((doc) => (
+            {allDocumentos.map((doc) => (
               <div
                 key={doc.id}
                 className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3"

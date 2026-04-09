@@ -1,5 +1,5 @@
 import { Loader2, FileText, Calendar, Download, ExternalLink } from 'lucide-react';
-import { usePlanoTrabalho, useCronogramaItems, useDocumentos } from '@/hooks/usePlanoTrabalho';
+import { usePlanoTrabalho, useCronogramaItems, useDocumentos, useDocumentosByEmenda } from '@/hooks/usePlanoTrabalho';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 
@@ -21,7 +21,14 @@ const formatDate = (dateString: string) => {
 const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProps) => {
   const { data: plano, isLoading: loadingPlano } = usePlanoTrabalho(emendaId);
   const { data: cronograma, isLoading: loadingCronograma } = useCronogramaItems(plano?.id || '');
-  const { data: documentos, isLoading: loadingDocumentos } = useDocumentos(plano?.id || '');
+  const { data: documentosPlano, isLoading: loadingDocumentosPlano } = useDocumentos(plano?.id || '');
+  const { data: documentosEmenda, isLoading: loadingDocumentosEmenda } = useDocumentosByEmenda(emendaId);
+
+  const allDocumentos = [
+    ...(documentosEmenda || []),
+    ...(documentosPlano || []),
+  ];
+  const loadingDocumentos = loadingDocumentosPlano || loadingDocumentosEmenda;
 
   if (loadingPlano) {
     return (
@@ -31,12 +38,12 @@ const PlanoTrabalhoPublicSection = ({ emendaId }: PlanoTrabalhoPublicSectionProp
     );
   }
 
-  if (!plano) {
+  if (!plano && (!documentosEmenda || documentosEmenda.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <FileText className="h-10 w-10 text-muted-foreground/50" />
         <p className="mt-3 text-sm text-muted-foreground">
-          Nenhum plano de trabalho cadastrado para esta emenda
+          Nenhum plano de trabalho ou documento cadastrado para esta emenda
         </p>
       </div>
     );

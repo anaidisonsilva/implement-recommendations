@@ -134,6 +134,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "documentos_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas_publicas"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "documentos_plano_trabalho_id_fkey"
             columns: ["plano_trabalho_id"]
             isOneToOne: false
@@ -253,6 +260,13 @@ export type Database = {
             referencedRelation: "prefeituras"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "emendas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       empresas_licitacao: {
@@ -292,6 +306,13 @@ export type Database = {
             columns: ["emenda_id"]
             isOneToOne: false
             referencedRelation: "emendas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresas_licitacao_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas_publicas"
             referencedColumns: ["id"]
           },
         ]
@@ -348,6 +369,13 @@ export type Database = {
             columns: ["prefeitura_id"]
             isOneToOne: false
             referencedRelation: "prefeituras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faturas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras_publicas"
             referencedColumns: ["id"]
           },
         ]
@@ -430,6 +458,13 @@ export type Database = {
             columns: ["emenda_id"]
             isOneToOne: false
             referencedRelation: "emendas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "planos_trabalho_emenda_id_fkey"
+            columns: ["emenda_id"]
+            isOneToOne: false
+            referencedRelation: "emendas_publicas"
             referencedColumns: ["id"]
           },
         ]
@@ -572,11 +607,171 @@ export type Database = {
             referencedRelation: "prefeituras"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_roles_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      emendas_publicas: {
+        Row: {
+          anuencia_previa_sus: boolean | null
+          cnpj_recebedor: string | null
+          contrapartida: number | null
+          created_at: string | null
+          data_disponibilizacao: string | null
+          data_fim_vigencia: string | null
+          data_inicio_vigencia: string | null
+          especial: boolean | null
+          estado: string | null
+          gestor_responsavel: string | null
+          grupo_natureza_despesa: string | null
+          id: string | null
+          municipio: string | null
+          nome_concedente: string | null
+          nome_parlamentar: string | null
+          nome_recebedor: string | null
+          numero: string | null
+          numero_convenio: string | null
+          numero_plano_acao: string | null
+          numero_proposta: string | null
+          objeto: string | null
+          prefeitura_id: string | null
+          programa: boolean | null
+          status: Database["public"]["Enums"]["status_emenda"] | null
+          tipo_concedente: Database["public"]["Enums"]["tipo_concedente"] | null
+          tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"] | null
+          updated_at: string | null
+          valor: number | null
+          valor_executado: number | null
+        }
+        Insert: {
+          anuencia_previa_sus?: boolean | null
+          cnpj_recebedor?: string | null
+          contrapartida?: number | null
+          created_at?: string | null
+          data_disponibilizacao?: string | null
+          data_fim_vigencia?: string | null
+          data_inicio_vigencia?: string | null
+          especial?: boolean | null
+          estado?: string | null
+          gestor_responsavel?: string | null
+          grupo_natureza_despesa?: string | null
+          id?: string | null
+          municipio?: string | null
+          nome_concedente?: string | null
+          nome_parlamentar?: string | null
+          nome_recebedor?: string | null
+          numero?: string | null
+          numero_convenio?: string | null
+          numero_plano_acao?: string | null
+          numero_proposta?: string | null
+          objeto?: string | null
+          prefeitura_id?: string | null
+          programa?: boolean | null
+          status?: Database["public"]["Enums"]["status_emenda"] | null
+          tipo_concedente?:
+            | Database["public"]["Enums"]["tipo_concedente"]
+            | null
+          tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"] | null
+          updated_at?: string | null
+          valor?: number | null
+          valor_executado?: number | null
+        }
+        Update: {
+          anuencia_previa_sus?: boolean | null
+          cnpj_recebedor?: string | null
+          contrapartida?: number | null
+          created_at?: string | null
+          data_disponibilizacao?: string | null
+          data_fim_vigencia?: string | null
+          data_inicio_vigencia?: string | null
+          especial?: boolean | null
+          estado?: string | null
+          gestor_responsavel?: string | null
+          grupo_natureza_despesa?: string | null
+          id?: string | null
+          municipio?: string | null
+          nome_concedente?: string | null
+          nome_parlamentar?: string | null
+          nome_recebedor?: string | null
+          numero?: string | null
+          numero_convenio?: string | null
+          numero_plano_acao?: string | null
+          numero_proposta?: string | null
+          objeto?: string | null
+          prefeitura_id?: string | null
+          programa?: boolean | null
+          status?: Database["public"]["Enums"]["status_emenda"] | null
+          tipo_concedente?:
+            | Database["public"]["Enums"]["tipo_concedente"]
+            | null
+          tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"] | null
+          updated_at?: string | null
+          valor?: number | null
+          valor_executado?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emendas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emendas_prefeitura_id_fkey"
+            columns: ["prefeitura_id"]
+            isOneToOne: false
+            referencedRelation: "prefeituras_publicas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prefeituras_publicas: {
+        Row: {
+          ativo: boolean | null
+          created_at: string | null
+          estado: string | null
+          id: string | null
+          is_teste: boolean | null
+          logo_url: string | null
+          municipio: string | null
+          nome: string | null
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string | null
+          estado?: string | null
+          id?: string | null
+          is_teste?: boolean | null
+          logo_url?: string | null
+          municipio?: string | null
+          nome?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string | null
+          estado?: string | null
+          id?: string | null
+          is_teste?: boolean | null
+          logo_url?: string | null
+          municipio?: string | null
+          nome?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_prefeitura: { Args: { _user_id: string }; Returns: string }

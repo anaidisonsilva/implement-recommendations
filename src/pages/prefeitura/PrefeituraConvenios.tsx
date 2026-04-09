@@ -62,12 +62,15 @@ const PrefeituraConvenios = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
 
   const availableYears = useMemo(() => {
-    if (!emendas || emendas.length === 0) return [];
     const years = new Set<number>();
-    emendas.forEach((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
-      years.add(year);
-    });
+    // Sempre incluir o ano atual
+    years.add(new Date().getFullYear());
+    if (emendas && emendas.length > 0) {
+      emendas.forEach((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        years.add(year);
+      });
+    }
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
 
@@ -311,10 +314,10 @@ const PrefeituraConvenios = () => {
             <p className="mt-4 text-lg font-medium text-muted-foreground">
               Nenhum convênio encontrado
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground text-center max-w-md">
               {hasActiveAdvancedFilters(filters)
                 ? 'Tente alterar os filtros de busca'
-                : 'Emendas com número de convênio aparecerão aqui'}
+                : `Não existem emendas com número de convênio cadastrado${selectedYear !== 'todos' ? ` para o ano de ${selectedYear}` : ''}. Quando um convênio for registrado no painel administrativo, ele aparecerá automaticamente aqui.`}
             </p>
           </div>
         )}

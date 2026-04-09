@@ -21,6 +21,7 @@ import {
   Zap,
   Database,
   Clock,
+  Handshake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -220,6 +221,12 @@ const PrefeituraPortal = () => {
                 <Link to={`/p/${slug}/relatorios`}>
                   <BarChart3 className="mr-2 h-4 w-4" />
                   Relatórios
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/convenios`}>
+                  <Handshake className="mr-2 h-4 w-4" />
+                  Convênios
                 </Link>
               </Button>
               <Button variant="outline" asChild>

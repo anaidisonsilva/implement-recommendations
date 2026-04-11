@@ -271,9 +271,9 @@ const PrefeituraConvenios = () => {
                     <TableHead>Nº Convênio</TableHead>
                     <TableHead>Nº Emenda</TableHead>
                     <TableHead>Objeto</TableHead>
-                    <TableHead>Concedente</TableHead>
-                    <TableHead>Parlamentar</TableHead>
-                    <TableHead>Valor</TableHead>
+                    <TableHead>Valor Total</TableHead>
+                    <TableHead>Repassado</TableHead>
+                    <TableHead>Vigência</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
@@ -295,9 +295,13 @@ const PrefeituraConvenios = () => {
                         </div>
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
-                      <TableCell>{emenda.nome_concedente}</TableCell>
-                      <TableCell>{emenda.nome_parlamentar || '-'}</TableCell>
-                      <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>
+                      <TableCell>{formatCurrency(Number(emenda.valor) + Number(emenda.contrapartida || 0))}</TableCell>
+                      <TableCell>{formatCurrency(Number(emenda.valor_executado))}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        {emenda.data_inicio_vigencia
+                          ? `${new Date(emenda.data_inicio_vigencia).toLocaleDateString('pt-BR')} a ${emenda.data_fim_vigencia ? new Date(emenda.data_fim_vigencia).toLocaleDateString('pt-BR') : '-'}`
+                          : '-'}
+                      </TableCell>
                       <TableCell>
                         <StatusBadge status={emenda.status as any} />
                       </TableCell>

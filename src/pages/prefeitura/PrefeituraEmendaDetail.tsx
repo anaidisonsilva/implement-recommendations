@@ -368,11 +368,9 @@ const PrefeituraEmendaDetail = () => {
             </div>
             <div className="flex gap-2">
               <EmendaExportDropdown emenda={emenda} onExportPDF={handleExportPDF} />
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Voltar ao portal
-                </Link>
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
               </Button>
             </div>
           </div>
@@ -380,7 +378,15 @@ const PrefeituraEmendaDetail = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <LastUpdatedBanner emendas={emenda ? [emenda] : null} />
+        <PortalBreadcrumb
+          slug={slug!}
+          items={[
+            ...(emenda.numero_convenio
+              ? [{ label: 'Convênios', href: `/p/${slug}/convenios` }]
+              : []),
+            { label: emenda.numero_convenio ? `Convênio ${emenda.numero_convenio}` : `Emenda ${emenda.numero || emenda.id.slice(0, 8)}` },
+          ]}
+        />
         <div className="space-y-6">
           {/* PIX Banner */}
           {emenda.especial && (

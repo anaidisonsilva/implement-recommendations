@@ -38,6 +38,7 @@ const formatCurrency = (value: number) => {
 };
 
 const PrefeituraConvenios = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 
@@ -188,11 +189,9 @@ const PrefeituraConvenios = () => {
                 }}
                 availableYears={availableYears}
               />
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Voltar ao Portal
-                </Link>
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
               </Button>
             </div>
           </div>

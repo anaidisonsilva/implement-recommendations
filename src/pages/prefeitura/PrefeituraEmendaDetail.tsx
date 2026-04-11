@@ -329,6 +329,7 @@ const PrefeituraEmendaDetail = () => {
   const contrapartida = Number(emenda.contrapartida || 0);
   const valorTotal = valor + contrapartida;
   const valorExecutado = Number(emenda.valor_executado);
+  const valorRepassado = Number((emenda as any).valor_repassado || 0);
   const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
 
   return (
@@ -453,6 +454,12 @@ const PrefeituraEmendaDetail = () => {
                     </p>
                   </div>
                 )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Repassado</p>
+                  <p className="text-lg font-semibold text-foreground">
+                    {formatCurrency(valorRepassado)}
+                  </p>
+                </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Valor Total</p>
                   <p className="text-2xl font-bold text-primary">

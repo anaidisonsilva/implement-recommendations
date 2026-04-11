@@ -9,6 +9,7 @@ import { Loader2, Building2, ArrowLeft, BarChart3, Zap } from 'lucide-react';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 
 const PrefeturaDadosAbertos = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 

@@ -38,6 +38,7 @@ const NovaEmenda = () => {
     grupoNaturezaDespesa: '',
     valor: '',
     contrapartida: '',
+    valorRepassado: '',
     banco: '',
     contaCorrente: '',
     anuenciaPreviaSUS: false,
@@ -72,6 +73,7 @@ const NovaEmenda = () => {
       grupo_natureza_despesa: formData.grupoNaturezaDespesa,
       valor: parseFloat(formData.valor),
       contrapartida: formData.contrapartida ? parseFloat(formData.contrapartida) : null,
+      valor_repassado: formData.valorRepassado ? parseFloat(formData.valorRepassado) : 0,
       banco: formData.banco || null,
       conta_corrente: formData.contaCorrente || null,
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
@@ -364,6 +366,20 @@ const NovaEmenda = () => {
               </div>
               <p className="text-xs text-muted-foreground">
                 Soma automática: Concedente + Contrapartida
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="valorRepassado">Valor Repassado (R$)</Label>
+              <Input
+                id="valorRepassado"
+                type="number"
+                step="0.01"
+                placeholder="0,00 (opcional)"
+                value={formData.valorRepassado}
+                onChange={(e) => handleChange('valorRepassado', e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Valor transferido pelo governo à prefeitura
               </p>
             </div>
             <div className="space-y-2">

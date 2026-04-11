@@ -46,6 +46,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     grupo_natureza_despesa: '',
     valor: '',
     valor_executado: '',
+    valor_repassado: '',
     banco: '',
     conta_corrente: '',
     anuencia_previa_sus: false,
@@ -78,6 +79,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         grupo_natureza_despesa: emenda.grupo_natureza_despesa,
         valor: String(emenda.valor),
         valor_executado: String(emenda.valor_executado),
+        valor_repassado: String((emenda as any).valor_repassado || 0),
         banco: emenda.banco || '',
         conta_corrente: emenda.conta_corrente || '',
         anuencia_previa_sus: emenda.anuencia_previa_sus || false,
@@ -114,6 +116,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       grupo_natureza_despesa: formData.grupo_natureza_despesa,
       valor: parseFloat(formData.valor) || 0,
       valor_executado: parseFloat(formData.valor_executado) || 0,
+      valor_repassado: parseFloat(formData.valor_repassado) || 0,
       banco: formData.banco || null,
       conta_corrente: formData.conta_corrente || null,
       anuencia_previa_sus: formData.anuencia_previa_sus,
@@ -343,6 +346,16 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     step="0.01"
                     value={formData.valor_executado}
                     onChange={(e) => setFormData({ ...formData, valor_executado: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_repassado">Valor Repassado (R$)</Label>
+                  <Input
+                    id="valor_repassado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_repassado}
+                    onChange={(e) => setFormData({ ...formData, valor_repassado: e.target.value })}
                   />
                 </div>
               </div>

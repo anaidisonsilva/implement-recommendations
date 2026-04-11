@@ -188,6 +188,7 @@ const EmendaDetail = () => {
           <div class="valor-box"><div class="valor-label">VALOR CONCEDENTE</div><div class="valor-number">${formatCurrency(valor)}</div></div>
           <div class="valor-box"><div class="valor-label">CONTRAPARTIDA</div><div class="valor-number">${formatCurrency(contrapartida)}</div></div>
           <div class="valor-box"><div class="valor-label">VALOR TOTAL</div><div class="valor-number">${formatCurrency(valorTotal)}</div></div>
+          <div class="valor-box"><div class="valor-label">REPASSADO</div><div class="valor-number">${formatCurrency(valorRepassado)}</div></div>
           <div class="valor-box"><div class="valor-label">EXECUTADO</div><div class="valor-number">${formatCurrency(valorExecutado)}</div></div>
         </div>
 
@@ -265,6 +266,7 @@ const EmendaDetail = () => {
 
   const valor = Number(emenda.valor);
   const valorExecutado = Number(emenda.valor_executado);
+  const valorRepassado = Number((emenda as any).valor_repassado || 0);
   const contrapartida = Number(emenda.contrapartida || 0);
   const valorTotal = valor + contrapartida;
   const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
@@ -385,7 +387,7 @@ const EmendaDetail = () => {
         </div>
 
         {/* Valores - grid responsivo */}
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
           <div className="rounded-lg bg-muted/50 p-3">
             <p className="text-xs text-muted-foreground">Valor Concedente</p>
             <p className="text-lg font-semibold text-foreground">
@@ -402,6 +404,12 @@ const EmendaDetail = () => {
             <p className="text-xs text-muted-foreground">Valor Total</p>
             <p className="text-xl font-bold text-primary">
               {formatCurrency(valorTotal)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="text-xs text-muted-foreground">Valor Repassado</p>
+            <p className="text-lg font-semibold text-foreground">
+              {formatCurrency(valorRepassado)}
             </p>
           </div>
           <div className="rounded-lg bg-muted/50 p-3">

@@ -183,6 +183,7 @@ export type Database = {
           updated_at: string
           valor: number
           valor_executado: number
+          valor_repassado: number
         }
         Insert: {
           anuencia_previa_sus?: boolean | null
@@ -217,6 +218,7 @@ export type Database = {
           updated_at?: string
           valor: number
           valor_executado?: number
+          valor_repassado?: number
         }
         Update: {
           anuencia_previa_sus?: boolean | null
@@ -251,6 +253,7 @@ export type Database = {
           updated_at?: string
           valor?: number
           valor_executado?: number
+          valor_repassado?: number
         }
         Relationships: [
           {

@@ -1,0 +1,1 @@
+ALTER TABLE public.emendas ADD COLUMN valor_repassado numeric NOT NULL DEFAULT 0;

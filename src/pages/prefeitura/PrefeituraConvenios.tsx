@@ -296,7 +296,7 @@ const PrefeituraConvenios = () => {
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
                       <TableCell>{formatCurrency(Number(emenda.valor) + Number(emenda.contrapartida || 0))}</TableCell>
-                      <TableCell>{formatCurrency(Number(emenda.valor_executado))}</TableCell>
+                      <TableCell>{formatCurrency(Number(emenda.valor_repassado || 0))}</TableCell>
                       <TableCell className="text-xs whitespace-nowrap">
                         {emenda.data_inicio_vigencia
                           ? `${new Date(emenda.data_inicio_vigencia).toLocaleDateString('pt-BR')} a ${emenda.data_fim_vigencia ? new Date(emenda.data_fim_vigencia).toLocaleDateString('pt-BR') : '-'}`

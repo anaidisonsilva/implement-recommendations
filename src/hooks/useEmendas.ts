@@ -21,6 +21,7 @@ export interface EmendaDB {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
+  valor_repassado: number;
   banco: string | null;
   conta_corrente: string | null;
   anuencia_previa_sus: boolean | null;
@@ -65,6 +66,7 @@ export interface CreateEmendaInput {
   data_fim_vigencia?: string | null;
   especial?: boolean;
   programa?: boolean;
+  valor_repassado?: number;
 }
 
 export const useEmendas = () => {

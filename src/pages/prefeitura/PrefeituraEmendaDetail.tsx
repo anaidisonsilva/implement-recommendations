@@ -21,6 +21,7 @@ import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
 import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
+import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
@@ -62,6 +63,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const PrefeituraEmendaDetail = () => {
+  const navigate = useNavigate();
   const { slug, id } = useParams();
   const { data: prefeitura, isLoading: loadingPrefeitura } = usePrefeituraBySlug(slug ?? '');
   const { data: emenda, isLoading: loadingEmenda } = useEmenda(id || '');

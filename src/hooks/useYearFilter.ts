@@ -1,14 +1,14 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmendaDB } from '@/hooks/useEmendas';
 
 export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const yearFromUrl = searchParams.get('ano') || '';
-  const [selectedYear, setSelectedYearInternal] = useState<string>(yearFromUrl);
+
+  const selectedYear = yearFromUrl;
 
   const setSelectedYear = (year: string) => {
-    setSelectedYearInternal(year);
     const newParams = new URLSearchParams(searchParams);
     if (year && year !== '') {
       newParams.set('ano', year);
@@ -30,21 +30,17 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
 
-  // Auto-select: URL param > latest year
+  // Auto-select the latest year when available years are loaded and no URL param
   useEffect(() => {
-    if (availableYears.length > 0 && selectedYear === '') {
-      const urlYear = searchParams.get('ano');
-      if (urlYear && (urlYear === 'todos' || availableYears.includes(parseInt(urlYear)))) {
-        setSelectedYearInternal(urlYear);
-      } else {
-        setSelectedYear(availableYears[0].toString());
-      }
+    if (availableYears.length > 0 && !yearFromUrl) {
+      setSelectedYear(availableYears[0].toString());
     }
-  }, [availableYears, selectedYear]);
+  }, [availableYears, yearFromUrl]);
 
   const filteredEmendas = useMemo(() => {
     if (!emendas) return [];
     if (selectedYear === 'todos') return emendas;
+    if (!selectedYear) return emendas;
     
     return emendas.filter((emenda) => {
       const year = new Date(emenda.data_disponibilizacao).getFullYear();

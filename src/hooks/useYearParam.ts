@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 /**
@@ -7,11 +7,9 @@ import { useSearchParams } from 'react-router-dom';
  */
 export const useYearParam = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const yearFromUrl = searchParams.get('ano') || '';
-  const [selectedYear, setSelectedYearInternal] = useState<string>(yearFromUrl);
+  const selectedYear = searchParams.get('ano') || '';
 
   const setSelectedYear = useCallback((year: string) => {
-    setSelectedYearInternal(year);
     const newParams = new URLSearchParams(searchParams);
     if (year && year !== '') {
       newParams.set('ano', year);
@@ -20,13 +18,6 @@ export const useYearParam = () => {
     }
     setSearchParams(newParams, { replace: true });
   }, [searchParams, setSearchParams]);
-
-  // Auto-initialize from URL on mount
-  useEffect(() => {
-    if (yearFromUrl && yearFromUrl !== selectedYear) {
-      setSelectedYearInternal(yearFromUrl);
-    }
-  }, []);
 
   return { selectedYear, setSelectedYear };
 };

@@ -1,4 +1,5 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
@@ -8,6 +9,7 @@ import { Loader2, Building2, ArrowLeft, BarChart3, Zap } from 'lucide-react';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 
 const PrefeturaDadosAbertos = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 
@@ -88,11 +90,9 @@ const PrefeturaDadosAbertos = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Portal
-                </Link>
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
               </Button>
               <Button variant="outline" asChild>
                 <Link to={`/p/${slug}/pix`}>
@@ -112,6 +112,7 @@ const PrefeturaDadosAbertos = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PortalBreadcrumb slug={slug!} items={[{ label: 'Dados Abertos' }]} />
         <LastUpdatedBanner emendas={emendas} />
         {loadingEmendas ? (
           <div className="flex items-center justify-center py-16">

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
+import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
@@ -37,6 +38,7 @@ const formatCurrency = (value: number) => {
 };
 
 const PrefeituraConvenios = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 
@@ -187,11 +189,9 @@ const PrefeituraConvenios = () => {
                 }}
                 availableYears={availableYears}
               />
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Voltar ao Portal
-                </Link>
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
               </Button>
             </div>
           </div>
@@ -199,6 +199,7 @@ const PrefeituraConvenios = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PortalBreadcrumb slug={slug!} items={[{ label: 'Convênios' }]} />
         <LastUpdatedBanner emendas={emendas} />
 
         {/* Stats */}

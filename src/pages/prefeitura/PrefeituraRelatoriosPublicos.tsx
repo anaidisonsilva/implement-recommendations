@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -72,6 +73,7 @@ const statusOptions = [
 ];
 
 const PrefeituraRelatoriosPublicos = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 
@@ -323,10 +325,8 @@ const PrefeituraRelatoriosPublicos = () => {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="h-5 w-5" />
-                </Link>
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+                <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3">
                 {prefeitura.logo_url ? (
@@ -387,6 +387,7 @@ const PrefeituraRelatoriosPublicos = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PortalBreadcrumb slug={slug!} items={[{ label: 'Relatórios' }]} />
         <LastUpdatedBanner emendas={emendas} />
         {/* Summary Cards */}
         <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

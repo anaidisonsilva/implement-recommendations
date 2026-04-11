@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Building2,
@@ -21,6 +21,7 @@ import { useEmpresasByEmenda } from '@/hooks/useEmpresasLicitacao';
 import { usePlanoTrabalho, useCronogramaItems } from '@/hooks/usePlanoTrabalho';
 import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSection';
 import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
+import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { toast } from 'sonner';
 
 const formatCurrency = (value: number) => {
@@ -62,6 +63,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const PrefeituraEmendaDetail = () => {
+  const navigate = useNavigate();
   const { slug, id } = useParams();
   const { data: prefeitura, isLoading: loadingPrefeitura } = usePrefeituraBySlug(slug ?? '');
   const { data: emenda, isLoading: loadingEmenda } = useEmenda(id || '');
@@ -366,11 +368,9 @@ const PrefeituraEmendaDetail = () => {
             </div>
             <div className="flex gap-2">
               <EmendaExportDropdown emenda={emenda} onExportPDF={handleExportPDF} />
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Voltar ao portal
-                </Link>
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
               </Button>
             </div>
           </div>
@@ -378,6 +378,15 @@ const PrefeituraEmendaDetail = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PortalBreadcrumb
+          slug={slug!}
+          items={[
+            ...(emenda.numero_convenio
+              ? [{ label: 'Convênios', href: `/p/${slug}/convenios` }]
+              : []),
+            { label: emenda.numero_convenio ? `Convênio ${emenda.numero_convenio}` : `Emenda ${emenda.numero || emenda.id.slice(0, 8)}` },
+          ]}
+        />
         <LastUpdatedBanner emendas={emenda ? [emenda] : null} />
         <div className="space-y-6">
           {/* PIX Banner */}

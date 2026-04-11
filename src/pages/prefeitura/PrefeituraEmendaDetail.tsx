@@ -76,6 +76,7 @@ const PrefeituraEmendaDetail = () => {
     const contrapartida = Number(emenda.contrapartida || 0);
     const valorTotal = valor + contrapartida;
     const valorExecutado = Number(emenda.valor_executado);
+    const valorRepassado = Number((emenda as any).valor_repassado || 0);
     const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
 
     // Generate Plano de Trabalho section
@@ -229,6 +230,10 @@ const PrefeituraEmendaDetail = () => {
       <div class="summary-item">
         <div class="label">Valor Total</div>
         <div class="value">${formatCurrency(valorTotal)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Repassado</div>
+        <div class="value">${formatCurrency(valorRepassado)}</div>
       </div>
       <div class="summary-item">
         <div class="label">Executado</div>

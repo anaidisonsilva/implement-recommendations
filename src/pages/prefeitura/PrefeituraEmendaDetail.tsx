@@ -387,6 +387,7 @@ const PrefeituraEmendaDetail = () => {
             { label: emenda.numero_convenio ? `Convênio ${emenda.numero_convenio}` : `Emenda ${emenda.numero || emenda.id.slice(0, 8)}` },
           ]}
         />
+        <LastUpdatedBanner emendas={emenda ? [emenda] : null} />
         <div className="space-y-6">
           {/* PIX Banner */}
           {emenda.especial && (

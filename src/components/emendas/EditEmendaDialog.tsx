@@ -348,6 +348,16 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     onChange={(e) => setFormData({ ...formData, valor_executado: e.target.value })}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_repassado">Valor Repassado (R$)</Label>
+                  <Input
+                    id="valor_repassado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_repassado}
+                    onChange={(e) => setFormData({ ...formData, valor_repassado: e.target.value })}
+                  />
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">

@@ -48,6 +48,7 @@ const formatDate = (dateString: string) => {
 };
 
 const PrefeituraPixPublica = () => {
+  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 

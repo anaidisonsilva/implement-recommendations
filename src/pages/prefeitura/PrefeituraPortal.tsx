@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useYearParam } from '@/hooks/useYearParam';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import {
@@ -79,8 +80,8 @@ const PrefeituraPortal = () => {
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
   
-  // Year filter
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  // Year filter synced with URL
+  const { selectedYear, setSelectedYear } = useYearParam();
 
   const availableYears = useMemo(() => {
     if (!emendas || emendas.length === 0) return [];

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useYearParam } from '@/hooks/useYearParam';
 import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
@@ -97,7 +98,7 @@ const PrefeituraRelatoriosPublicos = () => {
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const { selectedYear, setSelectedYear } = useYearParam();
 
   // Calculate available years
   const availableYears = useMemo(() => {

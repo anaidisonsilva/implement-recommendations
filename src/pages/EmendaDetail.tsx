@@ -188,6 +188,7 @@ const EmendaDetail = () => {
           <div class="valor-box"><div class="valor-label">VALOR CONCEDENTE</div><div class="valor-number">${formatCurrency(valor)}</div></div>
           <div class="valor-box"><div class="valor-label">CONTRAPARTIDA</div><div class="valor-number">${formatCurrency(contrapartida)}</div></div>
           <div class="valor-box"><div class="valor-label">VALOR TOTAL</div><div class="valor-number">${formatCurrency(valorTotal)}</div></div>
+          <div class="valor-box"><div class="valor-label">REPASSADO</div><div class="valor-number">${formatCurrency(valorRepassado)}</div></div>
           <div class="valor-box"><div class="valor-label">EXECUTADO</div><div class="valor-number">${formatCurrency(valorExecutado)}</div></div>
         </div>
 

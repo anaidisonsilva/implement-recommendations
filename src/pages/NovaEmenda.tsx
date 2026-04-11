@@ -369,6 +369,20 @@ const NovaEmenda = () => {
               </p>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="valorRepassado">Valor Repassado (R$)</Label>
+              <Input
+                id="valorRepassado"
+                type="number"
+                step="0.01"
+                placeholder="0,00 (opcional)"
+                value={formData.valorRepassado}
+                onChange={(e) => handleChange('valorRepassado', e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Valor transferido pelo governo à prefeitura
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="banco">Banco</Label>
               <Input
                 id="banco"

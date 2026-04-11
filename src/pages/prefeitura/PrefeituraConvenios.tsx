@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useYearParam } from '@/hooks/useYearParam';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
@@ -62,7 +63,7 @@ const PrefeituraConvenios = () => {
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const { selectedYear, setSelectedYear } = useYearParam();
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();

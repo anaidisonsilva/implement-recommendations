@@ -1,8 +1,22 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { EmendaDB } from '@/hooks/useEmendas';
 
 export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const yearFromUrl = searchParams.get('ano') || '';
+
+  const selectedYear = yearFromUrl;
+
+  const setSelectedYear = (year: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (year && year !== '') {
+      newParams.set('ano', year);
+    } else {
+      newParams.delete('ano');
+    }
+    setSearchParams(newParams, { replace: true });
+  };
 
   const availableYears = useMemo(() => {
     if (!emendas || emendas.length === 0) return [];
@@ -16,16 +30,17 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
 
-  // Auto-select the latest year when available years are loaded
+  // Auto-select the latest year when available years are loaded and no URL param
   useEffect(() => {
-    if (availableYears.length > 0 && selectedYear === '') {
+    if (availableYears.length > 0 && !yearFromUrl) {
       setSelectedYear(availableYears[0].toString());
     }
-  }, [availableYears, selectedYear]);
+  }, [availableYears, yearFromUrl]);
 
   const filteredEmendas = useMemo(() => {
     if (!emendas) return [];
     if (selectedYear === 'todos') return emendas;
+    if (!selectedYear) return emendas;
     
     return emendas.filter((emenda) => {
       const year = new Date(emenda.data_disponibilizacao).getFullYear();
@@ -35,7 +50,6 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
 
   const stats = useMemo(() => {
     const data = filteredEmendas;
-    // Excluir emendas pendentes e canceladas dos cálculos de valores
     const emendasComValor = data.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
     const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
     const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);

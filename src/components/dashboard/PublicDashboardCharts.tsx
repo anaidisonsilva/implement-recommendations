@@ -1,4 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { useInView } from '@/hooks/useAnimations';
+import { cn } from '@/lib/utils';
 
 interface DashboardStats {
   totalEmendas: number;
@@ -26,6 +28,9 @@ const formatCurrency = (value: number) => {
 };
 
 const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
+  const { ref: pieRef, isInView: pieInView } = useInView(0.1);
+  const { ref: barRef, isInView: barInView } = useInView(0.1);
+
   const executado = stats.valorExecutado;
   const restante = stats.valorTotal - stats.valorExecutado;
   const percentual = stats.valorTotal > 0 ? (executado / stats.valorTotal) * 100 : 0;
@@ -46,8 +51,14 @@ const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      {/* Execução Orçamentária */}
-      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+      <div
+        ref={pieRef}
+        className={cn(
+          'rounded-xl border border-border bg-card p-5 shadow-sm',
+          'transform transition-all duration-600 ease-out',
+          pieInView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+        )}
+      >
         <h3 className="mb-4 font-semibold text-foreground">Execução Orçamentária</h3>
         
         <div className="flex items-center gap-6">
@@ -62,6 +73,9 @@ const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
                   outerRadius={65}
                   paddingAngle={2}
                   dataKey="value"
+                  isAnimationActive={pieInView}
+                  animationDuration={1200}
+                  animationEasing="ease-out"
                 >
                   {pieData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
@@ -78,7 +92,6 @@ const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
               </PieChart>
             </ResponsiveContainer>
             
-            {/* Center text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-2xl font-bold text-foreground">
                 {percentual.toFixed(0)}%
@@ -117,8 +130,15 @@ const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
         </div>
       </div>
 
-      {/* Distribuição por Status */}
-      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+      <div
+        ref={barRef}
+        className={cn(
+          'rounded-xl border border-border bg-card p-5 shadow-sm',
+          'transform transition-all duration-600 ease-out',
+          barInView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+        )}
+        style={{ transitionDelay: '100ms' }}
+      >
         <h3 className="mb-4 font-semibold text-foreground">Distribuição por Status</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -137,6 +157,9 @@ const PublicDashboardCharts = ({ stats }: PublicDashboardChartsProps) => {
                 dataKey="quantidade"
                 radius={[0, 4, 4, 0]}
                 fill="hsl(var(--primary))"
+                isAnimationActive={barInView}
+                animationDuration={1200}
+                animationEasing="ease-out"
               />
             </BarChart>
           </ResponsiveContainer>

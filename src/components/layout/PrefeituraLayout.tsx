@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
+import PageTransition from '@/components/ui/page-transition';
 import {
   Building2,
   LayoutDashboard,
@@ -187,7 +188,9 @@ const PrefeituraLayout = ({ children }: PrefeituraLayoutProps) => {
         {/* Main content */}
         <main className="flex-1 p-4 lg:p-8">
           {blockStatus?.blocked && <BlockBanner reason={blockStatus.reason!} />}
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
       </div>
     </div>

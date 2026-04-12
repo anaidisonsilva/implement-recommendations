@@ -85,7 +85,7 @@ export const useEmendas = () => {
       let query = supabase
         .from('emendas')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('data_disponibilizacao', { ascending: false });
 
       // Se não for super_admin, filtra pela prefeitura do usuário
       if (!isSuperAdmin && prefeituraId) {

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
@@ -10,6 +10,7 @@ import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicDashboardCharts from '@/components/dashboard/PublicDashboardCharts';
 import YearFilter from '@/components/dashboard/YearFilter';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
+import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import {
   ArrowLeft,
   Loader2,
@@ -24,6 +25,10 @@ import {
   PlayCircle,
   CheckCircle2,
   BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Filter,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,6 +40,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import StatsCard from '@/components/dashboard/StatsCard';
+
+const ITEMS_PER_PAGE = 10;
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -60,7 +67,7 @@ const PrefeituraPixPublica = () => {
         .select('*')
         .eq('prefeitura_id', prefeitura!.id)
         .eq('especial', true)
-        .order('created_at', { ascending: false });
+        .order('data_disponibilizacao', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -68,7 +75,28 @@ const PrefeituraPixPublica = () => {
     enabled: !!prefeitura?.id,
   });
 
-  const { selectedYear, setSelectedYear, availableYears, filteredEmendas, stats } = useYearFilter(emendas ?? []);
+  const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(emendas ?? []);
+
+  // Advanced search filters
+  const [filters, setFilters] = useState(defaultFilters);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredEmendas = useMemo(() => {
+    return applyAdvancedFilters(yearFilteredEmendas, filters);
+  }, [yearFilteredEmendas, filters]);
+
+  const totalPages = Math.ceil(filteredEmendas.length / ITEMS_PER_PAGE);
+  const paginatedEmendas = filteredEmendas.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const clearFilters = () => {
+    setFilters(defaultFilters);
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = hasActiveAdvancedFilters(filters);
 
   if (loadingPrefeitura || loadingEmendas) {
     return (
@@ -173,61 +201,115 @@ const PrefeituraPixPublica = () => {
 
         <div className="rounded-xl border border-border bg-card">
           <div className="border-b border-border p-4">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-4 mb-4">
               <div>
                 <h3 className="font-semibold text-foreground">Emendas PIX</h3>
                 <p className="text-sm text-muted-foreground">{filteredEmendas.length} registro(s)</p>
               </div>
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}`}>Ver portal completo</Link>
-              </Button>
+              <div className="flex items-center gap-2">
+                {hasActiveFilters && (
+                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
+                    <X className="mr-1 h-4 w-4" />
+                    Limpar filtros
+                  </Button>
+                )}
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}`}>Ver portal completo</Link>
+                </Button>
+              </div>
             </div>
+            <AdvancedSearch
+              filters={filters}
+              onFiltersChange={(newFilters) => {
+                setFilters(newFilters);
+                setCurrentPage(1);
+              }}
+              emendas={yearFilteredEmendas as any}
+            />
           </div>
 
-          {filteredEmendas.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Número</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Objeto</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead className="text-center">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEmendas.map((emenda) => (
-                    <TableRow key={emenda.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <span>{emenda.numero || 'Programa'}</span>
-                          <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
-                            <Zap className="h-3 w-3" /> PIX
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell><StatusBadge status={emenda.status as any} /></TableCell>
-                      <TableCell className="max-w-[280px] truncate">{emenda.objeto}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(Number(emenda.valor))}</TableCell>
-                      <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>
-                      <TableCell className="text-center">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link to={`/p/${slug}/emenda/${emenda.id}`}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </TableCell>
+          {paginatedEmendas.length > 0 ? (
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Número</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Objeto</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead className="text-center">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedEmendas.map((emenda) => (
+                      <TableRow key={emenda.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <span>{emenda.numero || 'Programa'}</span>
+                            <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
+                              <Zap className="h-3 w-3" /> PIX
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell><StatusBadge status={emenda.status as any} /></TableCell>
+                        <TableCell className="max-w-[280px] truncate">{emenda.objeto}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(Number(emenda.valor))}</TableCell>
+                        <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>
+                        <TableCell className="text-center">
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link to={`/p/${slug}/emenda/${emenda.id}`}>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                  <p className="text-sm text-muted-foreground">
+                    Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, filteredEmendas.length)} de {filteredEmendas.length}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      {currentPage} / {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <FileText className="h-12 w-12 text-muted-foreground/50" />
               <p className="mt-4 text-lg font-medium text-muted-foreground">Nenhuma emenda PIX encontrada</p>
+              {hasActiveFilters && (
+                <Button variant="outline" size="sm" className="mt-4" onClick={clearFilters}>
+                  <X className="mr-1 h-4 w-4" />
+                  Limpar filtros
+                </Button>
+              )}
             </div>
           )}
         </div>

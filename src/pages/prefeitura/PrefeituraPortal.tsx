@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useYearParam } from '@/hooks/useYearParam';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
+import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import {
   FileText,
   TrendingUp,
@@ -203,8 +204,27 @@ const PrefeituraPortal = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <YearFilter 
+            <div className="flex items-center gap-3 flex-wrap">
+              <PublicExportDialog
+                emendas={filteredEmendas.map((e: any) => ({
+                  id: e.id,
+                  numero: e.numero || '-',
+                  objeto: e.objeto,
+                  nome_concedente: e.nome_concedente,
+                  nome_parlamentar: e.nome_parlamentar,
+                  nome_recebedor: e.nome_recebedor,
+                  municipio: e.municipio,
+                  estado: e.estado,
+                  valor: Number(e.valor),
+                  valor_executado: Number(e.valor_executado),
+                  contrapartida: Number(e.contrapartida || 0),
+                  status: e.status,
+                  data_disponibilizacao: e.data_disponibilizacao,
+                }))}
+                title="Exportar Relatório de Emendas"
+                prefeitura={prefeitura}
+              />
+              <YearFilter
                 selectedYear={selectedYear}
                 onYearChange={(year) => {
                   setSelectedYear(year);

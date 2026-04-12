@@ -81,6 +81,7 @@ const PrefeituraPortal = () => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
   
   // Year filter synced with URL
   const { selectedYear, setSelectedYear } = useYearParam();
@@ -104,12 +105,18 @@ const PrefeituraPortal = () => {
 
   const yearFilteredEmendas = useMemo(() => {
     if (!emendas) return [];
-    if (selectedYear === 'todos') return emendas;
-    return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
-      return year === parseInt(selectedYear);
-    });
-  }, [emendas, selectedYear]);
+    let filtered = emendas;
+    if (selectedYear !== 'todos') {
+      filtered = filtered.filter((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        return year === parseInt(selectedYear);
+      });
+    }
+    if (esferaFilter !== 'todos') {
+      filtered = filtered.filter((emenda: any) => emenda.esfera === esferaFilter);
+    }
+    return filtered;
+  }, [emendas, selectedYear, esferaFilter]);
 
   const filteredEmendas = useMemo(() => {
     return applyAdvancedFilters(yearFilteredEmendas, filters);
@@ -240,7 +247,14 @@ const PrefeituraPortal = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <LastUpdatedBanner emendas={emendas} />
+        <LastUpdatedBanner
+          emendas={emendas}
+          esferaFilter={esferaFilter}
+          onEsferaChange={(value) => {
+            setEsferaFilter(value);
+            setCurrentPage(1);
+          }}
+        />
 
         {/* Stats Cards */}
         <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-5">
@@ -382,6 +396,7 @@ const PrefeituraPortal = () => {
               contrapartida: Number(e.contrapartida || 0),
               status: e.status,
               data_disponibilizacao: e.data_disponibilizacao,
+              esfera: e.esfera || 'federal',
             }))}
             title="Exportar Relatório de Emendas"
             prefeitura={prefeitura}

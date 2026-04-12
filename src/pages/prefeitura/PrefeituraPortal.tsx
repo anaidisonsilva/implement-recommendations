@@ -157,11 +157,7 @@ const PrefeituraPortal = () => {
   const hasActiveFilters = hasActiveAdvancedFilters(filters);
 
   if (loadingPrefeitura) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <FullPortalSkeleton />;
   }
 
   if (error || !prefeitura) {
@@ -393,9 +389,7 @@ const PrefeituraPortal = () => {
 
         {/* Table */}
         {loadingEmendas ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <TableSkeleton rows={5} />
         ) : paginatedEmendas.length > 0 ? (
           <div className="rounded-xl border border-border bg-card">
             <Table>

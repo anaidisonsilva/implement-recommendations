@@ -38,6 +38,7 @@ const TransparenciaDadosAbertos = () => {
     estado: e.estado,
     valor: Number(e.valor),
     valor_executado: Number(e.valor_executado),
+    valor_repassado: Number(e.valor_repassado),
     contrapartida: e.contrapartida ? Number(e.contrapartida) : null,
     status: e.status,
     data_disponibilizacao: e.data_disponibilizacao,
@@ -48,6 +49,13 @@ const TransparenciaDadosAbertos = () => {
     grupo_natureza_despesa: e.grupo_natureza_despesa,
     data_inicio_vigencia: e.data_inicio_vigencia,
     data_fim_vigencia: e.data_fim_vigencia,
+    numero_convenio: e.numero_convenio,
+    numero_proposta: e.numero_proposta,
+    numero_plano_acao: e.numero_plano_acao,
+    gestor_responsavel: e.gestor_responsavel,
+    banco: e.banco,
+    conta_corrente: e.conta_corrente,
+    anuencia_previa_sus: e.anuencia_previa_sus,
   }));
 
   return (

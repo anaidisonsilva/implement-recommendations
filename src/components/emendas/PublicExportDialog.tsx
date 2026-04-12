@@ -306,18 +306,18 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
   <table>
     <thead>
       <tr>
-306:         <th>Número</th>
-307:         <th>Esfera</th>
-308:         <th>Objeto</th>
-309:         <th>Parlamentar</th>
-310:         <th>Recebedor</th>
-311:         <th>Município</th>
-312:         <th class="text-right">Concedente</th>
-313:         <th class="text-right">Contrapartida</th>
-314:         <th class="text-right">Total</th>
-315:         <th class="text-right">Executado</th>
-316:         <th>Status</th>
-317:       </tr>
+        <th>Número</th>
+        <th>Esfera</th>
+        <th>Objeto</th>
+        <th>Parlamentar</th>
+        <th>Recebedor</th>
+        <th>Município</th>
+        <th class="text-right">Concedente</th>
+        <th class="text-right">Contrapartida</th>
+        <th class="text-right">Total</th>
+        <th class="text-right">Executado</th>
+        <th>Status</th>
+      </tr>
     </thead>
     <tbody>
       ${emendas.map((e) => {

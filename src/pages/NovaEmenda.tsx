@@ -45,6 +45,7 @@ const NovaEmenda = () => {
     hasAnuencia: false,
     especial: false,
     programa: false,
+    esfera: 'federal' as 'federal' | 'estadual',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,6 +80,7 @@ const NovaEmenda = () => {
       anuencia_previa_sus: formData.hasAnuencia ? formData.anuenciaPreviaSUS : null,
       especial: formData.especial,
       programa: formData.programa,
+      esfera: formData.esfera,
     };
 
     await createEmenda.mutateAsync(input);
@@ -177,7 +179,22 @@ const NovaEmenda = () => {
         {/* Concedente e Parlamentar */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-foreground">Origem do Recurso</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="esfera">Esfera *</Label>
+              <Select
+                value={formData.esfera}
+                onValueChange={(value) => handleChange('esfera', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a esfera" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="federal">🇧🇷 Federal</SelectItem>
+                  <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="tipoConcedente">Tipo de Emenda *</Label>
               <Select

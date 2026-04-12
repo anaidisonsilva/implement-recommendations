@@ -17,6 +17,7 @@ const EmendasList = () => {
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -42,10 +43,12 @@ const EmendasList = () => {
         especialFilter === 'todos' || 
         (especialFilter === 'sim' && emenda.especial) || 
         (especialFilter === 'nao' && !emenda.especial);
+      const matchesEsfera =
+        esferaFilter === 'todos' || (emenda as any).esfera === esferaFilter;
 
-      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial;
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera;
     });
-  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter]);
+  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter, esferaFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -64,6 +67,7 @@ const EmendasList = () => {
     setStatusFilter('todos');
     setConcedenteFilter('todos');
     setEspecialFilter('todos');
+    setEsferaFilter('todos');
     setCurrentPage(1);
   };
 
@@ -119,6 +123,11 @@ const EmendasList = () => {
         especialFilter={especialFilter}
         onEspecialChange={(value) => {
           setEspecialFilter(value);
+          setCurrentPage(1);
+        }}
+        esferaFilter={esferaFilter}
+        onEsferaChange={(value) => {
+          setEsferaFilter(value);
           setCurrentPage(1);
         }}
         onClearFilters={clearFilters}

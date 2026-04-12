@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Building2, Calendar, MapPin, User, Banknote } from 'lucide-react';
 import { EmendaDB } from '@/hooks/useEmendas';
 import StatusBadge from '@/components/dashboard/StatusBadge';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useInView } from '@/hooks/useAnimations';
 import { cn } from '@/lib/utils';
@@ -55,8 +56,11 @@ const EmendaCard = ({ emenda, index = 0 }: EmendaCardProps) => {
               </p>
             </div>
           </div>
-          <div className="shrink-0">
+          <div className="flex flex-col items-end gap-1.5 shrink-0">
             <StatusBadge status={emenda.status} />
+            <Badge variant={(emenda as any).esfera === 'estadual' ? 'secondary' : 'outline'} className="text-[10px] px-2 py-0">
+              {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}
+            </Badge>
           </div>
         </div>
 

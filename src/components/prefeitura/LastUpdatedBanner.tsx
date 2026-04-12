@@ -40,8 +40,8 @@ const LastUpdatedBanner = ({ emendas, esferaFilter = 'todos', onEsferaChange }: 
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todas as Esferas</SelectItem>
-            <SelectItem value="federal">🇧🇷 Federal</SelectItem>
-            <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+            <SelectItem value="federal">Federal</SelectItem>
+            <SelectItem value="estadual">Estadual</SelectItem>
           </SelectContent>
         </Select>
       )}

@@ -4,6 +4,7 @@ import { useYearParam } from '@/hooks/useYearParam';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
+import { FullPortalSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 import {
   FileText,
   TrendingUp,

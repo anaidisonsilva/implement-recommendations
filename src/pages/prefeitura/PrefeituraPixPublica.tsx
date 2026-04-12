@@ -222,8 +222,8 @@ const PrefeituraPixPublica = () => {
               filters={filters}
               onFiltersChange={(newFilters) => {
                 setFilters(newFilters);
-                setCurrentPage(1);
               }}
+              onResetPage={() => setCurrentPage(1)}
               emendas={yearFilteredEmendas as any}
             />
           </div>

@@ -75,7 +75,16 @@ const PrefeituraPixPublica = () => {
     enabled: !!prefeitura?.id,
   });
 
-  const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(emendas ?? []);
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+
+  // Filter by esfera before year filter
+  const esferaFilteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (esferaFilter === 'todos') return emendas;
+    return emendas.filter((e: any) => e.esfera === esferaFilter);
+  }, [emendas, esferaFilter]);
+
+  const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(esferaFilteredEmendas);
 
   // Advanced search filters
   const [filters, setFilters] = useState(defaultFilters);

@@ -410,14 +410,15 @@ const PrefeituraPortal = () => {
           <div className="rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Número</TableHead>
-                  <TableHead>Objeto</TableHead>
-                  <TableHead>Concedente</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-center">Ações</TableHead>
-                </TableRow>
+                 <TableRow>
+399:                   <TableHead>Número</TableHead>
+400:                   <TableHead>Esfera</TableHead>
+401:                   <TableHead>Objeto</TableHead>
+402:                   <TableHead>Concedente</TableHead>
+403:                   <TableHead>Valor</TableHead>
+404:                   <TableHead>Status</TableHead>
+405:                   <TableHead className="text-center">Ações</TableHead>
+406:                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedEmendas.map((emenda) => (
@@ -433,6 +434,11 @@ const PrefeituraPortal = () => {
                           </span>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                        {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}
+                      </span>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
                     <TableCell>{emenda.nome_concedente}</TableCell>

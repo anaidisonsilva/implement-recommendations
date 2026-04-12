@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import PageTransition from '@/components/ui/page-transition';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <Header onMenuClick={() => setSidebarOpen(true)} />
         
         <main className="flex-1 overflow-auto p-4 lg:p-6">
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
 
         <footer className="border-t border-border bg-card px-4 py-3 text-center text-xs text-muted-foreground">

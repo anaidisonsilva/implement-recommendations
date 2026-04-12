@@ -437,7 +437,7 @@ const PrefeituraPortal = () => {
                     </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                        {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}
+                        {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
                       </span>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>

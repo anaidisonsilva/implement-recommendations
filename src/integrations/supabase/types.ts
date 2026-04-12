@@ -161,6 +161,7 @@ export type Database = {
           data_disponibilizacao: string
           data_fim_vigencia: string | null
           data_inicio_vigencia: string | null
+          esfera: Database["public"]["Enums"]["esfera_emenda"]
           especial: boolean
           estado: string
           gestor_responsavel: string
@@ -196,6 +197,7 @@ export type Database = {
           data_disponibilizacao: string
           data_fim_vigencia?: string | null
           data_inicio_vigencia?: string | null
+          esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
           gestor_responsavel: string
@@ -231,6 +233,7 @@ export type Database = {
           data_disponibilizacao?: string
           data_fim_vigencia?: string | null
           data_inicio_vigencia?: string | null
+          esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
           gestor_responsavel?: string
@@ -792,6 +795,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "prefeitura_admin" | "prefeitura_user"
+      esfera_emenda: "federal" | "estadual"
       status_emenda:
         | "pendente"
         | "aprovado"
@@ -933,6 +937,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "prefeitura_admin", "prefeitura_user"],
+      esfera_emenda: ["federal", "estadual"],
       status_emenda: [
         "pendente",
         "aprovado",

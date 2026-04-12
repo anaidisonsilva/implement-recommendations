@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface BreadcrumbItem {
   label: string;
@@ -17,7 +18,13 @@ const PortalBreadcrumb = ({ slug, items }: PortalBreadcrumbProps) => {
   return (
     <nav aria-label="Navegação de páginas" className="mb-4">
       <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-        <li className="flex items-center">
+        <li
+          className={cn(
+            'flex items-center transform transition-all duration-300 ease-out',
+            'translate-x-0 opacity-100'
+          )}
+          style={{ animationDelay: '0ms' }}
+        >
           <Link
             to={`/p/${slug}`}
             className="flex items-center gap-1 transition-colors hover:text-foreground"
@@ -27,7 +34,13 @@ const PortalBreadcrumb = ({ slug, items }: PortalBreadcrumbProps) => {
           </Link>
         </li>
         {items.map((item, index) => (
-          <li key={index} className="flex items-center gap-1">
+          <li
+            key={index}
+            className={cn(
+              'flex items-center gap-1 animate-fade-in'
+            )}
+            style={{ animationDelay: `${(index + 1) * 100}ms`, animationFillMode: 'both' }}
+          >
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
             {item.href ? (
               <Link

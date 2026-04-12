@@ -1,5 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardStats } from '@/types/emenda';
+import { useInView } from '@/hooks/useAnimations';
+import { cn } from '@/lib/utils';
 
 interface ValueProgressChartProps {
   stats: DashboardStats;
@@ -15,6 +17,7 @@ const formatCurrency = (value: number) => {
 };
 
 const ValueProgressChart = ({ stats }: ValueProgressChartProps) => {
+  const { ref, isInView } = useInView(0.1);
   const executado = stats.valorExecutado;
   const restante = stats.valorTotal - stats.valorExecutado;
   const percentual = stats.valorTotal > 0 ? (executado / stats.valorTotal) * 100 : 0;
@@ -27,7 +30,14 @@ const ValueProgressChart = ({ stats }: ValueProgressChartProps) => {
   const COLORS = ['hsl(155, 60%, 40%)', 'hsl(210, 15%, 88%)'];
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+    <div
+      ref={ref}
+      className={cn(
+        'rounded-xl border border-border bg-card p-5 shadow-sm',
+        'transform transition-all duration-600 ease-out',
+        isInView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+      )}
+    >
       <h3 className="mb-4 font-semibold text-foreground">Execução Orçamentária</h3>
       
       <div className="flex items-center gap-6">
@@ -42,6 +52,9 @@ const ValueProgressChart = ({ stats }: ValueProgressChartProps) => {
                 outerRadius={65}
                 paddingAngle={2}
                 dataKey="value"
+                isAnimationActive={isInView}
+                animationDuration={1200}
+                animationEasing="ease-out"
               >
                 {data.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index]} />
@@ -58,7 +71,6 @@ const ValueProgressChart = ({ stats }: ValueProgressChartProps) => {
             </PieChart>
           </ResponsiveContainer>
           
-          {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-2xl font-bold text-foreground">
               {percentual.toFixed(0)}%

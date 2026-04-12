@@ -25,6 +25,7 @@ interface EmendaData {
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
+  esfera?: string;
 }
 
 interface PrefeituraInfo {
@@ -70,6 +71,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       const jsonData = emendas.map((e) => ({
         numero: e.numero,
         objeto: e.objeto,
+        esfera: e.esfera === 'estadual' ? 'Estadual' : 'Federal',
         parlamentar: e.nome_parlamentar || null,
         concedente: e.nome_concedente || null,
         recebedor: e.nome_recebedor,
@@ -102,12 +104,13 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const headers = ['Número', 'Esfera', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
       const rows = emendas.map((e) => {
         const valorConc = Number(e.valor);
         const valorContra = Number(e.contrapartida || 0);
         return [
           e.numero,
+          e.esfera === 'estadual' ? 'Estadual' : 'Federal',
           `"${e.objeto.replace(/"/g, '""')}"`,
           `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
           `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
@@ -303,17 +306,18 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
   <table>
     <thead>
       <tr>
-        <th>Número</th>
-        <th>Objeto</th>
-        <th>Parlamentar</th>
-        <th>Recebedor</th>
-        <th>Município</th>
-        <th class="text-right">Concedente</th>
-        <th class="text-right">Contrapartida</th>
-        <th class="text-right">Total</th>
-        <th class="text-right">Executado</th>
-        <th>Status</th>
-      </tr>
+306:         <th>Número</th>
+307:         <th>Esfera</th>
+308:         <th>Objeto</th>
+309:         <th>Parlamentar</th>
+310:         <th>Recebedor</th>
+311:         <th>Município</th>
+312:         <th class="text-right">Concedente</th>
+313:         <th class="text-right">Contrapartida</th>
+314:         <th class="text-right">Total</th>
+315:         <th class="text-right">Executado</th>
+316:         <th>Status</th>
+317:       </tr>
     </thead>
     <tbody>
       ${emendas.map((e) => {
@@ -323,6 +327,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         return `
         <tr>
           <td>${e.numero}</td>
+          <td>${(e as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}</td>
           <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
           <td>${e.nome_parlamentar || '-'}</td>
           <td>${e.nome_recebedor}</td>

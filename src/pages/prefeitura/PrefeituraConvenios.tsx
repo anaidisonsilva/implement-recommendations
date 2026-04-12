@@ -62,6 +62,7 @@ const PrefeituraConvenios = () => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const { selectedYear, setSelectedYear } = useYearParam();
 
@@ -89,12 +90,18 @@ const PrefeituraConvenios = () => {
 
   const yearFilteredEmendas = useMemo(() => {
     if (!emendas) return [];
-    if (selectedYear === 'todos') return emendas;
-    return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
-      return year === parseInt(selectedYear);
-    });
-  }, [emendas, selectedYear]);
+    let filtered = emendas;
+    if (selectedYear !== 'todos') {
+      filtered = filtered.filter((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        return year === parseInt(selectedYear);
+      });
+    }
+    if (esferaFilter !== 'todos') {
+      filtered = filtered.filter((emenda: any) => emenda.esfera === esferaFilter);
+    }
+    return filtered;
+  }, [emendas, selectedYear, esferaFilter]);
 
   const filteredEmendas = useMemo(() => {
     return applyAdvancedFilters(yearFilteredEmendas, filters);
@@ -201,7 +208,14 @@ const PrefeituraConvenios = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <PortalBreadcrumb slug={slug!} items={[{ label: 'Convênios' }]} />
-        <LastUpdatedBanner emendas={emendas} />
+        <LastUpdatedBanner
+          emendas={emendas}
+          esferaFilter={esferaFilter}
+          onEsferaChange={(value) => {
+            setEsferaFilter(value);
+            setCurrentPage(1);
+          }}
+        />
 
         {/* Stats */}
         <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-5">
@@ -270,14 +284,15 @@ const PrefeituraConvenios = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nº Convênio</TableHead>
-                    <TableHead>Nº Emenda</TableHead>
-                    <TableHead>Objeto</TableHead>
-                    <TableHead>Valor Total</TableHead>
-                    <TableHead>Repassado</TableHead>
-                    <TableHead>Vigência</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Ações</TableHead>
+                     <TableHead>Nº Convênio</TableHead>
+                     <TableHead>Nº Emenda</TableHead>
+                     <TableHead>Esfera</TableHead>
+                     <TableHead>Objeto</TableHead>
+                     <TableHead>Valor Total</TableHead>
+                     <TableHead>Repassado</TableHead>
+                     <TableHead>Vigência</TableHead>
+                     <TableHead>Status</TableHead>
+                     <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -295,6 +310,11 @@ const PrefeituraConvenios = () => {
                             </span>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${(emenda as any).esfera === 'estadual' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        </span>
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
                       <TableCell>{formatCurrency(Number(emenda.valor) + Number(emenda.contrapartida || 0))}</TableCell>

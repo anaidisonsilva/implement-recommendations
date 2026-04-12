@@ -205,25 +205,6 @@ const PrefeituraPortal = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <PublicExportDialog
-                emendas={filteredEmendas.map((e: any) => ({
-                  id: e.id,
-                  numero: e.numero || '-',
-                  objeto: e.objeto,
-                  nome_concedente: e.nome_concedente,
-                  nome_parlamentar: e.nome_parlamentar,
-                  nome_recebedor: e.nome_recebedor,
-                  municipio: e.municipio,
-                  estado: e.estado,
-                  valor: Number(e.valor),
-                  valor_executado: Number(e.valor_executado),
-                  contrapartida: Number(e.contrapartida || 0),
-                  status: e.status,
-                  data_disponibilizacao: e.data_disponibilizacao,
-                }))}
-                title="Exportar Relatório de Emendas"
-                prefeitura={prefeitura}
-              />
               <YearFilter
                 selectedYear={selectedYear}
                 onYearChange={(year) => {
@@ -383,11 +364,32 @@ const PrefeituraPortal = () => {
           />
         </div>
 
-        {/* Results count */}
-        <p className="mb-4 text-sm text-muted-foreground">
-          {filteredEmendas.length} emenda(s) encontrada(s)
-          {selectedYear !== 'todos' && ` em ${selectedYear}`}
-        </p>
+        {/* Results count + Export */}
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {filteredEmendas.length} emenda(s) encontrada(s)
+            {selectedYear !== 'todos' && ` em ${selectedYear}`}
+          </p>
+          <PublicExportDialog
+            emendas={filteredEmendas.map((e: any) => ({
+              id: e.id,
+              numero: e.numero || '-',
+              objeto: e.objeto,
+              nome_concedente: e.nome_concedente,
+              nome_parlamentar: e.nome_parlamentar,
+              nome_recebedor: e.nome_recebedor,
+              municipio: e.municipio,
+              estado: e.estado,
+              valor: Number(e.valor),
+              valor_executado: Number(e.valor_executado),
+              contrapartida: Number(e.contrapartida || 0),
+              status: e.status,
+              data_disponibilizacao: e.data_disponibilizacao,
+            }))}
+            title="Exportar Relatório de Emendas"
+            prefeitura={prefeitura}
+          />
+        </div>
 
         {/* Table */}
         {loadingEmendas ? (

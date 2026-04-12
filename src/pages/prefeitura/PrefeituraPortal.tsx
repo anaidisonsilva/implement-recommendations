@@ -410,15 +410,15 @@ const PrefeituraPortal = () => {
           <div className="rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
-                 <TableRow>
-399:                   <TableHead>Número</TableHead>
-400:                   <TableHead>Esfera</TableHead>
-401:                   <TableHead>Objeto</TableHead>
-402:                   <TableHead>Concedente</TableHead>
-403:                   <TableHead>Valor</TableHead>
-404:                   <TableHead>Status</TableHead>
-405:                   <TableHead className="text-center">Ações</TableHead>
-406:                 </TableRow>
+                <TableRow>
+                  <TableHead>Número</TableHead>
+                  <TableHead>Esfera</TableHead>
+                  <TableHead>Objeto</TableHead>
+                  <TableHead>Concedente</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-center">Ações</TableHead>
+                </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedEmendas.map((emenda) => (

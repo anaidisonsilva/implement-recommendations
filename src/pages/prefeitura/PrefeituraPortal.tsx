@@ -81,6 +81,7 @@ const PrefeituraPortal = () => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
   
   // Year filter synced with URL
   const { selectedYear, setSelectedYear } = useYearParam();
@@ -104,12 +105,18 @@ const PrefeituraPortal = () => {
 
   const yearFilteredEmendas = useMemo(() => {
     if (!emendas) return [];
-    if (selectedYear === 'todos') return emendas;
-    return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
-      return year === parseInt(selectedYear);
-    });
-  }, [emendas, selectedYear]);
+    let filtered = emendas;
+    if (selectedYear !== 'todos') {
+      filtered = filtered.filter((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        return year === parseInt(selectedYear);
+      });
+    }
+    if (esferaFilter !== 'todos') {
+      filtered = filtered.filter((emenda: any) => emenda.esfera === esferaFilter);
+    }
+    return filtered;
+  }, [emendas, selectedYear, esferaFilter]);
 
   const filteredEmendas = useMemo(() => {
     return applyAdvancedFilters(yearFilteredEmendas, filters);
@@ -240,7 +247,14 @@ const PrefeituraPortal = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <LastUpdatedBanner emendas={emendas} />
+        <LastUpdatedBanner
+          emendas={emendas}
+          esferaFilter={esferaFilter}
+          onEsferaChange={(value) => {
+            setEsferaFilter(value);
+            setCurrentPage(1);
+          }}
+        />
 
         {/* Stats Cards */}
         <div className="mb-6 grid gap-4 grid-cols-2 lg:grid-cols-5">
@@ -382,6 +396,7 @@ const PrefeituraPortal = () => {
               contrapartida: Number(e.contrapartida || 0),
               status: e.status,
               data_disponibilizacao: e.data_disponibilizacao,
+              esfera: e.esfera || 'federal',
             }))}
             title="Exportar Relatório de Emendas"
             prefeitura={prefeitura}
@@ -395,14 +410,15 @@ const PrefeituraPortal = () => {
           <div className="rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Número</TableHead>
-                  <TableHead>Objeto</TableHead>
-                  <TableHead>Concedente</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-center">Ações</TableHead>
-                </TableRow>
+                 <TableRow>
+399:                   <TableHead>Número</TableHead>
+400:                   <TableHead>Esfera</TableHead>
+401:                   <TableHead>Objeto</TableHead>
+402:                   <TableHead>Concedente</TableHead>
+403:                   <TableHead>Valor</TableHead>
+404:                   <TableHead>Status</TableHead>
+405:                   <TableHead className="text-center">Ações</TableHead>
+406:                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedEmendas.map((emenda) => (
@@ -418,6 +434,11 @@ const PrefeituraPortal = () => {
                           </span>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                        {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}
+                      </span>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
                     <TableCell>{emenda.nome_concedente}</TableCell>

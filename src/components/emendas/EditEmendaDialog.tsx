@@ -58,6 +58,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     data_fim_vigencia: '',
     especial: false,
     programa: false,
+    esfera: 'federal' as EmendaDB['esfera'],
     status: '' as EmendaDB['status'],
   });
 
@@ -91,6 +92,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         data_fim_vigencia: emenda.data_fim_vigencia || '',
         especial: emenda.especial || false,
         programa: emenda.programa || false,
+        esfera: (emenda as any).esfera || 'federal',
         status: emenda.status,
       });
     }
@@ -128,6 +130,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       data_fim_vigencia: formData.data_fim_vigencia || null,
       especial: formData.especial,
       programa: formData.programa,
+      esfera: formData.esfera,
       status: formData.status,
     });
     
@@ -196,8 +199,23 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
 
             {/* Concedente e Parlamentar */}
             <div className="space-y-4">
-              <h4 className="font-medium text-foreground">Concedente e Parlamentar</h4>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <h4 className="font-medium text-foreground">Origem do Recurso</h4>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="esfera">Esfera *</Label>
+                  <Select
+                    value={formData.esfera}
+                    onValueChange={(value) => setFormData({ ...formData, esfera: value as EmendaDB['esfera'] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="federal">🇧🇷 Federal</SelectItem>
+                      <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="tipo_concedente">Tipo de Concedente *</Label>
                   <Select

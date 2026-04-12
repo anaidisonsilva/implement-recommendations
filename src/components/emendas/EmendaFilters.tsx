@@ -19,6 +19,8 @@ interface EmendaFiltersProps {
   onConcedenteChange: (value: TipoConcedente | 'todos') => void;
   especialFilter?: 'todos' | 'sim' | 'nao';
   onEspecialChange?: (value: 'todos' | 'sim' | 'nao') => void;
+  esferaFilter?: 'todos' | 'federal' | 'estadual';
+  onEsferaChange?: (value: 'todos' | 'federal' | 'estadual') => void;
   onClearFilters: () => void;
 }
 
@@ -31,10 +33,12 @@ const EmendaFilters = ({
   onConcedenteChange,
   especialFilter = 'todos',
   onEspecialChange,
+  esferaFilter = 'todos',
+  onEsferaChange,
   onClearFilters,
 }: EmendaFiltersProps) => {
   const hasActiveFilters =
-    searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos';
+    searchTerm || statusFilter !== 'todos' || concedenteFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos';
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -79,6 +83,20 @@ const EmendaFilters = ({
             <SelectItem value="outro">Outro</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Esfera filter */}
+        {onEsferaChange && (
+          <Select value={esferaFilter} onValueChange={onEsferaChange}>
+            <SelectTrigger className="w-full lg:w-36">
+              <SelectValue placeholder="Esfera" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todas Esferas</SelectItem>
+              <SelectItem value="federal">🇧🇷 Federal</SelectItem>
+              <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
 
         {/* Especial filter */}
         {onEspecialChange && (

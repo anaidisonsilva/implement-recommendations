@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { toast } from 'sonner';
 
+export type EsferaEmenda = 'federal' | 'estadual';
+
 export interface EmendaDB {
   id: string;
   numero: string | null;
@@ -33,6 +35,7 @@ export interface EmendaDB {
   data_fim_vigencia: string | null;
   especial: boolean;
   programa: boolean;
+  esfera: EsferaEmenda;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;
@@ -67,6 +70,7 @@ export interface CreateEmendaInput {
   especial?: boolean;
   programa?: boolean;
   valor_repassado?: number;
+  esfera?: EsferaEmenda;
 }
 
 export const useEmendas = () => {

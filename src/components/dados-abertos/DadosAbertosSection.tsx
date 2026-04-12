@@ -26,6 +26,7 @@ interface EmendaData {
   estado: string;
   valor: number;
   valor_executado: number;
+  valor_repassado?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
@@ -36,6 +37,13 @@ interface EmendaData {
   grupo_natureza_despesa: string;
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
+  numero_convenio?: string | null;
+  numero_proposta?: string | null;
+  numero_plano_acao?: string | null;
+  gestor_responsavel?: string;
+  banco?: string | null;
+  conta_corrente?: string | null;
+  anuencia_previa_sus?: boolean | null;
 }
 
 interface DadosAbertosSectionProps {
@@ -73,6 +81,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
   const buildRows = () =>
     emendas.map((e) => ({
       numero: e.numero || '',
+      numero_convenio: e.numero_convenio || '',
+      numero_proposta: e.numero_proposta || '',
+      numero_plano_acao: e.numero_plano_acao || '',
       tipo: e.programa ? 'Programa' : 'Emenda',
       especial_pix: e.especial ? 'Sim' : 'Não',
       objeto: e.objeto,
@@ -84,10 +95,12 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       tipo_recebedor: tipoRecebedorLabels[e.tipo_recebedor] || e.tipo_recebedor,
       municipio: e.municipio,
       estado: e.estado,
+      gestor_responsavel: e.gestor_responsavel || '',
       grupo_natureza_despesa: e.grupo_natureza_despesa,
       valor_concedente: Number(e.valor),
       contrapartida: Number(e.contrapartida || 0),
       valor_total: Number(e.valor) + Number(e.contrapartida || 0),
+      valor_repassado: Number(e.valor_repassado || 0),
       valor_executado: Number(e.valor_executado),
       percentual_execucao:
         Number(e.valor) + Number(e.contrapartida || 0) > 0
@@ -100,6 +113,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       data_disponibilizacao: e.data_disponibilizacao,
       data_inicio_vigencia: e.data_inicio_vigencia || '',
       data_fim_vigencia: e.data_fim_vigencia || '',
+      banco: e.banco || '',
+      conta_corrente: e.conta_corrente || '',
+      anuencia_previa_sus: e.anuencia_previa_sus === true ? 'Sim' : e.anuencia_previa_sus === false ? 'Não' : '',
     }));
 
   const downloadFile = (content: string, filename: string, type: string) => {
@@ -144,10 +160,11 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       const output = {
         metadata: {
           fonte: prefeituraName || 'Portal de Transparência',
-          descricao: 'Dados abertos de emendas parlamentares',
+          descricao: 'Dados abertos de emendas parlamentares e convênios',
           data_geracao: new Date().toISOString(),
           total_registros: rows.length,
           licenca: 'Creative Commons Attribution 4.0 (CC BY 4.0)',
+          base_legal: 'Lei 12.527/2011, Decreto 8.777/2016, LC 210/2024, Recomendação MPC-MG 01/2025',
         },
         dados: rows,
       };
@@ -173,6 +190,7 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       xml += `    <data_geracao>${new Date().toISOString()}</data_geracao>\n`;
       xml += `    <total_registros>${rows.length}</total_registros>\n`;
       xml += '    <licenca>Creative Commons Attribution 4.0 (CC BY 4.0)</licenca>\n';
+      xml += '    <base_legal>Lei 12.527/2011, Decreto 8.777/2016, LC 210/2024, Recomendação MPC-MG 01/2025</base_legal>\n';
       xml += '  </metadata>\n';
       xml += '  <emendas>\n';
       rows.forEach((r) => {
@@ -195,8 +213,8 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
 
   const datasets = [
     {
-      title: 'Emendas Parlamentares',
-      description: 'Dataset completo com todas as emendas, valores, status e informações de vigência.',
+      title: 'Emendas Parlamentares e Convênios',
+      description: 'Dataset completo com todas as emendas, convênios, valores, repasses, status e informações de vigência.',
       records: emendas.length,
       formats: [
         { label: 'CSV', icon: FileSpreadsheet, color: 'text-green-600', handler: handleExportCSV, key: 'csv' },
@@ -204,6 +222,39 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
         { label: 'XML', icon: FileCode, color: 'text-orange-600', handler: handleExportXML, key: 'xml' },
       ],
     },
+  ];
+
+  const dictionaryEntries = [
+    ['numero', 'Texto', 'Número identificador da emenda parlamentar'],
+    ['numero_convenio', 'Texto', 'Número do convênio ou instrumento de transferência'],
+    ['numero_proposta', 'Texto', 'Número da proposta junto ao concedente'],
+    ['numero_plano_acao', 'Texto', 'Número do plano de ação vinculado'],
+    ['tipo', 'Texto', 'Classificação: Emenda ou Programa'],
+    ['especial_pix', 'Texto', 'Indica se é emenda especial PIX (Sim/Não)'],
+    ['objeto', 'Texto', 'Descrição do objeto da emenda ou convênio'],
+    ['parlamentar', 'Texto', 'Nome do parlamentar autor da emenda'],
+    ['tipo_concedente', 'Texto', 'Tipo do concedente (Parlamentar, Comissão, Bancada, Outro)'],
+    ['concedente', 'Texto', 'Nome do órgão/entidade concedente dos recursos'],
+    ['recebedor', 'Texto', 'Nome do ente recebedor (convenente)'],
+    ['cnpj_recebedor', 'Texto', 'CNPJ do ente recebedor'],
+    ['tipo_recebedor', 'Texto', 'Tipo do recebedor (Adm. Pública, Entidade sem Fins Lucrativos, Consórcio Público, PJ Privada, Outro)'],
+    ['municipio', 'Texto', 'Município beneficiário dos recursos'],
+    ['estado', 'Texto', 'Unidade Federativa (UF) do município'],
+    ['gestor_responsavel', 'Texto', 'Nome do gestor responsável pela execução'],
+    ['grupo_natureza_despesa', 'Texto', 'Grupo e natureza da despesa conforme classificação orçamentária'],
+    ['valor_concedente', 'Numérico (R$)', 'Valor pactuado pelo concedente'],
+    ['contrapartida', 'Numérico (R$)', 'Valor de contrapartida do convenente'],
+    ['valor_total', 'Numérico (R$)', 'Valor global (concedente + contrapartida)'],
+    ['valor_repassado', 'Numérico (R$)', 'Valor efetivamente repassado pelo concedente ao convenente'],
+    ['valor_executado', 'Numérico (R$)', 'Valor efetivamente executado/pago nas despesas'],
+    ['percentual_execucao', 'Numérico (%)', 'Percentual de execução financeira sobre o valor global'],
+    ['status', 'Texto', 'Situação atual: Pendente, Aprovado, Em Execução, Concluído ou Cancelado'],
+    ['data_disponibilizacao', 'Data (AAAA-MM-DD)', 'Data de disponibilização/publicação do recurso'],
+    ['data_inicio_vigencia', 'Data (AAAA-MM-DD)', 'Data de início da vigência do convênio/emenda'],
+    ['data_fim_vigencia', 'Data (AAAA-MM-DD)', 'Data de término da vigência do convênio/emenda'],
+    ['banco', 'Texto', 'Instituição bancária da conta específica do convênio'],
+    ['conta_corrente', 'Texto', 'Número da conta corrente específica'],
+    ['anuencia_previa_sus', 'Texto', 'Anuência prévia do SUS, quando aplicável (Sim/Não)'],
   ];
 
   return (
@@ -217,8 +268,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
           <div>
             <h2 className="text-lg font-bold text-foreground">Dados Abertos</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Disponibilizamos os dados de emendas parlamentares em formatos abertos e legíveis por máquina,
-              conforme a Lei de Acesso à Informação (Lei 12.527/2011) e a Política de Dados Abertos do Governo Federal.
+              Disponibilizamos os dados de emendas parlamentares e convênios em formatos abertos e legíveis por máquina,
+              conforme a Lei de Acesso à Informação (Lei 12.527/2011), a Política de Dados Abertos (Decreto 8.777/2016),
+              a Lei Complementar 210/2024 e a Recomendação MPC-MG nº 01/2025.
             </p>
           </div>
         </div>
@@ -300,6 +352,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
             <Info className="h-4 w-4" />
             Dicionário de Dados
           </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Descrição completa de todos os campos disponíveis nos arquivos de dados abertos, conforme exigências da transparência pública.
+          </p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -311,33 +366,10 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {[
-                ['numero', 'Texto', 'Número identificador da emenda'],
-                ['tipo', 'Texto', 'Emenda ou Programa'],
-                ['especial_pix', 'Texto', 'Se é emenda especial PIX (Sim/Não)'],
-                ['objeto', 'Texto', 'Descrição do objeto da emenda'],
-                ['parlamentar', 'Texto', 'Nome do parlamentar autor'],
-                ['tipo_concedente', 'Texto', 'Tipo do concedente (Parlamentar, Comissão, Bancada, Outro)'],
-                ['concedente', 'Texto', 'Nome do órgão concedente'],
-                ['recebedor', 'Texto', 'Nome do ente recebedor'],
-                ['cnpj_recebedor', 'Texto', 'CNPJ do recebedor'],
-                ['tipo_recebedor', 'Texto', 'Tipo do recebedor'],
-                ['municipio', 'Texto', 'Município beneficiário'],
-                ['estado', 'Texto', 'UF do município'],
-                ['grupo_natureza_despesa', 'Texto', 'Grupo/natureza da despesa'],
-                ['valor_concedente', 'Numérico', 'Valor repassado pelo concedente (R$)'],
-                ['contrapartida', 'Numérico', 'Valor de contrapartida (R$)'],
-                ['valor_total', 'Numérico', 'Valor total (concedente + contrapartida)'],
-                ['valor_executado', 'Numérico', 'Valor efetivamente executado (R$)'],
-                ['percentual_execucao', 'Numérico', 'Percentual de execução (%)'],
-                ['status', 'Texto', 'Status atual (Pendente, Aprovado, Em Execução, Concluído, Cancelado)'],
-                ['data_disponibilizacao', 'Data', 'Data de disponibilização do recurso'],
-                ['data_inicio_vigencia', 'Data', 'Início da vigência'],
-                ['data_fim_vigencia', 'Data', 'Fim da vigência'],
-              ].map(([campo, tipo, desc]) => (
+              {dictionaryEntries.map(([campo, tipo, desc]) => (
                 <tr key={campo}>
                   <td className="px-4 py-2 font-mono text-xs text-primary">{campo}</td>
-                  <td className="px-4 py-2 text-muted-foreground">{tipo}</td>
+                  <td className="px-4 py-2 text-muted-foreground whitespace-nowrap">{tipo}</td>
                   <td className="px-4 py-2 text-muted-foreground">{desc}</td>
                 </tr>
               ))}
@@ -347,11 +379,17 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       </div>
 
       {/* Legal */}
-      <div className="rounded-xl border border-info/30 bg-info/5 p-4 text-sm text-muted-foreground">
+      <div className="rounded-xl border border-info/30 bg-info/5 p-4 text-sm text-muted-foreground space-y-2">
         <p>
-          <strong className="text-info">Base Legal:</strong> A disponibilização de dados abertos atende à 
-          Lei de Acesso à Informação (Lei 12.527/2011), ao Decreto 8.777/2016 (Política de Dados Abertos), 
-          à Recomendação MPC-MG nº 01/2025 e à Lei Complementar 210/2024.
+          <strong className="text-info">Base Legal:</strong> A disponibilização de dados abertos atende à
+          Lei de Acesso à Informação (Lei 12.527/2011), ao Decreto 8.777/2016 (Política de Dados Abertos),
+          à Lei Complementar 210/2024, à Recomendação MPC-MG nº 01/2025 e às diretrizes do
+          Tribunal de Contas do Estado para publicação de transferências voluntárias e convênios.
+        </p>
+        <p>
+          <strong className="text-info">Termos de Uso:</strong> Os dados podem ser livremente utilizados,
+          redistribuídos e adaptados para qualquer finalidade, inclusive comercial, desde que seja
+          atribuída a fonte original conforme a licença CC BY 4.0.
         </p>
       </div>
     </div>

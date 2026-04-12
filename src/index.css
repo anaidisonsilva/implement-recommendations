@@ -150,6 +150,12 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
   opacity: 0;

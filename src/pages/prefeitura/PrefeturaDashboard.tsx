@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, XCircle, ThumbsUp, Receipt, Users } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, HandCoins, XCircle, ThumbsUp, Receipt, Users } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
 import { useIsPrefeituraAdmin } from '@/hooks/useUserRoles';
+import { FullDashboardSkeleton } from '@/components/ui/skeletons';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -57,7 +58,6 @@ const PrefeturaDashboard = () => {
       };
     }
 
-    // Excluir emendas pendentes e canceladas dos cálculos de valores
     const emendasComValor = emendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
     const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
     const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
@@ -78,11 +78,7 @@ const PrefeturaDashboard = () => {
   }, [emendas]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <FullDashboardSkeleton />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, Loader2, HandCoins, XCircle, ThumbsUp } from 'lucide-react';
+import { FileText, Banknote, TrendingUp, Clock, CheckCircle2, PlayCircle, HandCoins, XCircle, ThumbsUp } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentEmendas from '@/components/dashboard/RecentEmendas';
 import ExecutionChart from '@/components/dashboard/ExecutionChart';
@@ -7,6 +7,7 @@ import VigenciaCards from '@/components/dashboard/VigenciaCards';
 import YearFilter from '@/components/dashboard/YearFilter';
 import { useEmendas } from '@/hooks/useEmendas';
 import { useYearFilter } from '@/hooks/useYearFilter';
+import { FullDashboardSkeleton } from '@/components/ui/skeletons';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -22,11 +23,7 @@ const Dashboard = () => {
   const { selectedYear, setSelectedYear, availableYears, filteredEmendas, stats } = useYearFilter(emendas);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <FullDashboardSkeleton />;
   }
 
   return (

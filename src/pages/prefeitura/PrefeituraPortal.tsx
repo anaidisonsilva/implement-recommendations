@@ -87,12 +87,17 @@ const PrefeituraPortal = () => {
   const { selectedYear, setSelectedYear } = useYearParam();
 
   const availableYears = useMemo(() => {
-    if (!emendas || emendas.length === 0) return [];
     const years = new Set<number>();
-    emendas.forEach((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
-      years.add(year);
-    });
+    const currentYear = new Date().getFullYear();
+    for (let y = 2020; y <= currentYear; y++) {
+      years.add(y);
+    }
+    if (emendas && emendas.length > 0) {
+      emendas.forEach((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        years.add(year);
+      });
+    }
     return Array.from(years).sort((a, b) => b - a);
   }, [emendas]);
 

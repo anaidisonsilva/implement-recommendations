@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useYearFilter } from '@/hooks/useYearFilter';
+import { useYearParam } from '@/hooks/useYearParam';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import StatusBadge from '@/components/dashboard/StatusBadge';
 import PublicDashboardCharts from '@/components/dashboard/PublicDashboardCharts';
@@ -76,15 +76,62 @@ const PrefeituraPixPublica = () => {
   });
 
   const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const { selectedYear, setSelectedYear } = useYearParam();
 
-  // Filter by esfera before year filter
-  const esferaFilteredEmendas = useMemo(() => {
+  const availableYears = useMemo(() => {
+    const years = new Set<number>();
+    const currentYear = new Date().getFullYear();
+    for (let y = 2020; y <= currentYear; y++) {
+      years.add(y);
+    }
+    if (emendas && emendas.length > 0) {
+      emendas.forEach((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        years.add(year);
+      });
+    }
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === '') {
+      setSelectedYear(availableYears[0].toString());
+    }
+  }, [availableYears, selectedYear]);
+
+  const yearFilteredEmendas = useMemo(() => {
     if (!emendas) return [];
-    if (esferaFilter === 'todos') return emendas;
-    return emendas.filter((e: any) => e.esfera === esferaFilter);
-  }, [emendas, esferaFilter]);
+    let filtered = emendas;
+    if (selectedYear !== 'todos') {
+      filtered = filtered.filter((emenda) => {
+        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        return year === parseInt(selectedYear);
+      });
+    }
+    if (esferaFilter !== 'todos') {
+      filtered = filtered.filter((emenda: any) => emenda.esfera === esferaFilter);
+    }
+    return filtered;
+  }, [emendas, selectedYear, esferaFilter]);
 
-  const { selectedYear, setSelectedYear, availableYears, filteredEmendas: yearFilteredEmendas, stats } = useYearFilter(esferaFilteredEmendas);
+  const stats = useMemo(() => {
+    const data = yearFilteredEmendas;
+    const emendasComValor = data.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+    const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
+    const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
+    return {
+      totalEmendas: data.length,
+      valorConcedente,
+      valorTotal: valorConcedente + valorContrapartida,
+      valorExecutado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
+      valorContrapartida,
+      emendasPendentes: data.filter((e) => e.status === 'pendente').length,
+      emendasAprovadas: data.filter((e) => e.status === 'aprovado').length,
+      emendasEmExecucao: data.filter((e) => e.status === 'em_execucao').length,
+      emendasConcluidas: data.filter((e) => e.status === 'concluido').length,
+      emendasCanceladas: data.filter((e) => e.status === 'cancelado').length,
+    };
+  }, [yearFilteredEmendas]);
 
   // Advanced search filters
   const [filters, setFilters] = useState(defaultFilters);

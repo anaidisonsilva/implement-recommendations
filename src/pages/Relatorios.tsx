@@ -333,13 +333,15 @@ const Relatorios = () => {
     <thead>
       <tr>
         <th>Número</th>
+        <th>Esfera</th>
+        <th>Tipo</th>
+        <th>Autoria</th>
+        <th>Forma Repasse</th>
+        <th>Nº Convênio</th>
         <th>Objeto</th>
-        <th>Parlamentar</th>
-        <th>Recebedor</th>
-        <th>Município</th>
-        <th class="text-right">Concedente</th>
-        <th class="text-right">Contrapartida</th>
-        <th class="text-right">Total</th>
+        <th>Função Governo</th>
+        <th class="text-right">Previsto</th>
+        <th class="text-right">Repassado</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
       </tr>

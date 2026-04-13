@@ -10,6 +10,7 @@ interface Emenda {
   numero: string;
   tipo_concedente: string;
   nome_concedente: string;
+  nome_parlamentar: string | null;
   tipo_recebedor: string;
   nome_recebedor: string;
   cnpj_recebedor: string;
@@ -21,6 +22,7 @@ interface Emenda {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
+  valor_repassado: number;
   contrapartida: number | null;
   banco: string;
   conta_corrente: string;
@@ -28,6 +30,9 @@ interface Emenda {
   status: string;
   created_at: string;
   prefeitura_id: string | null;
+  especial: boolean;
+  numero_convenio: string | null;
+  esfera: string;
 }
 
 interface Prefeitura {

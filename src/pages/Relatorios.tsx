@@ -162,22 +162,24 @@ const Relatorios = () => {
   const handleExportPDF = () => {
     if (!filteredEmendas?.length) return;
 
+    const tipoLabels2: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
     const tableRows = filteredEmendas
       .map((e) => {
         const valorConc = Number(e.valor);
-        const valorContra = Number(e.contrapartida || 0);
-        const valorTotalEmenda = valorConc + valorContra;
+        const formaRepasse = e.especial ? 'Transf. Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
 
         return `
           <tr>
-            <td>${e.numero}</td>
-            <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-            <td>${e.nome_parlamentar || '-'}</td>
-            <td>${e.nome_recebedor}</td>
-            <td>${e.municipio}</td>
+            <td>${e.numero || 'Programa'}</td>
+            <td>${(e as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+            <td>${tipoLabels2[e.tipo_concedente] || e.tipo_concedente}</td>
+            <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
+            <td>${formaRepasse}</td>
+            <td>${e.numero_convenio || '-'}</td>
+            <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+            <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.grupo_natureza_despesa || '-'}</td>
             <td class="text-right">${formatCurrency(valorConc)}</td>
-            <td class="text-right">${formatCurrency(valorContra)}</td>
-            <td class="text-right">${formatCurrency(valorTotalEmenda)}</td>
+            <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
             <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
             <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
           </tr>

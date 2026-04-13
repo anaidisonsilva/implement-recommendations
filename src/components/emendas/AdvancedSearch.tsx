@@ -132,6 +132,7 @@ export function hasActiveAdvancedFilters(filters: AdvancedSearchFilters): boolea
     filters.statusFilter !== 'todos' ||
     filters.concedenteFilter !== 'todos' ||
     filters.especialFilter !== 'todos' ||
+    filters.formaRepasseFilter !== 'todos' ||
     filters.valorMin !== '' ||
     filters.valorMax !== '' ||
     filters.parlamentar !== '' ||

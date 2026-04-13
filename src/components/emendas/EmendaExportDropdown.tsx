@@ -24,6 +24,7 @@ interface EmendaData {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
+  valor_repassado?: number;
   contrapartida?: number | null;
   banco?: string | null;
   conta_corrente?: string | null;
@@ -35,6 +36,7 @@ interface EmendaData {
   numero_plano_acao?: string | null;
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
+  esfera?: string;
 }
 
 interface EmendaExportDropdownProps {
@@ -85,12 +87,18 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 function buildEmendaObject(emenda: EmendaData) {
   const valor = Number(emenda.valor);
   const contrapartida = Number(emenda.contrapartida || 0);
+  const formaRepasse = emenda.especial ? 'Transferência Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
   return {
     numero: emenda.numero,
+    esfera: (emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal',
+    tipo: tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente,
+    autoria: emenda.nome_parlamentar || emenda.nome_concedente || '',
     objeto: emenda.objeto,
+    forma_repasse: formaRepasse,
+    numero_convenio: emenda.numero_convenio || '',
+    funcao_governo: emenda.grupo_natureza_despesa,
     status: statusLabels[emenda.status] || emenda.status,
     especial: emenda.especial || false,
-    tipo_concedente: tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente,
     nome_concedente: emenda.nome_concedente || '',
     nome_parlamentar: emenda.nome_parlamentar || '',
     tipo_recebedor: tipoRecebedorLabels[emenda.tipo_recebedor] || emenda.tipo_recebedor,
@@ -100,8 +108,8 @@ function buildEmendaObject(emenda: EmendaData) {
     estado: emenda.estado,
     data_disponibilizacao: emenda.data_disponibilizacao,
     gestor_responsavel: emenda.gestor_responsavel,
-    grupo_natureza_despesa: emenda.grupo_natureza_despesa,
-    valor_concedente: valor,
+    valor_previsto: valor,
+    valor_repassado: Number(emenda.valor_repassado || 0),
     contrapartida: contrapartida,
     valor_total: valor + contrapartida,
     valor_executado: Number(emenda.valor_executado),
@@ -109,7 +117,6 @@ function buildEmendaObject(emenda: EmendaData) {
     conta_corrente: emenda.conta_corrente || '',
     anuencia_previa_sus: emenda.anuencia_previa_sus,
     numero_proposta: emenda.numero_proposta || '',
-    numero_convenio: emenda.numero_convenio || '',
     numero_plano_acao: emenda.numero_plano_acao || '',
     data_inicio_vigencia: emenda.data_inicio_vigencia || '',
     data_fim_vigencia: emenda.data_fim_vigencia || '',

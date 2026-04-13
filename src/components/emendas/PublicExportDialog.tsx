@@ -336,13 +336,14 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       <tr>
         <th>Número</th>
         <th>Esfera</th>
+        <th>Tipo</th>
+        <th>Autoria</th>
+        <th>Forma Repasse</th>
+        <th>Nº Convênio</th>
         <th>Objeto</th>
-        <th>Parlamentar</th>
-        <th>Recebedor</th>
-        <th>Município</th>
-        <th class="text-right">Concedente</th>
-        <th class="text-right">Contrapartida</th>
-        <th class="text-right">Total</th>
+        <th>Função Governo</th>
+        <th class="text-right">Previsto</th>
+        <th class="text-right">Repassado</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
       </tr>
@@ -350,19 +351,18 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     <tbody>
       ${emendas.map((e) => {
         const valorConc = Number(e.valor);
-        const valorContra = Number(e.contrapartida || 0);
-        const valorTotalEmenda = valorConc + valorContra;
         return `
         <tr>
           <td>${e.numero}</td>
-          <td>${(e as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}</td>
-          <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td>${e.nome_parlamentar || '-'}</td>
-          <td>${e.nome_recebedor}</td>
-          <td>${e.municipio}/${e.estado}</td>
+          <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+          <td>${tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-'}</td>
+          <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
+          <td>${getFormaRepasse(e)}</td>
+          <td>${e.numero_convenio || '-'}</td>
+          <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+          <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.grupo_natureza_despesa || '-'}</td>
           <td class="text-right">${formatCurrency(valorConc)}</td>
-          <td class="text-right">${formatCurrency(valorContra)}</td>
-          <td class="text-right">${formatCurrency(valorTotalEmenda)}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
           <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
         </tr>

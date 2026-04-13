@@ -170,11 +170,13 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
       <body>
         <table border="1">
           <tr><th colspan="2" style="background:#1e40af;color:white;font-size:14pt;">Ficha da Emenda Nº ${data.numero}</th></tr>
-          <tr><td><b>Objeto</b></td><td>${data.objeto}</td></tr>
+           <tr><td><b>Objeto</b></td><td>${data.objeto}</td></tr>
+          <tr><td><b>Esfera</b></td><td>${data.esfera}</td></tr>
           <tr><td><b>Status</b></td><td>${data.status}${data.especial ? ' ⭐ Especial' : ''}</td></tr>
+          <tr><td><b>Forma de Repasse</b></td><td>${data.forma_repasse}</td></tr>
           <tr><td colspan="2" style="background:#e5e7eb;"><b>Concedente</b></td></tr>
-          <tr><td><b>Tipo Concedente</b></td><td>${data.tipo_concedente}</td></tr>
-          <tr><td><b>Parlamentar</b></td><td>${data.nome_parlamentar}</td></tr>
+          <tr><td><b>Tipo</b></td><td>${data.tipo}</td></tr>
+          <tr><td><b>Autoria</b></td><td>${data.autoria}</td></tr>
           <tr><td><b>Órgão Concedente</b></td><td>${data.nome_concedente}</td></tr>
           <tr><td colspan="2" style="background:#e5e7eb;"><b>Recebedor</b></td></tr>
           <tr><td><b>Tipo Recebedor</b></td><td>${data.tipo_recebedor}</td></tr>
@@ -185,13 +187,14 @@ const EmendaExportDropdown = ({ emenda, onExportPDF, size = 'default' }: EmendaE
           <tr><td><b>Gestor Responsável</b></td><td>${data.gestor_responsavel}</td></tr>
           <tr><td><b>Data Disponibilização</b></td><td>${formatDate(data.data_disponibilizacao)}</td></tr>
           <tr><td colspan="2" style="background:#e5e7eb;"><b>Valores</b></td></tr>
-          <tr><td><b>Valor Concedente</b></td><td>${formatCurrency(valor)}</td></tr>
+          <tr><td><b>Valor Previsto</b></td><td>${formatCurrency(valor)}</td></tr>
+          <tr><td><b>Valor Repassado</b></td><td>${formatCurrency(data.valor_repassado)}</td></tr>
           <tr><td><b>Contrapartida</b></td><td>${formatCurrency(contrapartida)}</td></tr>
           <tr><td><b>Valor Total</b></td><td>${formatCurrency(valorTotal)}</td></tr>
           <tr><td><b>Valor Executado</b></td><td>${formatCurrency(valorExecutado)}</td></tr>
           <tr><td><b>% Execução</b></td><td>${valorTotal > 0 ? ((valorExecutado / valorTotal) * 100).toFixed(1) : 0}%</td></tr>
           <tr><td colspan="2" style="background:#e5e7eb;"><b>Dados Financeiros</b></td></tr>
-          <tr><td><b>Grupo Natureza Despesa</b></td><td>${data.grupo_natureza_despesa}</td></tr>
+          <tr><td><b>Função de Governo</b></td><td>${data.funcao_governo}</td></tr>
           <tr><td><b>Banco</b></td><td>${data.banco}</td></tr>
           <tr><td><b>Conta Corrente</b></td><td>${data.conta_corrente}</td></tr>
           <tr><td><b>Nº Proposta</b></td><td>${data.numero_proposta}</td></tr>

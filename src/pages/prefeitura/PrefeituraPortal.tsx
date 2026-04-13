@@ -407,54 +407,83 @@ const PrefeituraPortal = () => {
         {loadingEmendas ? (
           <TableSkeleton rows={5} />
         ) : paginatedEmendas.length > 0 ? (
-          <div className="rounded-xl border border-border bg-card">
+          <div className="rounded-xl border border-border bg-card overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Número</TableHead>
                   <TableHead>Esfera</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Autoria</TableHead>
                   <TableHead>Objeto</TableHead>
-                  <TableHead>Concedente</TableHead>
-                  <TableHead>Valor</TableHead>
+                  <TableHead>Forma de Repasse</TableHead>
+                  <TableHead>Nº Convênio</TableHead>
+                  <TableHead>Valor Previsto</TableHead>
+                  <TableHead>Repassado</TableHead>
+                  <TableHead>Função de Governo</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedEmendas.map((emenda) => (
-                  <TableRow key={emenda.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2 flex-wrap animate-fade-in">
-                        <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-foreground border border-border hover-scale">
-                          {emenda.programa ? '📋 Programa' : '📄 Emenda'} Nº {emenda.numero || '-'}
-                        </span>
-                        {emenda.especial && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning hover-scale animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
-                            <Zap className="h-3 w-3" /> PIX
+                {paginatedEmendas.map((emenda) => {
+                  const formaRepasse = emenda.especial
+                    ? 'Transferência Especial'
+                    : emenda.numero_convenio
+                      ? 'Convênio'
+                      : 'Fundo a Fundo';
+
+                  const tipoLabels: Record<string, string> = {
+                    parlamentar: 'Individual',
+                    bancada: 'Bancada',
+                    comissao: 'Comissão',
+                    outro: 'Outro',
+                  };
+
+                  return (
+                    <TableRow key={emenda.id}>
+                      <TableCell className="font-medium whitespace-nowrap">
+                        <div className="flex items-center gap-2 flex-wrap animate-fade-in">
+                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-foreground border border-border hover-scale">
+                            {emenda.programa ? 'Programa' : 'Emenda'} Nº {emenda.numero || '-'}
                           </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                        {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
-                    <TableCell>{emenda.nome_concedente}</TableCell>
-                    <TableCell>{formatCurrency(Number(emenda.valor))}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={emenda.status as any} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/p/${slug}/emenda/${emenda.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          {emenda.especial && (
+                            <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning hover-scale animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
+                              <Zap className="h-3 w-3" /> PIX
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">
+                        {tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">
+                        {emenda.nome_parlamentar || emenda.nome_concedente || '-'}
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{formaRepasse}</TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{emenda.numero_convenio || '-'}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatCurrency(Number(emenda.valor))}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatCurrency(Number(emenda.valor_repassado || 0))}</TableCell>
+                      <TableCell className="max-w-[150px] truncate text-sm">{emenda.grupo_natureza_despesa}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={emenda.status as any} />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to={`/p/${slug}/emenda/${emenda.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>

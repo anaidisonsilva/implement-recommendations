@@ -120,18 +120,26 @@ const Relatorios = () => {
   const handleExportCSV = () => {
     if (!filteredEmendas?.length) return;
 
-    const headers = ['Número', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data'];
+    const headers = ['Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio', 'Função de Governo', 'Concedente', 'Recebedor', 'Município', 'Valor Previsto', 'Repassado', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data'];
+    const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
     const rows = filteredEmendas.map((e) => {
       const valorConc = Number(e.valor);
       const valorContra = Number(e.contrapartida || 0);
+      const formaRepasse = e.especial ? 'Transferência Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
       return [
         e.numero,
+        (e as any).esfera === 'estadual' ? 'Estadual' : 'Federal',
+        tipoLabels[e.tipo_concedente] || e.tipo_concedente,
+        `"${(e.nome_parlamentar || e.nome_concedente || '').replace(/"/g, '""')}"`,
         `"${e.objeto.replace(/"/g, '""')}"`,
-        `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+        formaRepasse,
+        e.numero_convenio || '-',
+        `"${(e.grupo_natureza_despesa || '-').replace(/"/g, '""')}"`,
         `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
         `"${e.nome_recebedor.replace(/"/g, '""')}"`,
         e.municipio,
         valorConc,
+        Number(e.valor_repassado || 0),
         valorContra,
         valorConc + valorContra,
         e.valor_executado,

@@ -426,6 +426,9 @@ const PrefeituraEmendaDetail = () => {
                       {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
                     </h1>
                     <StatusBadge status={emenda.status} />
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                      {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                    </span>
                     {emenda.especial && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
                         <Zap className="h-3 w-3" /> Emenda PIX
@@ -433,24 +436,27 @@ const PrefeituraEmendaDetail = () => {
                     )}
                     {(emenda as any).programa && (
                       <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                        📋 Programa
+                        Programa
                       </span>
                     )}
                   </div>
-                  {(emenda.numero_proposta || emenda.numero_convenio || emenda.numero_plano_acao) && (
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                      {emenda.numero_proposta && (
-                        <span>Proposta: <strong className="text-foreground">{emenda.numero_proposta}</strong></span>
-                      )}
-                      {emenda.numero_convenio && (
-                        <span>Convênio: <strong className="text-foreground">{emenda.numero_convenio}</strong></span>
-                      )}
-                      {emenda.numero_plano_acao && (
-                        <span>Plano de Ação: <strong className="text-foreground">{emenda.numero_plano_acao}</strong></span>
-                      )}
-                    </div>
-                  )}
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                    <span>Tipo: <strong className="text-foreground">{tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</strong></span>
+                    <span>Forma de Repasse: <strong className="text-foreground">{emenda.especial ? 'Transferência Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo'}</strong></span>
+                    {emenda.numero_proposta && (
+                      <span>Proposta: <strong className="text-foreground">{emenda.numero_proposta}</strong></span>
+                    )}
+                    {emenda.numero_convenio && (
+                      <span>Convênio: <strong className="text-foreground">{emenda.numero_convenio}</strong></span>
+                    )}
+                    {emenda.numero_plano_acao && (
+                      <span>Plano de Ação: <strong className="text-foreground">{emenda.numero_plano_acao}</strong></span>
+                    )}
+                  </div>
                   <p className="mt-2 text-muted-foreground break-words whitespace-normal overflow-hidden">{emenda.objeto}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Função de Governo: <strong className="text-foreground">{emenda.grupo_natureza_despesa}</strong>
+                  </p>
                 </div>
               </div>
               <div className="flex gap-6 text-right">

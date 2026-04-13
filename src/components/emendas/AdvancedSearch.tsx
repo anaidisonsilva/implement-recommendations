@@ -46,6 +46,7 @@ export interface AdvancedSearchFilters {
   statusFilter: string;
   concedenteFilter: string;
   especialFilter: 'todos' | 'sim' | 'nao';
+  formaRepasseFilter: 'todos' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo';
   valorMin: string;
   valorMax: string;
   parlamentar: string;
@@ -65,6 +66,7 @@ export const defaultFilters: AdvancedSearchFilters = {
   statusFilter: 'todos',
   concedenteFilter: 'todos',
   especialFilter: 'todos',
+  formaRepasseFilter: 'todos',
   valorMin: '',
   valorMax: '',
   parlamentar: '',

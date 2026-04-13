@@ -215,14 +215,13 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
   }, []);
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+    <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-4">
+      {/* Search row */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground shrink-0">
           <Filter className="h-4 w-4" />
           Filtros
         </div>
-
-        {/* Search with autocomplete */}
         <div className="relative flex-1" ref={searchRef}>
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -235,7 +234,6 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
             }}
             onFocus={() => setShowSuggestions(true)}
           />
-          {/* Autocomplete dropdown */}
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-lg border border-border bg-popover shadow-lg">
               {suggestions.map((s, i) => (
@@ -256,6 +254,10 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
             </div>
           )}
         </div>
+      </div>
+
+      {/* Filters row */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:flex-wrap">
 
         {/* Status */}
         <Select value={filters.statusFilter} onValueChange={(v) => update({ statusFilter: v })}>

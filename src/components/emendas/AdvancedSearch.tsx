@@ -299,6 +299,19 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
           </SelectContent>
         </Select>
 
+        {/* Forma de Repasse */}
+        <Select value={filters.formaRepasseFilter} onValueChange={(v: 'todos' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo') => update({ formaRepasseFilter: v })}>
+          <SelectTrigger className="w-full lg:w-44">
+            <SelectValue placeholder="Forma de Repasse" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Todas as Formas</SelectItem>
+            <SelectItem value="transferencia_especial">Transferência Especial</SelectItem>
+            <SelectItem value="convenio">Convênio</SelectItem>
+            <SelectItem value="fundo_a_fundo">Fundo a Fundo</SelectItem>
+          </SelectContent>
+        </Select>
+
         {/* Advanced filters toggle */}
         <Popover open={advancedOpen} onOpenChange={setAdvancedOpen}>
           <PopoverTrigger asChild>

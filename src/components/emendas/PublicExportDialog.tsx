@@ -127,19 +127,24 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Esfera', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const headers = ['Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio', 'Função de Governo', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Previsto', 'Repassado', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
       const rows = emendas.map((e) => {
         const valorConc = Number(e.valor);
         const valorContra = Number(e.contrapartida || 0);
         return [
           e.numero,
           e.esfera === 'estadual' ? 'Estadual' : 'Federal',
+          tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
+          `"${(e.nome_parlamentar || e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.objeto.replace(/"/g, '""')}"`,
-          `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+          getFormaRepasse(e),
+          e.numero_convenio || '-',
+          `"${(e.grupo_natureza_despesa || '-').replace(/"/g, '""')}"`,
           `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.nome_recebedor.replace(/"/g, '""')}"`,
           `${e.municipio}/${e.estado}`,
           valorConc,
+          Number(e.valor_repassado || 0),
           valorContra,
           valorConc + valorContra,
           e.valor_executado,

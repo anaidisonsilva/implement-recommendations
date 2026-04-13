@@ -94,6 +94,17 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
       (filters.especialFilter === 'sim' && emenda.especial) ||
       (filters.especialFilter === 'nao' && !emenda.especial);
 
+    // Forma de repasse filter
+    let matchesFormaRepasse = true;
+    if (filters.formaRepasseFilter !== 'todos') {
+      const formaRepasse = emenda.especial
+        ? 'transferencia_especial'
+        : emenda.numero_convenio
+          ? 'convenio'
+          : 'fundo_a_fundo';
+      matchesFormaRepasse = formaRepasse === filters.formaRepasseFilter;
+    }
+
     const valorTotal = Number(emenda.valor) + Number(emenda.contrapartida || 0);
     const matchesValorMin = !filters.valorMin || valorTotal >= Number(filters.valorMin);
     const matchesValorMax = !filters.valorMax || valorTotal <= Number(filters.valorMax);
@@ -111,7 +122,7 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
     }
 
     return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial &&
-      matchesValorMin && matchesValorMax && matchesParlamentar && matchesVigencia;
+      matchesFormaRepasse && matchesValorMin && matchesValorMax && matchesParlamentar && matchesVigencia;
   });
 }
 

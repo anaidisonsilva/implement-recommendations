@@ -234,34 +234,37 @@ const PrefeituraRelatoriosPublicos = () => {
           <thead>
             <tr>
               <th>Número</th>
-              <th>Status</th>
+              <th>Esfera</th>
+              <th>Tipo</th>
+              <th>Autoria</th>
+              <th>Forma Repasse</th>
+              <th>Nº Convênio</th>
               <th>Objeto</th>
-              <th>Parlamentar</th>
-              <th>Concedente</th>
-              <th class="text-right">Valor Concedente</th>
-              <th class="text-right">Contrapartida</th>
-              <th class="text-right">Total</th>
+              <th>Função Governo</th>
+              <th class="text-right">Previsto</th>
+              <th class="text-right">Repassado</th>
               <th class="text-right">Executado</th>
-              <th>Data</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             ${filteredEmendas.map(emenda => {
-              const valor = Number(emenda.valor);
-              const contrapartida = Number(emenda.contrapartida || 0);
-              const total = valor + contrapartida;
+              const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
+              const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
               return `
               <tr>
                 <td>${emenda.numero || 'Programa'}</td>
-                <td>${emenda.status.replace('_', ' ')}</td>
-                <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
-                <td>${emenda.nome_parlamentar || '-'}</td>
-                <td>${emenda.nome_concedente || '-'}</td>
-                <td class="text-right">${formatCurrency(valor)}</td>
-                <td class="text-right">${formatCurrency(contrapartida)}</td>
-                <td class="text-right">${formatCurrency(total)}</td>
+                <td>${emenda.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+                <td>${tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</td>
+                <td>${emenda.nome_parlamentar || emenda.nome_concedente || '-'}</td>
+                <td>${formaRepasse}</td>
+                <td>${emenda.numero_convenio || '-'}</td>
+                <td>${emenda.objeto.substring(0, 40)}${emenda.objeto.length > 40 ? '...' : ''}</td>
+                <td>${emenda.grupo_natureza_despesa || '-'}</td>
+                <td class="text-right">${formatCurrency(Number(emenda.valor))}</td>
+                <td class="text-right">${formatCurrency(Number(emenda.valor_repassado || 0))}</td>
                 <td class="text-right">${formatCurrency(Number(emenda.valor_executado))}</td>
-                <td>${formatDate(emenda.data_disponibilizacao)}</td>
+                <td>${emenda.status.replace('_', ' ')}</td>
               </tr>
               `;
             }).join('')}

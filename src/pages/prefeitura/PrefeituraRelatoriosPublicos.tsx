@@ -376,8 +376,15 @@ const PrefeituraRelatoriosPublicos = () => {
                   estado: e.estado,
                   valor: Number(e.valor),
                   valor_executado: Number(e.valor_executado),
+                  valor_repassado: Number(e.valor_repassado || 0),
+                  contrapartida: Number(e.contrapartida || 0),
                   status: e.status,
                   data_disponibilizacao: e.data_disponibilizacao,
+                  esfera: e.esfera || 'federal',
+                  tipo_concedente: e.tipo_concedente,
+                  especial: e.especial,
+                  numero_convenio: e.numero_convenio,
+                  grupo_natureza_despesa: e.grupo_natureza_despesa,
                 }))}
                 title="Exportar Relatório"
                 prefeitura={prefeitura ? { nome: prefeitura.nome, cnpj: prefeitura.cnpj, logo_url: prefeitura.logo_url, municipio: prefeitura.municipio, estado: prefeitura.estado } : null}

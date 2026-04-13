@@ -156,7 +156,7 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
     for (const e of emendas) {
       if (results.length >= 8) break;
 
-      if (e.numero.toLowerCase().includes(term) && !seen.has(`n:${e.numero}`)) {
+      if (e.numero && e.numero.toLowerCase().includes(term) && !seen.has(`n:${e.numero}`)) {
         seen.add(`n:${e.numero}`);
         results.push({ type: 'Nº', value: e.numero, label: e.numero });
       }

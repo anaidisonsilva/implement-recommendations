@@ -46,6 +46,7 @@ export interface AdvancedSearchFilters {
   statusFilter: string;
   concedenteFilter: string;
   especialFilter: 'todos' | 'sim' | 'nao';
+  formaRepasseFilter: 'todos' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo';
   valorMin: string;
   valorMax: string;
   parlamentar: string;
@@ -65,6 +66,7 @@ export const defaultFilters: AdvancedSearchFilters = {
   statusFilter: 'todos',
   concedenteFilter: 'todos',
   especialFilter: 'todos',
+  formaRepasseFilter: 'todos',
   valorMin: '',
   valorMax: '',
   parlamentar: '',
@@ -92,6 +94,17 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
       (filters.especialFilter === 'sim' && emenda.especial) ||
       (filters.especialFilter === 'nao' && !emenda.especial);
 
+    // Forma de repasse filter
+    let matchesFormaRepasse = true;
+    if (filters.formaRepasseFilter !== 'todos') {
+      const formaRepasse = emenda.especial
+        ? 'transferencia_especial'
+        : emenda.numero_convenio
+          ? 'convenio'
+          : 'fundo_a_fundo';
+      matchesFormaRepasse = formaRepasse === filters.formaRepasseFilter;
+    }
+
     const valorTotal = Number(emenda.valor) + Number(emenda.contrapartida || 0);
     const matchesValorMin = !filters.valorMin || valorTotal >= Number(filters.valorMin);
     const matchesValorMax = !filters.valorMax || valorTotal <= Number(filters.valorMax);
@@ -109,7 +122,7 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
     }
 
     return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial &&
-      matchesValorMin && matchesValorMax && matchesParlamentar && matchesVigencia;
+      matchesFormaRepasse && matchesValorMin && matchesValorMax && matchesParlamentar && matchesVigencia;
   });
 }
 
@@ -119,6 +132,7 @@ export function hasActiveAdvancedFilters(filters: AdvancedSearchFilters): boolea
     filters.statusFilter !== 'todos' ||
     filters.concedenteFilter !== 'todos' ||
     filters.especialFilter !== 'todos' ||
+    filters.formaRepasseFilter !== 'todos' ||
     filters.valorMin !== '' ||
     filters.valorMax !== '' ||
     filters.parlamentar !== '' ||
@@ -282,6 +296,19 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
             <SelectItem value="todos">Todas</SelectItem>
             <SelectItem value="sim">⭐ Especiais</SelectItem>
             <SelectItem value="nao">Normais</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Forma de Repasse */}
+        <Select value={filters.formaRepasseFilter} onValueChange={(v: 'todos' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo') => update({ formaRepasseFilter: v })}>
+          <SelectTrigger className="w-full lg:w-44">
+            <SelectValue placeholder="Forma de Repasse" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Todas as Formas</SelectItem>
+            <SelectItem value="transferencia_especial">Transferência Especial</SelectItem>
+            <SelectItem value="convenio">Convênio</SelectItem>
+            <SelectItem value="fundo_a_fundo">Fundo a Fundo</SelectItem>
           </SelectContent>
         </Select>
 

@@ -27,6 +27,7 @@ export interface EmendaBasic {
   estado: string;
   valor: number;
   valor_executado?: number;
+  valor_repassado?: number;
   contrapartida?: number | null;
   status: string;
   tipo_concedente: string;
@@ -36,6 +37,8 @@ export interface EmendaBasic {
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
   cnpj_recebedor?: string;
+  numero_convenio?: string | null;
+  grupo_natureza_despesa?: string;
 }
 
 export interface AdvancedSearchFilters {

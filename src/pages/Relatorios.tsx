@@ -567,32 +567,39 @@ const Relatorios = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Número</TableHead>
+                  <TableHead>Esfera</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Autoria</TableHead>
+                  <TableHead>Forma Repasse</TableHead>
+                  <TableHead>Nº Convênio</TableHead>
                   <TableHead className="min-w-[150px]">Objeto</TableHead>
-                  <TableHead>Parlamentar</TableHead>
-                  <TableHead>Concedente</TableHead>
-                  <TableHead>Município</TableHead>
-                  <TableHead className="text-right">Valor Concedente</TableHead>
-                  <TableHead className="text-right">Contrapartida</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead>Função Governo</TableHead>
+                  <TableHead className="text-right">Previsto</TableHead>
+                  <TableHead className="text-right">Repassado</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredEmendas.slice(0, 20).map((emenda) => {
-                  const valorConc = Number(emenda.valor);
-                  const valorContra = Number(emenda.contrapartida || 0);
-                  const valorTotalEmenda = valorConc + valorContra;
+                  const tipoLabels3: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
+                  const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
                   return (
                     <TableRow key={emenda.id}>
                       <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        </span>
+                      </TableCell>
+                      <TableCell>{tipoLabels3[emenda.tipo_concedente] || emenda.tipo_concedente}</TableCell>
+                      <TableCell className="max-w-[120px] truncate">{emenda.nome_parlamentar || emenda.nome_concedente || '-'}</TableCell>
+                      <TableCell>{formaRepasse}</TableCell>
+                      <TableCell>{emenda.numero_convenio || '-'}</TableCell>
                       <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>{emenda.objeto}</TableCell>
-                      <TableCell>{emenda.nome_parlamentar || '-'}</TableCell>
-                      <TableCell>{emenda.nome_concedente || '-'}</TableCell>
-                      <TableCell>{emenda.municipio}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(valorConc)}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(valorContra)}</TableCell>
-                      <TableCell className="text-right font-medium">{formatCurrency(valorTotalEmenda)}</TableCell>
+                      <TableCell className="max-w-[100px] truncate">{emenda.grupo_natureza_despesa || '-'}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(Number(emenda.valor))}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(Number(emenda.valor_repassado || 0))}</TableCell>
                       <TableCell className="text-right">{formatCurrency(Number(emenda.valor_executado))}</TableCell>
                       <TableCell>
                         <StatusBadge status={emenda.status} />

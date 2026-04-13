@@ -215,8 +215,49 @@ const AdvancedSearch = ({ emendas, onFiltersChange, filters, onResetPage }: Adva
   }, []);
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+    <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-4">
+      {/* Search row */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground shrink-0">
+          <Filter className="h-4 w-4" />
+          Filtros
+        </div>
+        <div className="relative flex-1" ref={searchRef}>
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por número, objeto, parlamentar, CNPJ, recebedor..."
+            className="pl-10"
+            value={filters.searchTerm}
+            onChange={(e) => {
+              update({ searchTerm: e.target.value });
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-lg border border-border bg-popover shadow-lg">
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/50 text-left"
+                  onClick={() => {
+                    update({ searchTerm: s.value });
+                    setShowSuggestions(false);
+                  }}
+                >
+                  <span className="shrink-0 rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    {s.type}
+                  </span>
+                  <span className="truncate text-foreground">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Filters row */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:flex-wrap">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Filter className="h-4 w-4" />
           Filtros

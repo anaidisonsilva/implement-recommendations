@@ -22,10 +22,15 @@ interface EmendaData {
   estado: string;
   valor: number;
   valor_executado: number;
+  valor_repassado?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
   esfera?: string;
+  tipo_concedente?: string;
+  especial?: boolean;
+  numero_convenio?: string | null;
+  grupo_natureza_despesa?: string;
 }
 
 interface PrefeituraInfo {
@@ -48,6 +53,19 @@ const statusLabels: Record<string, string> = {
   em_execucao: 'Em Execução',
   concluido: 'Concluído',
   cancelado: 'Cancelado',
+};
+
+const tipoConcedenteLabels: Record<string, string> = {
+  parlamentar: 'Individual',
+  comissao: 'Comissão',
+  bancada: 'Bancada',
+  outro: 'Outro',
+};
+
+const getFormaRepasse = (e: EmendaData) => {
+  if (e.especial) return 'Transferência Especial';
+  if (e.numero_convenio) return 'Convênio';
+  return 'Fundo a Fundo';
 };
 
 const formatCurrency = (value: number) => {

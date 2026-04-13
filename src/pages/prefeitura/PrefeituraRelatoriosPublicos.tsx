@@ -234,34 +234,37 @@ const PrefeituraRelatoriosPublicos = () => {
           <thead>
             <tr>
               <th>Número</th>
-              <th>Status</th>
+              <th>Esfera</th>
+              <th>Tipo</th>
+              <th>Autoria</th>
+              <th>Forma Repasse</th>
+              <th>Nº Convênio</th>
               <th>Objeto</th>
-              <th>Parlamentar</th>
-              <th>Concedente</th>
-              <th class="text-right">Valor Concedente</th>
-              <th class="text-right">Contrapartida</th>
-              <th class="text-right">Total</th>
+              <th>Função Governo</th>
+              <th class="text-right">Previsto</th>
+              <th class="text-right">Repassado</th>
               <th class="text-right">Executado</th>
-              <th>Data</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             ${filteredEmendas.map(emenda => {
-              const valor = Number(emenda.valor);
-              const contrapartida = Number(emenda.contrapartida || 0);
-              const total = valor + contrapartida;
+              const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
+              const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
               return `
               <tr>
                 <td>${emenda.numero || 'Programa'}</td>
-                <td>${emenda.status.replace('_', ' ')}</td>
-                <td>${emenda.objeto.substring(0, 50)}${emenda.objeto.length > 50 ? '...' : ''}</td>
-                <td>${emenda.nome_parlamentar || '-'}</td>
-                <td>${emenda.nome_concedente || '-'}</td>
-                <td class="text-right">${formatCurrency(valor)}</td>
-                <td class="text-right">${formatCurrency(contrapartida)}</td>
-                <td class="text-right">${formatCurrency(total)}</td>
+                <td>${emenda.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+                <td>${tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</td>
+                <td>${emenda.nome_parlamentar || emenda.nome_concedente || '-'}</td>
+                <td>${formaRepasse}</td>
+                <td>${emenda.numero_convenio || '-'}</td>
+                <td>${emenda.objeto.substring(0, 40)}${emenda.objeto.length > 40 ? '...' : ''}</td>
+                <td>${emenda.grupo_natureza_despesa || '-'}</td>
+                <td class="text-right">${formatCurrency(Number(emenda.valor))}</td>
+                <td class="text-right">${formatCurrency(Number(emenda.valor_repassado || 0))}</td>
                 <td class="text-right">${formatCurrency(Number(emenda.valor_executado))}</td>
-                <td>${formatDate(emenda.data_disponibilizacao)}</td>
+                <td>${emenda.status.replace('_', ' ')}</td>
               </tr>
               `;
             }).join('')}
@@ -376,8 +379,15 @@ const PrefeituraRelatoriosPublicos = () => {
                   estado: e.estado,
                   valor: Number(e.valor),
                   valor_executado: Number(e.valor_executado),
+                  valor_repassado: Number(e.valor_repassado || 0),
+                  contrapartida: Number(e.contrapartida || 0),
                   status: e.status,
                   data_disponibilizacao: e.data_disponibilizacao,
+                  esfera: e.esfera || 'federal',
+                  tipo_concedente: e.tipo_concedente,
+                  especial: e.especial,
+                  numero_convenio: e.numero_convenio,
+                  grupo_natureza_despesa: e.grupo_natureza_despesa,
                 }))}
                 title="Exportar Relatório"
                 prefeitura={prefeitura ? { nome: prefeitura.nome, cnpj: prefeitura.cnpj, logo_url: prefeitura.logo_url, municipio: prefeitura.municipio, estado: prefeitura.estado } : null}
@@ -512,49 +522,52 @@ const PrefeituraRelatoriosPublicos = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Número</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Esfera</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Autoria</TableHead>
+                  <TableHead>Forma Repasse</TableHead>
+                  <TableHead>Nº Convênio</TableHead>
                   <TableHead>Objeto</TableHead>
-                  <TableHead>Parlamentar</TableHead>
-                  <TableHead>Concedente</TableHead>
-                  <TableHead className="text-right">Valor Concedente</TableHead>
-                  <TableHead className="text-right">Contrapartida</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead>Função Governo</TableHead>
+                  <TableHead className="text-right">Previsto</TableHead>
+                  <TableHead className="text-right">Repassado</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
-                  <TableHead>Data</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedEmendas.length > 0 ? (
                   paginatedEmendas.map((emenda) => {
-                    const valor = Number(emenda.valor);
-                    const contrapartida = Number(emenda.contrapartida || 0);
-                    const total = valor + contrapartida;
+                    const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
+                    const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
                     return (
                       <TableRow key={emenda.id}>
                         <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                         <TableCell>
-                          <StatusBadge status={emenda.status} />
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${emenda.esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                            {emenda.esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                          </span>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={emenda.objeto}>
+                        <TableCell>{tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</TableCell>
+                        <TableCell className="max-w-[120px] truncate">{emenda.nome_parlamentar || emenda.nome_concedente || '-'}</TableCell>
+                        <TableCell>{formaRepasse}</TableCell>
+                        <TableCell>{emenda.numero_convenio || '-'}</TableCell>
+                        <TableCell className="max-w-[150px] truncate" title={emenda.objeto}>
                           {emenda.objeto}
                         </TableCell>
-                        <TableCell className="max-w-[150px] truncate" title={emenda.nome_parlamentar || ''}>
-                          {emenda.nome_parlamentar || '-'}
-                        </TableCell>
-                        <TableCell className="max-w-[150px] truncate" title={emenda.nome_concedente || ''}>
-                          {emenda.nome_concedente || '-'}
-                        </TableCell>
-                        <TableCell className="text-right">{formatCurrencyCompact(valor)}</TableCell>
-                        <TableCell className="text-right">{formatCurrencyCompact(contrapartida)}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrencyCompact(total)}</TableCell>
+                        <TableCell className="max-w-[100px] truncate">{emenda.grupo_natureza_despesa || '-'}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor))}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_repassado || 0))}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_executado))}</TableCell>
-                        <TableCell>{formatDate(emenda.data_disponibilizacao)}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={emenda.status} />
+                        </TableCell>
                       </TableRow>
                     );
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={11} className="py-8 text-center text-muted-foreground">
+                    <TableCell colSpan={12} className="py-8 text-center text-muted-foreground">
                       Nenhuma emenda encontrada
                     </TableCell>
                   </TableRow>

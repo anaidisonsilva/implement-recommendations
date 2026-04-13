@@ -10,6 +10,7 @@ interface Emenda {
   numero: string;
   tipo_concedente: string;
   nome_concedente: string;
+  nome_parlamentar: string | null;
   tipo_recebedor: string;
   nome_recebedor: string;
   cnpj_recebedor: string;
@@ -21,6 +22,7 @@ interface Emenda {
   grupo_natureza_despesa: string;
   valor: number;
   valor_executado: number;
+  valor_repassado: number;
   contrapartida: number | null;
   banco: string;
   conta_corrente: string;
@@ -28,6 +30,9 @@ interface Emenda {
   status: string;
   created_at: string;
   prefeitura_id: string | null;
+  especial: boolean;
+  numero_convenio: string | null;
+  esfera: string;
 }
 
 interface Prefeitura {
@@ -82,30 +87,26 @@ function escapeCSV(value: string | number | boolean | null): string {
   return str;
 }
 
+function getFormaRepasse(e: Emenda): string {
+  if (e.especial) return 'Transferência Especial';
+  if (e.numero_convenio) return 'Convênio';
+  return 'Fundo a Fundo';
+}
+
+const tipoLabels: Record<string, string> = {
+  parlamentar: 'Individual',
+  comissao: 'Comissão',
+  bancada: 'Bancada',
+  outro: 'Outro',
+};
+
 function generateCSV(emendas: Emenda[]): string {
   const headers = [
-    'Número',
-    'Status',
-    'Tipo Concedente',
-    'Nome Concedente',
-    'Tipo Recebedor',
-    'Nome Recebedor',
-    'CNPJ Recebedor',
-    'Município',
-    'Estado',
-    'Data Disponibilização',
-    'Gestor Responsável',
-    'Objeto',
-    'Grupo Natureza Despesa',
-    'Valor Concedente (R$)',
-    'Contrapartida (R$)',
-    'Valor Total (R$)',
-    'Valor Executado (R$)',
-    '% Executado',
-    'Banco',
-    'Conta Corrente',
-    'Anuência Prévia SUS',
-    'Data Cadastro',
+    'Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio',
+    'Função de Governo', 'Status', 'Concedente', 'Recebedor', 'CNPJ Recebedor',
+    'Município', 'Estado', 'Gestor Responsável', 'Data Disponibilização',
+    'Valor Previsto (R$)', 'Valor Repassado (R$)', 'Contrapartida (R$)', 'Valor Total (R$)',
+    'Valor Executado (R$)', '% Executado', 'Banco', 'Conta Corrente', 'Anuência SUS', 'Data Cadastro',
   ];
 
   const rows = emendas.map((e) => {
@@ -114,23 +115,27 @@ function generateCSV(emendas: Emenda[]): string {
     const valorTotal = valorConc + valorContra;
     return [
       escapeCSV(e.numero),
+      escapeCSV(e.esfera === 'estadual' ? 'Estadual' : 'Federal'),
+      escapeCSV(tipoLabels[e.tipo_concedente] || e.tipo_concedente),
+      escapeCSV(e.nome_parlamentar || e.nome_concedente || ''),
+      escapeCSV(e.objeto),
+      escapeCSV(getFormaRepasse(e)),
+      escapeCSV(e.numero_convenio || ''),
+      escapeCSV(e.grupo_natureza_despesa),
       escapeCSV(statusLabels[e.status] || e.status),
-      escapeCSV(tipoConcedenteLabels[e.tipo_concedente] || e.tipo_concedente),
       escapeCSV(e.nome_concedente),
-      escapeCSV(tipoRecebedorLabels[e.tipo_recebedor] || e.tipo_recebedor),
       escapeCSV(e.nome_recebedor),
       escapeCSV(e.cnpj_recebedor),
       escapeCSV(e.municipio),
       escapeCSV(e.estado),
-      escapeCSV(formatDate(e.data_disponibilizacao)),
       escapeCSV(e.gestor_responsavel),
-      escapeCSV(e.objeto),
-      escapeCSV(e.grupo_natureza_despesa),
+      escapeCSV(formatDate(e.data_disponibilizacao)),
       escapeCSV(valorConc.toFixed(2)),
+      escapeCSV(Number(e.valor_repassado || 0).toFixed(2)),
       escapeCSV(valorContra.toFixed(2)),
       escapeCSV(valorTotal.toFixed(2)),
       escapeCSV(Number(e.valor_executado).toFixed(2)),
-      escapeCSV(((Number(e.valor_executado) / valorTotal) * 100).toFixed(2) + '%'),
+      escapeCSV(valorTotal > 0 ? ((Number(e.valor_executado) / valorTotal) * 100).toFixed(2) + '%' : '0%'),
       escapeCSV(e.banco),
       escapeCSV(e.conta_corrente),
       escapeCSV(e.anuencia_previa_sus === null ? 'N/A' : e.anuencia_previa_sus ? 'Sim' : 'Não'),
@@ -161,20 +166,20 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
   const tableRows = emendas
     .map((e) => {
       const valorConc = Number(e.valor);
-      const valorContra = Number(e.contrapartida || 0);
-      const valorTotal = valorConc + valorContra;
       return `
     <tr>
       <td>${e.numero || 'Programa'}</td>
-      <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
-      <td>${e.nome_concedente || '-'}</td>
-      <td>${e.nome_recebedor}</td>
-      <td>${e.municipio}/${e.estado}</td>
+      <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+      <td>${tipoLabels[e.tipo_concedente] || e.tipo_concedente}</td>
+      <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
+      <td>${getFormaRepasse(e)}</td>
+      <td>${e.numero_convenio || '-'}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">${e.objeto}</td>
+      <td style="max-width:80px;overflow:hidden;text-overflow:ellipsis;">${e.grupo_natureza_despesa}</td>
       <td class="text-right">${formatCurrency(valorConc)}</td>
-      <td class="text-right">${formatCurrency(valorContra)}</td>
-      <td class="text-right">${formatCurrency(valorTotal)}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
-      <td class="text-right">${((Number(e.valor_executado) / valorTotal) * 100).toFixed(1)}%</td>
+      <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
     </tr>
   `;
     })
@@ -384,15 +389,17 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
     <thead>
       <tr>
         <th>Número</th>
-        <th>Status</th>
-        <th>Concedente</th>
-        <th>Recebedor</th>
-        <th>Município</th>
-        <th class="text-right">Concedente</th>
-        <th class="text-right">Contrapartida</th>
-        <th class="text-right">Total</th>
+        <th>Esfera</th>
+        <th>Tipo</th>
+        <th>Autoria</th>
+        <th>Forma Repasse</th>
+        <th>Nº Convênio</th>
+        <th>Objeto</th>
+        <th>Função Governo</th>
+        <th class="text-right">Previsto</th>
+        <th class="text-right">Repassado</th>
         <th class="text-right">Executado</th>
-        <th class="text-right">%</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>

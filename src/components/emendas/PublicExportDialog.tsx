@@ -22,10 +22,15 @@ interface EmendaData {
   estado: string;
   valor: number;
   valor_executado: number;
+  valor_repassado?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
   esfera?: string;
+  tipo_concedente?: string;
+  especial?: boolean;
+  numero_convenio?: string | null;
+  grupo_natureza_despesa?: string;
 }
 
 interface PrefeituraInfo {
@@ -50,6 +55,19 @@ const statusLabels: Record<string, string> = {
   cancelado: 'Cancelado',
 };
 
+const tipoConcedenteLabels: Record<string, string> = {
+  parlamentar: 'Individual',
+  comissao: 'Comissão',
+  bancada: 'Bancada',
+  outro: 'Outro',
+};
+
+const getFormaRepasse = (e: EmendaData) => {
+  if (e.especial) return 'Transferência Especial';
+  if (e.numero_convenio) return 'Convênio';
+  return 'Fundo a Fundo';
+};
+
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -70,13 +88,18 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     try {
       const jsonData = emendas.map((e) => ({
         numero: e.numero,
-        objeto: e.objeto,
         esfera: e.esfera === 'estadual' ? 'Estadual' : 'Federal',
-        parlamentar: e.nome_parlamentar || null,
+        tipo: tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
+        autoria: e.nome_parlamentar || e.nome_concedente || null,
+        objeto: e.objeto,
+        forma_repasse: getFormaRepasse(e),
+        numero_convenio: e.numero_convenio || null,
+        funcao_governo: e.grupo_natureza_despesa || null,
         concedente: e.nome_concedente || null,
         recebedor: e.nome_recebedor,
         municipio: `${e.municipio}/${e.estado}`,
-        valor_concedente: Number(e.valor),
+        valor_previsto: Number(e.valor),
+        valor_repassado: Number(e.valor_repassado || 0),
         contrapartida: Number(e.contrapartida || 0),
         valor_total: Number(e.valor) + Number(e.contrapartida || 0),
         valor_executado: Number(e.valor_executado),
@@ -104,19 +127,24 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Esfera', 'Objeto', 'Parlamentar', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Concedente', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const headers = ['Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio', 'Função de Governo', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Previsto', 'Repassado', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
       const rows = emendas.map((e) => {
         const valorConc = Number(e.valor);
         const valorContra = Number(e.contrapartida || 0);
         return [
           e.numero,
           e.esfera === 'estadual' ? 'Estadual' : 'Federal',
+          tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
+          `"${(e.nome_parlamentar || e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.objeto.replace(/"/g, '""')}"`,
-          `"${(e.nome_parlamentar || '').replace(/"/g, '""')}"`,
+          getFormaRepasse(e),
+          e.numero_convenio || '-',
+          `"${(e.grupo_natureza_despesa || '-').replace(/"/g, '""')}"`,
           `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.nome_recebedor.replace(/"/g, '""')}"`,
           `${e.municipio}/${e.estado}`,
           valorConc,
+          Number(e.valor_repassado || 0),
           valorContra,
           valorConc + valorContra,
           e.valor_executado,
@@ -308,13 +336,14 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
       <tr>
         <th>Número</th>
         <th>Esfera</th>
+        <th>Tipo</th>
+        <th>Autoria</th>
+        <th>Forma Repasse</th>
+        <th>Nº Convênio</th>
         <th>Objeto</th>
-        <th>Parlamentar</th>
-        <th>Recebedor</th>
-        <th>Município</th>
-        <th class="text-right">Concedente</th>
-        <th class="text-right">Contrapartida</th>
-        <th class="text-right">Total</th>
+        <th>Função Governo</th>
+        <th class="text-right">Previsto</th>
+        <th class="text-right">Repassado</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
       </tr>
@@ -322,19 +351,18 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     <tbody>
       ${emendas.map((e) => {
         const valorConc = Number(e.valor);
-        const valorContra = Number(e.contrapartida || 0);
-        const valorTotalEmenda = valorConc + valorContra;
         return `
         <tr>
           <td>${e.numero}</td>
-          <td>${(e as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}</td>
-          <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td>${e.nome_parlamentar || '-'}</td>
-          <td>${e.nome_recebedor}</td>
-          <td>${e.municipio}/${e.estado}</td>
+          <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+          <td>${tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-'}</td>
+          <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
+          <td>${getFormaRepasse(e)}</td>
+          <td>${e.numero_convenio || '-'}</td>
+          <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
+          <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.grupo_natureza_despesa || '-'}</td>
           <td class="text-right">${formatCurrency(valorConc)}</td>
-          <td class="text-right">${formatCurrency(valorContra)}</td>
-          <td class="text-right">${formatCurrency(valorTotalEmenda)}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
           <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
         </tr>

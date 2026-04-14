@@ -75,7 +75,7 @@ const PrefeituraPixPublica = () => {
     enabled: !!prefeitura?.id,
   });
 
-  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
   const { selectedYear, setSelectedYear } = useYearParam();
 
   const availableYears = useMemo(() => {

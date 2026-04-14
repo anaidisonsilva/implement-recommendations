@@ -7,10 +7,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+export type EsferaFilterValue = 'todos' | 'federal' | 'estadual' | 'municipal';
+
 interface LastUpdatedBannerProps {
   emendas: { updated_at: string }[] | null | undefined;
-  esferaFilter?: 'todos' | 'federal' | 'estadual';
-  onEsferaChange?: (value: 'todos' | 'federal' | 'estadual') => void;
+  esferaFilter?: EsferaFilterValue;
+  onEsferaChange?: (value: EsferaFilterValue) => void;
 }
 
 const LastUpdatedBanner = ({ emendas, esferaFilter = 'todos', onEsferaChange }: LastUpdatedBannerProps) => {
@@ -42,6 +44,7 @@ const LastUpdatedBanner = ({ emendas, esferaFilter = 'todos', onEsferaChange }: 
             <SelectItem value="todos">Todas as Esferas</SelectItem>
             <SelectItem value="federal">Federal</SelectItem>
             <SelectItem value="estadual">Estadual</SelectItem>
+            <SelectItem value="municipal">Municipal</SelectItem>
           </SelectContent>
         </Select>
       )}

@@ -89,7 +89,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     try {
       const jsonData = emendas.map((e) => ({
         numero: e.numero,
-        esfera: e.esfera === 'estadual' ? 'Estadual' : 'Federal',
+        esfera: e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal',
         tipo: tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
         autoria: e.nome_parlamentar || e.nome_concedente || null,
         objeto: e.objeto,
@@ -135,7 +135,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         const valorContra = Number(e.contrapartida || 0);
         return [
           e.numero,
-          e.esfera === 'estadual' ? 'Estadual' : 'Federal',
+          e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal',
           tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
           `"${(e.nome_parlamentar || e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.objeto.replace(/"/g, '""')}"`,
@@ -356,7 +356,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         return `
         <tr>
           <td>${e.numero}</td>
-          <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+          <td>${e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
           <td>${tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-'}</td>
           <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
           <td>${getFormaRepasse(e)}</td>

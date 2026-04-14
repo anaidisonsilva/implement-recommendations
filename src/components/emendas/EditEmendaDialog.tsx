@@ -217,6 +217,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     <SelectContent>
                       <SelectItem value="federal">🇧🇷 Federal</SelectItem>
                       <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+                      <SelectItem value="municipal">🏘️ Municipal</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

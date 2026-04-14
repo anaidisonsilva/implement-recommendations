@@ -259,7 +259,7 @@ const PrefeituraRelatoriosPublicos = () => {
               return `
               <tr>
                 <td>${emenda.numero || 'Programa'}</td>
-                <td>${emenda.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+                <td>${emenda.esfera === 'estadual' ? 'Estadual' : emenda.esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
                 <td>${tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</td>
                 <td>${emenda.nome_parlamentar || emenda.nome_concedente || '-'}</td>
                 <td>${formaRepasse}</td>
@@ -550,8 +550,8 @@ const PrefeituraRelatoriosPublicos = () => {
                       <TableRow key={emenda.id}>
                         <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                         <TableCell>
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${emenda.esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                            {emenda.esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${emenda.esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : emenda.esfera === 'municipal' ? 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                            {emenda.esfera === 'estadual' ? 'Estadual' : emenda.esfera === 'municipal' ? 'Municipal' : 'Federal'}
                           </span>
                         </TableCell>
                         <TableCell>{tipoLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</TableCell>

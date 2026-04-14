@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { toast } from 'sonner';
 
-export type EsferaEmenda = 'federal' | 'estadual';
+export type EsferaEmenda = 'federal' | 'estadual' | 'municipal';
 
 export interface EmendaDB {
   id: string;

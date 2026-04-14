@@ -128,7 +128,7 @@ const Relatorios = () => {
       const formaRepasse = e.especial ? 'Transferência Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
       return [
         e.numero,
-        (e as any).esfera === 'estadual' ? 'Estadual' : 'Federal',
+        (e as any).esfera === 'estadual' ? 'Estadual' : (e as any).esfera === 'municipal' ? 'Municipal' : 'Federal',
         tipoLabels[e.tipo_concedente] || e.tipo_concedente,
         `"${(e.nome_parlamentar || e.nome_concedente || '').replace(/"/g, '""')}"`,
         `"${e.objeto.replace(/"/g, '""')}"`,
@@ -171,7 +171,7 @@ const Relatorios = () => {
         return `
           <tr>
             <td>${e.numero || 'Programa'}</td>
-            <td>${(e as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+            <td>${(e as any).esfera === 'estadual' ? 'Estadual' : (e as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
             <td>${tipoLabels2[e.tipo_concedente] || e.tipo_concedente}</td>
             <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
             <td>${formaRepasse}</td>
@@ -588,8 +588,8 @@ const Relatorios = () => {
                     <TableRow key={emenda.id}>
                       <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : (emenda as any).esfera === 'municipal' ? 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}
                         </span>
                       </TableCell>
                       <TableCell>{tipoLabels3[emenda.tipo_concedente] || emenda.tipo_concedente}</TableCell>

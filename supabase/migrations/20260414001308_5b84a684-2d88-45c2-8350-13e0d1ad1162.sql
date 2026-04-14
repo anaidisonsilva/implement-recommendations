@@ -1,0 +1,1 @@
+ALTER TYPE public.esfera_emenda ADD VALUE IF NOT EXISTS 'municipal';

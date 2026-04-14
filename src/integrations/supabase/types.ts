@@ -164,6 +164,7 @@ export type Database = {
           esfera: Database["public"]["Enums"]["esfera_emenda"]
           especial: boolean
           estado: string
+          funcao_governo: string | null
           gestor_responsavel: string
           grupo_natureza_despesa: string
           id: string
@@ -200,6 +201,7 @@ export type Database = {
           esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
+          funcao_governo?: string | null
           gestor_responsavel: string
           grupo_natureza_despesa: string
           id?: string
@@ -236,6 +238,7 @@ export type Database = {
           esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
+          funcao_governo?: string | null
           gestor_responsavel?: string
           grupo_natureza_despesa?: string
           id?: string

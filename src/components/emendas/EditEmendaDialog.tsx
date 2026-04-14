@@ -45,6 +45,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     gestor_responsavel: '',
     objeto: '',
     grupo_natureza_despesa: '',
+    funcao_governo: '',
     valor: '',
     valor_executado: '',
     valor_repassado: '',
@@ -79,6 +80,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         gestor_responsavel: emenda.gestor_responsavel,
         objeto: emenda.objeto,
         grupo_natureza_despesa: emenda.grupo_natureza_despesa,
+        funcao_governo: (emenda as any).funcao_governo || '',
         valor: String(emenda.valor),
         valor_executado: String(emenda.valor_executado),
         valor_repassado: String((emenda as any).valor_repassado || 0),
@@ -117,6 +119,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       gestor_responsavel: formData.gestor_responsavel,
       objeto: formData.objeto,
       grupo_natureza_despesa: formData.grupo_natureza_despesa,
+      funcao_governo: formData.funcao_governo || null,
       valor: parseFloat(formData.valor) || 0,
       valor_executado: parseFloat(formData.valor_executado) || 0,
       valor_repassado: parseFloat(formData.valor_repassado) || 0,
@@ -406,10 +409,29 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="grupo_natureza_despesa">Função de Governo *</Label>
+                  <Label htmlFor="grupo_natureza_despesa">Grupo Natureza de Despesa *</Label>
                   <Select
                     value={formData.grupo_natureza_despesa}
                     onValueChange={(value) => setFormData({ ...formData, grupo_natureza_despesa: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o GND" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1 - Pessoal e Encargos Sociais">1 - Pessoal e Encargos Sociais</SelectItem>
+                      <SelectItem value="2 - Juros e Encargos da Dívida">2 - Juros e Encargos da Dívida</SelectItem>
+                      <SelectItem value="3 - Outras Despesas Correntes">3 - Outras Despesas Correntes</SelectItem>
+                      <SelectItem value="4 - Investimentos">4 - Investimentos</SelectItem>
+                      <SelectItem value="5 - Inversões Financeiras">5 - Inversões Financeiras</SelectItem>
+                      <SelectItem value="6 - Amortização da Dívida">6 - Amortização da Dívida</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="funcao_governo">Função de Governo</Label>
+                  <Select
+                    value={formData.funcao_governo}
+                    onValueChange={(value) => setFormData({ ...formData, funcao_governo: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a função de governo" />

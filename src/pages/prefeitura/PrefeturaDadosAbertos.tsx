@@ -65,6 +65,7 @@ const PrefeturaDadosAbertos = () => {
     data_disponibilizacao: e.data_disponibilizacao,
     programa: e.programa,
     especial: e.especial,
+    esfera: e.esfera || 'federal',
     tipo_concedente: e.tipo_concedente,
     tipo_recebedor: e.tipo_recebedor,
     grupo_natureza_despesa: e.grupo_natureza_despesa,

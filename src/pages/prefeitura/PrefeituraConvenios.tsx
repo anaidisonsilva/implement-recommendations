@@ -319,8 +319,8 @@ const PrefeituraConvenios = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${(emenda as any).esfera === 'estadual' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
-                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${(emenda as any).esfera === 'estadual' ? 'bg-purple-100 text-purple-700 border border-purple-200' : (emenda as any).esfera === 'municipal' ? 'bg-orange-100 text-orange-700 border border-orange-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}
                         </span>
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{emenda.objeto}</TableCell>
@@ -371,12 +371,15 @@ const PrefeituraConvenios = () => {
               Nenhum convênio encontrado
             </p>
             <p className="mt-1 text-sm text-muted-foreground text-center max-w-lg">
-              {hasActiveAdvancedFilters(filters)
+                {hasActiveAdvancedFilters(filters)
                 ? 'Tente alterar os filtros de busca'
                 : (() => {
                     const ano = selectedYear !== 'todos' ? parseInt(selectedYear) : new Date().getFullYear();
                     const currentYear = new Date().getFullYear();
                     const dataFim = ano < currentYear ? `31/12/${ano}` : new Date().toLocaleDateString('pt-BR');
+                    if (esferaFilter === 'municipal') {
+                      return `Não foram recebidas emendas municipais no período de 01/01/${ano} até ${dataFim}.`;
+                    }
                     return `Não foram recebidas transferências voluntárias no período de 01/01/${ano} até ${dataFim}.`;
                   })()}
             </p>

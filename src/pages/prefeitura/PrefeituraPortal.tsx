@@ -466,8 +466,8 @@ const PrefeituraPortal = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : (emenda as any).esfera === 'municipal' ? 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                          {(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}
                         </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm">
@@ -501,12 +501,19 @@ const PrefeituraPortal = () => {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
             <FileText className="h-12 w-12 text-muted-foreground/50" />
-            <p className="mt-4 text-lg font-medium text-muted-foreground">
-              {selectedYear !== 'todos' 
-                ? `Nenhuma emenda encontrada para ${selectedYear}`
-                : 'Nenhuma emenda encontrada'
-              }
-            </p>
+             <p className="mt-4 text-lg font-medium text-muted-foreground">
+               {(() => {
+                 const ano = selectedYear !== 'todos' ? parseInt(selectedYear) : new Date().getFullYear();
+                 const currentYear = new Date().getFullYear();
+                 const dataFim = ano < currentYear ? `31/12/${ano}` : new Date().toLocaleDateString('pt-BR');
+                 if (esferaFilter === 'municipal') {
+                   return `Não foram recebidas emendas municipais no período de 01/01/${ano} até ${dataFim}.`;
+                 }
+                 return selectedYear !== 'todos' 
+                   ? `Nenhuma emenda encontrada para ${selectedYear}`
+                   : 'Nenhuma emenda encontrada';
+               })()}
+             </p>
           </div>
         )}
 

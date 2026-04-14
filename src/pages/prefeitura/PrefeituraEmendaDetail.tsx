@@ -427,8 +427,8 @@ const PrefeituraEmendaDetail = () => {
                       {emenda.numero ? `Emenda Nº ${emenda.numero}` : 'Emenda de Programa'}
                     </h1>
                     <StatusBadge status={emenda.status} />
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
-                      {(emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal'}
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${(emenda as any).esfera === 'estadual' ? 'bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300' : (emenda as any).esfera === 'municipal' ? 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300'}`}>
+                      {(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}
                     </span>
                     {emenda.especial && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">

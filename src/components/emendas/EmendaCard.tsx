@@ -59,7 +59,7 @@ const EmendaCard = ({ emenda, index = 0 }: EmendaCardProps) => {
           <div className="flex flex-col items-end gap-1.5 shrink-0">
             <StatusBadge status={emenda.status} />
             <Badge variant={(emenda as any).esfera === 'estadual' ? 'secondary' : 'outline'} className="text-[10px] px-2 py-0">
-              {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : '🇧🇷 Federal'}
+              {(emenda as any).esfera === 'estadual' ? '🏛️ Estadual' : (emenda as any).esfera === 'municipal' ? '🏘️ Municipal' : '🇧🇷 Federal'}
             </Badge>
           </div>
         </div>

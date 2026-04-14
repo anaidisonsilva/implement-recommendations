@@ -632,6 +632,9 @@ const PrefeituraRelatoriosPublicos = () => {
                   <TableHead>Função Governo</TableHead>
                   <TableHead className="text-right">Previsto</TableHead>
                   <TableHead className="text-right">Repassado</TableHead>
+                  <TableHead className="text-right">Empenhado</TableHead>
+                  <TableHead className="text-right">Liquidado</TableHead>
+                  <TableHead className="text-right">Pago</TableHead>
                   <TableHead className="text-right">Executado</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -659,6 +662,9 @@ const PrefeituraRelatoriosPublicos = () => {
                         <TableCell className="max-w-[100px] truncate">{(emenda as any).funcao_governo || emenda.grupo_natureza_despesa || '-'}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor))}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_repassado || 0))}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number((emenda as any).valor_empenhado || 0))}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number((emenda as any).valor_liquidado || 0))}</TableCell>
+                        <TableCell className="text-right">{formatCurrencyCompact(Number((emenda as any).valor_pago || 0))}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_executado))}</TableCell>
                         <TableCell>
                           <StatusBadge status={emenda.status} />

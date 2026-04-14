@@ -353,7 +353,7 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
               </span>
             </div>
           </div>
-          <div className="grid gap-3 p-6 sm:grid-cols-3">
+          <div className="grid gap-3 p-6 sm:grid-cols-4">
             {ds.formats.map((fmt) => (
               <Button
                 key={fmt.key}

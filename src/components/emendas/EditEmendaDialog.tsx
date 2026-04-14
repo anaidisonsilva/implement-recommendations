@@ -117,19 +117,28 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     const valor = parseFloat(formData.valor) || 0;
 
     if (newStatus === 'aprovado') {
-      // Ao aprovar, preenche empenhado com o valor da emenda (se ainda não preenchido)
       const currentEmpenhado = parseFloat(formData.valor_empenhado) || 0;
       if (currentEmpenhado === 0) {
         setFormData(prev => ({ ...prev, valor_empenhado: String(valor) }));
       }
-    } else if (newStatus === 'concluido') {
-      // Ao concluir (pago), preenche liquidado e pago com o valor da emenda (se ainda não preenchidos)
-      const currentLiquidado = parseFloat(formData.valor_liquidado) || 0;
-      const currentPago = parseFloat(formData.valor_pago) || 0;
+    } else if (newStatus === 'em_execucao') {
+      // Ao entrar em execução, preenche repassado com o valor da emenda (se zerado)
+      const currentRepassado = parseFloat(formData.valor_repassado) || 0;
       const currentEmpenhado = parseFloat(formData.valor_empenhado) || 0;
       setFormData(prev => ({
         ...prev,
         valor_empenhado: currentEmpenhado === 0 ? String(valor) : prev.valor_empenhado,
+        valor_repassado: currentRepassado === 0 ? String(valor) : prev.valor_repassado,
+      }));
+    } else if (newStatus === 'concluido') {
+      const currentLiquidado = parseFloat(formData.valor_liquidado) || 0;
+      const currentPago = parseFloat(formData.valor_pago) || 0;
+      const currentEmpenhado = parseFloat(formData.valor_empenhado) || 0;
+      const currentRepassado = parseFloat(formData.valor_repassado) || 0;
+      setFormData(prev => ({
+        ...prev,
+        valor_empenhado: currentEmpenhado === 0 ? String(valor) : prev.valor_empenhado,
+        valor_repassado: currentRepassado === 0 ? String(valor) : prev.valor_repassado,
         valor_liquidado: currentLiquidado === 0 ? String(valor) : prev.valor_liquidado,
         valor_pago: currentPago === 0 ? String(valor) : prev.valor_pago,
       }));

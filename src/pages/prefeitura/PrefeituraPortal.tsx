@@ -407,6 +407,7 @@ const PrefeituraPortal = () => {
               especial: e.especial,
               numero_convenio: e.numero_convenio,
               grupo_natureza_despesa: e.grupo_natureza_despesa,
+              funcao_governo: (e as any).funcao_governo,
             }))}
             title="Exportar Relatório de Emendas"
             prefeitura={prefeitura}

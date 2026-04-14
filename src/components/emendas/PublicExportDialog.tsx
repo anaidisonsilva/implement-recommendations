@@ -95,7 +95,8 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         objeto: e.objeto,
         forma_repasse: getFormaRepasse(e),
         numero_convenio: e.numero_convenio || null,
-        funcao_governo: e.grupo_natureza_despesa || null,
+        funcao_governo: e.funcao_governo || e.grupo_natureza_despesa || null,
+        grupo_natureza_despesa: e.grupo_natureza_despesa || null,
         concedente: e.nome_concedente || null,
         recebedor: e.nome_recebedor,
         municipio: `${e.municipio}/${e.estado}`,
@@ -140,7 +141,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
           `"${e.objeto.replace(/"/g, '""')}"`,
           getFormaRepasse(e),
           e.numero_convenio || '-',
-          `"${(e.grupo_natureza_despesa || '-').replace(/"/g, '""')}"`,
+          `"${(e.funcao_governo || e.grupo_natureza_despesa || '-').replace(/"/g, '""')}"`,
           `"${(e.nome_concedente || '').replace(/"/g, '""')}"`,
           `"${e.nome_recebedor.replace(/"/g, '""')}"`,
           `${e.municipio}/${e.estado}`,
@@ -361,7 +362,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
           <td>${getFormaRepasse(e)}</td>
           <td>${e.numero_convenio || '-'}</td>
           <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.grupo_natureza_despesa || '-'}</td>
+          <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.funcao_governo || e.grupo_natureza_despesa || '-'}</td>
           <td class="text-right">${formatCurrency(valorConc)}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>

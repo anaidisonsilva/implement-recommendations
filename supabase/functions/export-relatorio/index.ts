@@ -33,6 +33,9 @@ interface Emenda {
   especial: boolean;
   numero_convenio: string | null;
   esfera: string;
+  valor_empenhado: number;
+  valor_liquidado: number;
+  valor_pago: number;
 }
 
 interface Prefeitura {
@@ -106,6 +109,7 @@ function generateCSV(emendas: Emenda[]): string {
     'Função de Governo', 'Status', 'Concedente', 'Recebedor', 'CNPJ Recebedor',
     'Município', 'Estado', 'Gestor Responsável', 'Data Disponibilização',
     'Valor Previsto (R$)', 'Valor Repassado (R$)', 'Contrapartida (R$)', 'Valor Total (R$)',
+    'Valor Empenhado (R$)', 'Valor Liquidado (R$)', 'Valor Pago (R$)',
     'Valor Executado (R$)', '% Executado', 'Banco', 'Conta Corrente', 'Anuência SUS', 'Data Cadastro',
   ];
 
@@ -115,7 +119,7 @@ function generateCSV(emendas: Emenda[]): string {
     const valorTotal = valorConc + valorContra;
     return [
       escapeCSV(e.numero),
-      escapeCSV(e.esfera === 'estadual' ? 'Estadual' : 'Federal'),
+      escapeCSV(e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'),
       escapeCSV(tipoLabels[e.tipo_concedente] || e.tipo_concedente),
       escapeCSV(e.nome_parlamentar || e.nome_concedente || ''),
       escapeCSV(e.objeto),
@@ -134,6 +138,9 @@ function generateCSV(emendas: Emenda[]): string {
       escapeCSV(Number(e.valor_repassado || 0).toFixed(2)),
       escapeCSV(valorContra.toFixed(2)),
       escapeCSV(valorTotal.toFixed(2)),
+      escapeCSV(Number(e.valor_empenhado || 0).toFixed(2)),
+      escapeCSV(Number(e.valor_liquidado || 0).toFixed(2)),
+      escapeCSV(Number(e.valor_pago || 0).toFixed(2)),
       escapeCSV(Number(e.valor_executado).toFixed(2)),
       escapeCSV(valorTotal > 0 ? ((Number(e.valor_executado) / valorTotal) * 100).toFixed(2) + '%' : '0%'),
       escapeCSV(e.banco),
@@ -169,7 +176,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       return `
     <tr>
       <td>${e.numero || 'Programa'}</td>
-      <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+      <td>${e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
       <td>${tipoLabels[e.tipo_concedente] || e.tipo_concedente}</td>
       <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
       <td>${getFormaRepasse(e)}</td>
@@ -178,6 +185,9 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       <td style="max-width:80px;overflow:hidden;text-overflow:ellipsis;">${e.grupo_natureza_despesa}</td>
       <td class="text-right">${formatCurrency(valorConc)}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_empenhado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_liquidado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_pago || 0))}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
       <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
     </tr>
@@ -398,6 +408,9 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
         <th>Função Governo</th>
         <th class="text-right">Previsto</th>
         <th class="text-right">Repassado</th>
+        <th class="text-right">Empenhado</th>
+        <th class="text-right">Liquidado</th>
+        <th class="text-right">Pago</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
       </tr>

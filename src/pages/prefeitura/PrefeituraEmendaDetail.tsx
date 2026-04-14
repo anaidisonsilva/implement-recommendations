@@ -237,6 +237,20 @@ const PrefeituraEmendaDetail = () => {
         <div class="label">Repassado</div>
         <div class="value">${formatCurrency(valorRepassado)}</div>
       </div>
+    </div>
+    <div class="summary-grid" style="margin-top: 10px;">
+      <div class="summary-item">
+        <div class="label">Empenhado</div>
+        <div class="value" style="color:#1d4ed8">${formatCurrency(valorEmpenhado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Liquidado</div>
+        <div class="value" style="color:#b45309">${formatCurrency(valorLiquidado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Pago</div>
+        <div class="value" style="color:#15803d">${formatCurrency(valorPago)}</div>
+      </div>
       <div class="summary-item">
         <div class="label">Executado</div>
         <div class="value">${formatCurrency(valorExecutado)}</div>
@@ -338,6 +352,9 @@ const PrefeituraEmendaDetail = () => {
   const valorTotal = valor + contrapartida;
   const valorExecutado = Number(emenda.valor_executado);
   const valorRepassado = Number((emenda as any).valor_repassado || 0);
+  const valorEmpenhado = Number(emenda.valor_empenhado || 0);
+  const valorLiquidado = Number(emenda.valor_liquidado || 0);
+  const valorPago = Number(emenda.valor_pago || 0);
   const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
 
   return (
@@ -491,7 +508,7 @@ const PrefeituraEmendaDetail = () => {
             </div>
           </div>
 
-          {/* Progress Card */}
+           {/* Progress Card */}
           <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-foreground">Execução Financeira</h3>
@@ -500,13 +517,27 @@ const PrefeituraEmendaDetail = () => {
               </span>
             </div>
             <Progress value={progressPercent} className="h-3 mb-3" />
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm mb-4">
               <span className="text-muted-foreground">
                 Executado: <strong className="text-success">{formatCurrency(valorExecutado)}</strong>
               </span>
               <span className="text-muted-foreground">
                 Restante: <strong className="text-foreground">{formatCurrency(valorTotal - valorExecutado)}</strong>
               </span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 pt-3 border-t border-border">
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Empenhado</p>
+                <p className="text-base font-semibold text-blue-700 dark:text-blue-300">{formatCurrency(valorEmpenhado)}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Liquidado</p>
+                <p className="text-base font-semibold text-amber-700 dark:text-amber-300">{formatCurrency(valorLiquidado)}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Pago</p>
+                <p className="text-base font-semibold text-green-700 dark:text-green-300">{formatCurrency(valorPago)}</p>
+              </div>
             </div>
           </div>
 

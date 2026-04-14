@@ -24,6 +24,9 @@ interface EmendaData {
   valor: number;
   valor_executado: number;
   valor_repassado?: number;
+  valor_empenhado?: number;
+  valor_liquidado?: number;
+  valor_pago?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
@@ -102,6 +105,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     'Valor Repassado': Number(e.valor_repassado || 0),
     'Contrapartida': Number(e.contrapartida || 0),
     'Valor Total': Number(e.valor) + Number(e.contrapartida || 0),
+    'Valor Empenhado': Number(e.valor_empenhado || 0),
+    'Valor Liquidado': Number(e.valor_liquidado || 0),
+    'Valor Pago': Number(e.valor_pago || 0),
     'Valor Executado': Number(e.valor_executado),
     'Status': statusLabels[e.status] || e.status,
     'Data Disponibilização': formatDate(e.data_disponibilizacao),
@@ -154,6 +160,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         valor_repassado: Number(e.valor_repassado || 0),
         contrapartida: Number(e.contrapartida || 0),
         valor_total: Number(e.valor) + Number(e.contrapartida || 0),
+        valor_empenhado: Number(e.valor_empenhado || 0),
+        valor_liquidado: Number(e.valor_liquidado || 0),
+        valor_pago: Number(e.valor_pago || 0),
         valor_executado: Number(e.valor_executado),
         status: statusLabels[e.status] || e.status,
         data_disponibilizacao: e.data_disponibilizacao,
@@ -179,7 +188,7 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
     setIsExporting('csv');
 
     try {
-      const headers = ['Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio', 'Função de Governo', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Previsto', 'Repassado', 'Contrapartida', 'Valor Total', 'Valor Executado', 'Status', 'Data Disponibilização'];
+      const headers = ['Número', 'Esfera', 'Tipo', 'Autoria', 'Objeto', 'Forma de Repasse', 'Nº Convênio', 'Função de Governo', 'Concedente', 'Recebedor', 'Município/UF', 'Valor Previsto', 'Repassado', 'Contrapartida', 'Valor Total', 'Empenhado', 'Liquidado', 'Pago', 'Valor Executado', 'Status', 'Data Disponibilização'];
       const rows = emendas.map((e) => {
         const valorConc = Number(e.valor);
         const valorContra = Number(e.contrapartida || 0);
@@ -199,6 +208,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
           Number(e.valor_repassado || 0),
           valorContra,
           valorConc + valorContra,
+          Number(e.valor_empenhado || 0),
+          Number(e.valor_liquidado || 0),
+          Number(e.valor_pago || 0),
           e.valor_executado,
           statusLabels[e.status] || e.status,
           formatDate(e.data_disponibilizacao),

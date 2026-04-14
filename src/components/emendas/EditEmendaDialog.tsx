@@ -49,6 +49,9 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     valor: '',
     valor_executado: '',
     valor_repassado: '',
+    valor_empenhado: '',
+    valor_liquidado: '',
+    valor_pago: '',
     banco: '',
     conta_corrente: '',
     anuencia_previa_sus: false,
@@ -84,6 +87,9 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         valor: String(emenda.valor),
         valor_executado: String(emenda.valor_executado),
         valor_repassado: String((emenda as any).valor_repassado || 0),
+        valor_empenhado: String(emenda.valor_empenhado || 0),
+        valor_liquidado: String(emenda.valor_liquidado || 0),
+        valor_pago: String(emenda.valor_pago || 0),
         banco: emenda.banco || '',
         conta_corrente: emenda.conta_corrente || '',
         anuencia_previa_sus: emenda.anuencia_previa_sus || false,
@@ -123,6 +129,9 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       valor: parseFloat(formData.valor) || 0,
       valor_executado: parseFloat(formData.valor_executado) || 0,
       valor_repassado: parseFloat(formData.valor_repassado) || 0,
+      valor_empenhado: parseFloat(formData.valor_empenhado) || 0,
+      valor_liquidado: parseFloat(formData.valor_liquidado) || 0,
+      valor_pago: parseFloat(formData.valor_pago) || 0,
       banco: formData.banco || null,
       conta_corrente: formData.conta_corrente || null,
       anuencia_previa_sus: formData.anuencia_previa_sus,
@@ -349,7 +358,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
             {/* Dados Financeiros */}
             <div className="space-y-4">
               <h4 className="font-medium text-foreground">Dados Financeiros</h4>
-            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="valor">Valor do Concedente (R$) *</Label>
                   <Input
@@ -362,16 +371,6 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="valor_executado">Valor Executado (R$)</Label>
-                  <Input
-                    id="valor_executado"
-                    type="number"
-                    step="0.01"
-                    value={formData.valor_executado}
-                    onChange={(e) => setFormData({ ...formData, valor_executado: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
                   <Label htmlFor="valor_repassado">Valor Repassado (R$)</Label>
                   <Input
                     id="valor_repassado"
@@ -381,8 +380,6 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     onChange={(e) => setFormData({ ...formData, valor_repassado: e.target.value })}
                   />
                 </div>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="contrapartida">Contrapartida (R$)</Label>
                   <Input
@@ -406,6 +403,53 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                   <p className="text-xs text-muted-foreground">
                     Soma automática: Concedente + Contrapartida
                   </p>
+                </div>
+              </div>
+
+              <h4 className="font-medium text-foreground pt-2">Execução Orçamentária</h4>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="valor_empenhado">Valor Empenhado (R$)</Label>
+                  <Input
+                    id="valor_empenhado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_empenhado}
+                    onChange={(e) => setFormData({ ...formData, valor_empenhado: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_liquidado">Valor Liquidado (R$)</Label>
+                  <Input
+                    id="valor_liquidado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_liquidado}
+                    onChange={(e) => setFormData({ ...formData, valor_liquidado: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_pago">Valor Pago (R$)</Label>
+                  <Input
+                    id="valor_pago"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_pago}
+                    onChange={(e) => setFormData({ ...formData, valor_pago: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="valor_executado">Valor Executado Total (R$)</Label>
+                  <Input
+                    id="valor_executado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_executado}
+                    onChange={(e) => setFormData({ ...formData, valor_executado: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground">Calculado automaticamente pelos pagamentos registrados</p>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">

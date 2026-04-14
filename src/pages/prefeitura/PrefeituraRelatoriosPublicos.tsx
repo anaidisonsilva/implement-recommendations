@@ -560,7 +560,7 @@ const PrefeituraRelatoriosPublicos = () => {
                         <TableCell className="max-w-[150px] truncate" title={emenda.objeto}>
                           {emenda.objeto}
                         </TableCell>
-                        <TableCell className="max-w-[100px] truncate">{emenda.grupo_natureza_despesa || '-'}</TableCell>
+                        <TableCell className="max-w-[100px] truncate">{(emenda as any).funcao_governo || emenda.grupo_natureza_despesa || '-'}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor))}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_repassado || 0))}</TableCell>
                         <TableCell className="text-right">{formatCurrencyCompact(Number(emenda.valor_executado))}</TableCell>

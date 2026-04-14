@@ -480,7 +480,7 @@ const PrefeituraPortal = () => {
                       <TableCell className="whitespace-nowrap text-sm">{emenda.numero_convenio || '-'}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatCurrency(Number(emenda.valor))}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatCurrency(Number(emenda.valor_repassado || 0))}</TableCell>
-                      <TableCell className="max-w-[150px] truncate text-sm">{emenda.grupo_natureza_despesa}</TableCell>
+                      <TableCell className="max-w-[150px] truncate text-sm">{(emenda as any).funcao_governo || emenda.grupo_natureza_despesa}</TableCell>
                       <TableCell>
                         <StatusBadge status={emenda.status as any} />
                       </TableCell>

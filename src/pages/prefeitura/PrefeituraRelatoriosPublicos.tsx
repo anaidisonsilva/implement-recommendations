@@ -97,6 +97,8 @@ const PrefeituraRelatoriosPublicos = () => {
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
+  const [parlamentarFilter, setParlamentarFilter] = useState<string>('todos');
+  const [tipoFilter, setTipoFilter] = useState<string>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const { selectedYear, setSelectedYear } = useYearParam();
@@ -134,6 +136,17 @@ const PrefeituraRelatoriosPublicos = () => {
     });
   }, [emendas, selectedYear]);
 
+  // Get unique parlamentares for filter
+  const parlamentares = useMemo(() => {
+    if (!yearFilteredEmendas) return [];
+    const names = new Set<string>();
+    yearFilteredEmendas.forEach((e) => {
+      const name = e.nome_parlamentar || e.nome_concedente;
+      if (name) names.add(name);
+    });
+    return Array.from(names).sort();
+  }, [yearFilteredEmendas]);
+
   const filteredEmendas = useMemo(() => {
     return yearFilteredEmendas.filter((emenda) => {
       const searchLower = searchTerm.toLowerCase();
@@ -151,10 +164,13 @@ const PrefeituraRelatoriosPublicos = () => {
         (especialFilter === 'sim' && emenda.especial) ||
         (especialFilter === 'nao' && !emenda.especial);
       const matchesEsfera = esferaFilter === 'todos' || emenda.esfera === esferaFilter;
+      const matchesParlamentar = parlamentarFilter === 'todos' || 
+        (emenda.nome_parlamentar || emenda.nome_concedente || '') === parlamentarFilter;
+      const matchesTipo = tipoFilter === 'todos' || emenda.tipo_concedente === tipoFilter;
 
-      return matchesSearch && matchesStatus && matchesEspecial && matchesEsfera;
+      return matchesSearch && matchesStatus && matchesEspecial && matchesEsfera && matchesParlamentar && matchesTipo;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter, esferaFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter, esferaFilter, parlamentarFilter, tipoFilter]);
 
   // Calculate summary values
   const summaryStats = useMemo(() => {
@@ -182,10 +198,12 @@ const PrefeituraRelatoriosPublicos = () => {
     setStatusFilter('todos');
     setEspecialFilter('todos');
     setEsferaFilter('todos');
+    setParlamentarFilter('todos');
+    setTipoFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos' || parlamentarFilter !== 'todos' || tipoFilter !== 'todos';
 
   const getEmptyMessage = () => {
     if (esferaFilter !== 'todos' && filteredEmendas.length === 0) {
@@ -469,26 +487,28 @@ const PrefeituraRelatoriosPublicos = () => {
 
         {/* Filters */}
         <div className="mb-6 rounded-xl border border-border bg-card p-4 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Filter className="h-4 w-4" />
               Filtros
             </div>
             
-            <div className="flex flex-1 flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por número, objeto..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="pl-9"
-                />
-              </div>
-              
+            {/* Search bar full width */}
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por número, objeto, parlamentar..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-9"
+              />
+            </div>
+
+            {/* Filter row */}
+            <div className="flex flex-wrap gap-3">
               <Select 
                 value={statusFilter} 
                 onValueChange={(value) => {
@@ -496,7 +516,7 @@ const PrefeituraRelatoriosPublicos = () => {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -527,13 +547,52 @@ const PrefeituraRelatoriosPublicos = () => {
               </Select>
 
               <Select 
+                value={tipoFilter} 
+                onValueChange={(value) => {
+                  setTipoFilter(value);
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os tipos</SelectItem>
+                  <SelectItem value="parlamentar">Individual</SelectItem>
+                  <SelectItem value="comissao">Comissão</SelectItem>
+                  <SelectItem value="bancada">Bancada</SelectItem>
+                  <SelectItem value="outro">Outro</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select 
+                value={parlamentarFilter} 
+                onValueChange={(value) => {
+                  setParlamentarFilter(value);
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-52">
+                  <SelectValue placeholder="Autor/Parlamentar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os autores</SelectItem>
+                  {parlamentares.map((nome) => (
+                    <SelectItem key={nome} value={nome}>
+                      {nome.length > 30 ? nome.substring(0, 30) + '...' : nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select 
                 value={especialFilter} 
                 onValueChange={(value) => {
                   setEspecialFilter(value as 'todos' | 'sim' | 'nao');
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-full sm:w-40">
+                <SelectTrigger className="w-full sm:w-36">
                   <Star className="mr-2 h-4 w-4" />
                   <SelectValue placeholder="Especial" />
                 </SelectTrigger>

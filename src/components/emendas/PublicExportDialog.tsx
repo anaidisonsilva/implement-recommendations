@@ -8,8 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Download, FileSpreadsheet, FileText, FileJson, Loader2 } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText, FileJson, Loader2, Table2 } from 'lucide-react';
 import { toast } from 'sonner';
+import * as XLSX from 'xlsx';
 
 interface EmendaData {
   id: string;
@@ -82,7 +83,56 @@ const formatDate = (dateString: string) => {
 
 const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura }: PublicExportDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | null>(null);
+  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | 'json' | 'xlsx' | null>(null);
+
+  const buildExportRows = (ems: EmendaData[]) => ems.map((e) => ({
+    'Número': e.numero || '',
+    'Esfera': e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal',
+    'Tipo': tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-',
+    'Autoria': e.nome_parlamentar || e.nome_concedente || '-',
+    'Objeto': e.objeto,
+    'Forma de Repasse': getFormaRepasse(e),
+    'Nº Convênio': e.numero_convenio || '-',
+    'Função de Governo': e.funcao_governo || '-',
+    'GND': e.grupo_natureza_despesa || '-',
+    'Concedente': e.nome_concedente || '-',
+    'Recebedor': e.nome_recebedor,
+    'Município/UF': `${e.municipio}/${e.estado}`,
+    'Valor Previsto': Number(e.valor),
+    'Valor Repassado': Number(e.valor_repassado || 0),
+    'Contrapartida': Number(e.contrapartida || 0),
+    'Valor Total': Number(e.valor) + Number(e.contrapartida || 0),
+    'Valor Executado': Number(e.valor_executado),
+    'Status': statusLabels[e.status] || e.status,
+    'Data Disponibilização': formatDate(e.data_disponibilizacao),
+  }));
+
+  const handleExportXLSX = () => {
+    setIsExporting('xlsx');
+    try {
+      const rows = buildExportRows(emendas);
+      const ws = XLSX.utils.json_to_sheet(rows);
+      
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 18 }, { wch: 10 }, { wch: 12 }, { wch: 25 }, { wch: 40 },
+        { wch: 18 }, { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 25 },
+        { wch: 25 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+        { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 18 },
+      ];
+      
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Emendas');
+      XLSX.writeFile(wb, `relatorio-emendas-${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast.success('Relatório XLSX exportado com sucesso!');
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Erro ao exportar relatório');
+    } finally {
+      setIsExporting(null);
+    }
+  };
 
   const handleExportJSON = () => {
     setIsExporting('json');
@@ -427,6 +477,25 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
           <Button
             variant="outline"
             className="h-20 justify-start gap-4"
+            onClick={handleExportXLSX}
+            disabled={isExporting !== null}
+          >
+            {isExporting === 'xlsx' ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
+              <Table2 className="h-8 w-8 text-emerald-600" />
+            )}
+            <div className="text-left">
+              <p className="font-semibold">Excel (XLSX)</p>
+              <p className="text-sm text-muted-foreground">
+                Planilha editável para análise e prestação de contas
+              </p>
+            </div>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-20 justify-start gap-4"
             onClick={handleExportCSV}
             disabled={isExporting !== null}
           >
@@ -436,9 +505,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
               <FileSpreadsheet className="h-8 w-8 text-green-600" />
             )}
             <div className="text-left">
-              <p className="font-semibold">Excel / CSV</p>
+              <p className="font-semibold">CSV</p>
               <p className="text-sm text-muted-foreground">
-                Planilha com todos os dados para análise
+                Dados separados por vírgula para importação
               </p>
             </div>
           </Button>

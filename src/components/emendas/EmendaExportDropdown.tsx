@@ -90,7 +90,7 @@ function buildEmendaObject(emenda: EmendaData) {
   const formaRepasse = emenda.especial ? 'Transferência Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
   return {
     numero: emenda.numero,
-    esfera: (emenda as any).esfera === 'estadual' ? 'Estadual' : 'Federal',
+    esfera: (emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal',
     tipo: tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente,
     autoria: emenda.nome_parlamentar || emenda.nome_concedente || '',
     objeto: emenda.objeto,

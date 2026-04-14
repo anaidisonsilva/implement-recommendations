@@ -81,7 +81,7 @@ const PrefeituraPortal = () => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
-  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
   
   // Year filter synced with URL
   const { selectedYear, setSelectedYear } = useYearParam();

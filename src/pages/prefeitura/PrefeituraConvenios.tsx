@@ -62,7 +62,7 @@ const PrefeituraConvenios = () => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
-  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const { selectedYear, setSelectedYear } = useYearParam();
 

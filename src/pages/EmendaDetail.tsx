@@ -219,6 +219,7 @@ const EmendaDetail = () => {
           <div class="section">
             <div class="section-title">DADOS FINANCEIROS</div>
             <div class="field"><div class="field-label">Grupo Natureza Despesa</div><div class="field-value">${emenda.grupo_natureza_despesa}</div></div>
+            <div class="field"><div class="field-label">Função de Governo</div><div class="field-value">${(emenda as any).funcao_governo || '-'}</div></div>
             <div class="field"><div class="field-label">Banco</div><div class="field-value">${emenda.banco || '-'}</div></div>
             <div class="field"><div class="field-label">Conta Corrente</div><div class="field-value">${emenda.conta_corrente || '-'}</div></div>
           </div>

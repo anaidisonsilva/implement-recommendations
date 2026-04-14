@@ -270,6 +270,7 @@ const PrefeituraEmendaDetail = () => {
     <div class="card">
       <h3>Dados Financeiros</h3>
       <div class="field"><div class="label">Grupo Natureza Despesa</div><div class="value">${emenda.grupo_natureza_despesa}</div></div>
+      <div class="field"><div class="label">Função de Governo</div><div class="value">${(emenda as any).funcao_governo || '-'}</div></div>
       <div class="field"><div class="label">Banco</div><div class="value">${emenda.banco || '-'}</div></div>
       <div class="field"><div class="label">Conta Corrente</div><div class="value">${emenda.conta_corrente || '-'}</div></div>
     </div>
@@ -455,7 +456,7 @@ const PrefeituraEmendaDetail = () => {
                   </div>
                   <p className="mt-2 text-muted-foreground break-words whitespace-normal overflow-hidden">{emenda.objeto}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Função de Governo: <strong className="text-foreground">{emenda.grupo_natureza_despesa}</strong>
+                    Função de Governo: <strong className="text-foreground">{(emenda as any).funcao_governo || '-'}</strong>
                   </p>
                 </div>
               </div>
@@ -597,6 +598,10 @@ const PrefeituraEmendaDetail = () => {
                 <div>
                   <span className="text-muted-foreground">Grupo Natureza Despesa:</span>{' '}
                   <span className="font-medium">{emenda.grupo_natureza_despesa}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Função de Governo:</span>{' '}
+                  <span className="font-medium">{(emenda as any).funcao_governo || '-'}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Banco:</span>{' '}

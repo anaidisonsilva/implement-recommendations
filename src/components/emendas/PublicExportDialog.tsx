@@ -477,6 +477,25 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
           <Button
             variant="outline"
             className="h-20 justify-start gap-4"
+            onClick={handleExportXLSX}
+            disabled={isExporting !== null}
+          >
+            {isExporting === 'xlsx' ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
+              <Table2 className="h-8 w-8 text-emerald-600" />
+            )}
+            <div className="text-left">
+              <p className="font-semibold">Excel (XLSX)</p>
+              <p className="text-sm text-muted-foreground">
+                Planilha editável para análise e prestação de contas
+              </p>
+            </div>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-20 justify-start gap-4"
             onClick={handleExportCSV}
             disabled={isExporting !== null}
           >
@@ -486,9 +505,9 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
               <FileSpreadsheet className="h-8 w-8 text-green-600" />
             )}
             <div className="text-left">
-              <p className="font-semibold">Excel / CSV</p>
+              <p className="font-semibold">CSV</p>
               <p className="text-sm text-muted-foreground">
-                Planilha com todos os dados para análise
+                Dados separados por vírgula para importação
               </p>
             </div>
           </Button>

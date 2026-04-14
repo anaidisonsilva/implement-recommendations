@@ -237,6 +237,20 @@ const PrefeituraEmendaDetail = () => {
         <div class="label">Repassado</div>
         <div class="value">${formatCurrency(valorRepassado)}</div>
       </div>
+    </div>
+    <div class="summary-grid" style="margin-top: 10px;">
+      <div class="summary-item">
+        <div class="label">Empenhado</div>
+        <div class="value" style="color:#1d4ed8">${formatCurrency(valorEmpenhado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Liquidado</div>
+        <div class="value" style="color:#b45309">${formatCurrency(valorLiquidado)}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Pago</div>
+        <div class="value" style="color:#15803d">${formatCurrency(valorPago)}</div>
+      </div>
       <div class="summary-item">
         <div class="label">Executado</div>
         <div class="value">${formatCurrency(valorExecutado)}</div>

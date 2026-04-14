@@ -33,6 +33,9 @@ interface Emenda {
   especial: boolean;
   numero_convenio: string | null;
   esfera: string;
+  valor_empenhado: number;
+  valor_liquidado: number;
+  valor_pago: number;
 }
 
 interface Prefeitura {
@@ -173,7 +176,7 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       return `
     <tr>
       <td>${e.numero || 'Programa'}</td>
-      <td>${e.esfera === 'estadual' ? 'Estadual' : 'Federal'}</td>
+      <td>${e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
       <td>${tipoLabels[e.tipo_concedente] || e.tipo_concedente}</td>
       <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
       <td>${getFormaRepasse(e)}</td>
@@ -182,6 +185,9 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
       <td style="max-width:80px;overflow:hidden;text-overflow:ellipsis;">${e.grupo_natureza_despesa}</td>
       <td class="text-right">${formatCurrency(valorConc)}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_empenhado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_liquidado || 0))}</td>
+      <td class="text-right">${formatCurrency(Number(e.valor_pago || 0))}</td>
       <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
       <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
     </tr>
@@ -402,6 +408,9 @@ function generateHTML(emendas: Emenda[], prefeitura: Prefeitura | null): string 
         <th>Função Governo</th>
         <th class="text-right">Previsto</th>
         <th class="text-right">Repassado</th>
+        <th class="text-right">Empenhado</th>
+        <th class="text-right">Liquidado</th>
+        <th class="text-right">Pago</th>
         <th class="text-right">Executado</th>
         <th>Status</th>
       </tr>

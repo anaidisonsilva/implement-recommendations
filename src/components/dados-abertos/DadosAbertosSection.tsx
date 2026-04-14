@@ -32,9 +32,11 @@ interface EmendaData {
   data_disponibilizacao: string;
   programa: boolean;
   especial: boolean;
+  esfera?: string;
   tipo_concedente: string;
   tipo_recebedor: string;
   grupo_natureza_despesa: string;
+  funcao_governo?: string | null;
   data_inicio_vigencia?: string | null;
   data_fim_vigencia?: string | null;
   numero_convenio?: string | null;
@@ -78,9 +80,16 @@ const tipoRecebedorLabels: Record<string, string> = {
 const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAbertosSectionProps) => {
   const [isExporting, setIsExporting] = useState<string | null>(null);
 
+  const esferaLabels: Record<string, string> = {
+    federal: 'Federal',
+    estadual: 'Estadual',
+    municipal: 'Municipal',
+  };
+
   const buildRows = () =>
     emendas.map((e) => ({
       numero: e.numero || '',
+      esfera: esferaLabels[e.esfera || 'federal'] || e.esfera || 'Federal',
       numero_convenio: e.numero_convenio || '',
       numero_proposta: e.numero_proposta || '',
       numero_plano_acao: e.numero_plano_acao || '',
@@ -97,6 +106,7 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       estado: e.estado,
       gestor_responsavel: e.gestor_responsavel || '',
       grupo_natureza_despesa: e.grupo_natureza_despesa,
+      funcao_governo: e.funcao_governo || '',
       valor_concedente: Number(e.valor),
       contrapartida: Number(e.contrapartida || 0),
       valor_total: Number(e.valor) + Number(e.contrapartida || 0),
@@ -226,6 +236,7 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
 
   const dictionaryEntries = [
     ['numero', 'Texto', 'Número identificador da emenda parlamentar'],
+    ['esfera', 'Texto', 'Esfera de origem do recurso: Federal, Estadual ou Municipal'],
     ['numero_convenio', 'Texto', 'Número do convênio ou instrumento de transferência'],
     ['numero_proposta', 'Texto', 'Número da proposta junto ao concedente'],
     ['numero_plano_acao', 'Texto', 'Número do plano de ação vinculado'],
@@ -241,7 +252,8 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
     ['municipio', 'Texto', 'Município beneficiário dos recursos'],
     ['estado', 'Texto', 'Unidade Federativa (UF) do município'],
     ['gestor_responsavel', 'Texto', 'Nome do gestor responsável pela execução'],
-    ['grupo_natureza_despesa', 'Texto', 'Grupo e natureza da despesa conforme classificação orçamentária'],
+    ['grupo_natureza_despesa', 'Texto', 'Grupo e natureza da despesa conforme classificação orçamentária (1 a 6)'],
+    ['funcao_governo', 'Texto', 'Função de Governo conforme Lei 4.320/64 e Portaria MOG nº 42/1999 (ex: 10 - Saúde, 12 - Educação)'],
     ['valor_concedente', 'Numérico (R$)', 'Valor pactuado pelo concedente'],
     ['contrapartida', 'Numérico (R$)', 'Valor de contrapartida do convenente'],
     ['valor_total', 'Numérico (R$)', 'Valor global (concedente + contrapartida)'],

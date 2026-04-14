@@ -96,6 +96,7 @@ const PrefeituraRelatoriosPublicos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
+  const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const { selectedYear, setSelectedYear } = useYearParam();
@@ -141,17 +142,19 @@ const PrefeituraRelatoriosPublicos = () => {
         (emenda.numero || '').toLowerCase().includes(searchLower) ||
         emenda.objeto.toLowerCase().includes(searchLower) ||
         emenda.municipio.toLowerCase().includes(searchLower) ||
-        emenda.nome_concedente?.toLowerCase().includes(searchLower);
+        emenda.nome_concedente?.toLowerCase().includes(searchLower) ||
+        (emenda.nome_parlamentar || '').toLowerCase().includes(searchLower);
 
       const matchesStatus = statusFilter === 'todos' || emenda.status === statusFilter;
       const matchesEspecial = 
         especialFilter === 'todos' || 
         (especialFilter === 'sim' && emenda.especial) ||
         (especialFilter === 'nao' && !emenda.especial);
+      const matchesEsfera = esferaFilter === 'todos' || emenda.esfera === esferaFilter;
 
-      return matchesSearch && matchesStatus && matchesEspecial;
+      return matchesSearch && matchesStatus && matchesEspecial && matchesEsfera;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter, esferaFilter]);
 
   // Calculate summary values
   const summaryStats = useMemo(() => {
@@ -178,10 +181,22 @@ const PrefeituraRelatoriosPublicos = () => {
     setSearchTerm('');
     setStatusFilter('todos');
     setEspecialFilter('todos');
+    setEsferaFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos';
+
+  const getEmptyMessage = () => {
+    if (esferaFilter !== 'todos' && filteredEmendas.length === 0) {
+      const esferaLabel = esferaFilter === 'federal' ? 'federais' : esferaFilter === 'estadual' ? 'estaduais' : 'municipais';
+      const ano = selectedYear !== 'todos' ? parseInt(selectedYear) : new Date().getFullYear();
+      const hoje = new Date();
+      const dataFim = ano === hoje.getFullYear() ? `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${ano}` : `31/12/${ano}`;
+      return `Não foram recebidas emendas ${esferaLabel} no período de 01/01/${ano} até ${dataFim}.`;
+    }
+    return 'Nenhuma emenda encontrada';
+  };
 
   const handlePrint = () => {
     const printContent = `
@@ -494,6 +509,24 @@ const PrefeituraRelatoriosPublicos = () => {
               </Select>
 
               <Select 
+                value={esferaFilter} 
+                onValueChange={(value) => {
+                  setEsferaFilter(value as 'todos' | 'federal' | 'estadual' | 'municipal');
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="Esfera" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas as esferas</SelectItem>
+                  <SelectItem value="federal">Federal</SelectItem>
+                  <SelectItem value="estadual">Estadual</SelectItem>
+                  <SelectItem value="municipal">Municipal</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select 
                 value={especialFilter} 
                 onValueChange={(value) => {
                   setEspecialFilter(value as 'todos' | 'sim' | 'nao');
@@ -574,7 +607,7 @@ const PrefeituraRelatoriosPublicos = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={12} className="py-8 text-center text-muted-foreground">
-                      Nenhuma emenda encontrada
+                      {getEmptyMessage()}
                     </TableCell>
                   </TableRow>
                 )}

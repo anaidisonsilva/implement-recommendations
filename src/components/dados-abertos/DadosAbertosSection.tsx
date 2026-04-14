@@ -29,6 +29,9 @@ interface EmendaData {
   valor: number;
   valor_executado: number;
   valor_repassado?: number;
+  valor_empenhado?: number;
+  valor_liquidado?: number;
+  valor_pago?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;
@@ -114,6 +117,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       valor_total: Number(e.valor) + Number(e.contrapartida || 0),
       valor_repassado: Number(e.valor_repassado || 0),
       valor_executado: Number(e.valor_executado),
+      valor_empenhado: Number(e.valor_empenhado || 0),
+      valor_liquidado: Number(e.valor_liquidado || 0),
+      valor_pago: Number(e.valor_pago || 0),
       percentual_execucao:
         Number(e.valor) + Number(e.contrapartida || 0) > 0
           ? (
@@ -279,6 +285,9 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
     ['valor_total', 'Numérico (R$)', 'Valor global (concedente + contrapartida)'],
     ['valor_repassado', 'Numérico (R$)', 'Valor efetivamente repassado pelo concedente ao convenente'],
     ['valor_executado', 'Numérico (R$)', 'Valor efetivamente executado/pago nas despesas'],
+    ['valor_empenhado', 'Numérico (R$)', 'Valor empenhado conforme execução orçamentária'],
+    ['valor_liquidado', 'Numérico (R$)', 'Valor liquidado conforme execução orçamentária'],
+    ['valor_pago', 'Numérico (R$)', 'Valor efetivamente pago conforme execução financeira'],
     ['percentual_execucao', 'Numérico (%)', 'Percentual de execução financeira sobre o valor global'],
     ['status', 'Texto', 'Situação atual: Pendente, Aprovado, Em Execução, Concluído ou Cancelado'],
     ['data_disponibilizacao', 'Data (AAAA-MM-DD)', 'Data de disponibilização/publicação do recurso'],

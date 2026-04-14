@@ -189,6 +189,11 @@ const EmendaDetail = () => {
           <div class="valor-box"><div class="valor-label">CONTRAPARTIDA</div><div class="valor-number">${formatCurrency(contrapartida)}</div></div>
           <div class="valor-box"><div class="valor-label">VALOR TOTAL</div><div class="valor-number">${formatCurrency(valorTotal)}</div></div>
           <div class="valor-box"><div class="valor-label">REPASSADO</div><div class="valor-number">${formatCurrency(valorRepassado)}</div></div>
+        </div>
+        <div class="valores-grid">
+          <div class="valor-box"><div class="valor-label">EMPENHADO</div><div class="valor-number" style="color:#1d4ed8">${formatCurrency(Number(emenda.valor_empenhado || 0))}</div></div>
+          <div class="valor-box"><div class="valor-label">LIQUIDADO</div><div class="valor-number" style="color:#b45309">${formatCurrency(Number(emenda.valor_liquidado || 0))}</div></div>
+          <div class="valor-box"><div class="valor-label">PAGO</div><div class="valor-number" style="color:#15803d">${formatCurrency(Number(emenda.valor_pago || 0))}</div></div>
           <div class="valor-box"><div class="valor-label">EXECUTADO</div><div class="valor-number">${formatCurrency(valorExecutado)}</div></div>
         </div>
 

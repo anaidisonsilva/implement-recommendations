@@ -106,6 +106,7 @@ function generateCSV(emendas: Emenda[]): string {
     'Função de Governo', 'Status', 'Concedente', 'Recebedor', 'CNPJ Recebedor',
     'Município', 'Estado', 'Gestor Responsável', 'Data Disponibilização',
     'Valor Previsto (R$)', 'Valor Repassado (R$)', 'Contrapartida (R$)', 'Valor Total (R$)',
+    'Valor Empenhado (R$)', 'Valor Liquidado (R$)', 'Valor Pago (R$)',
     'Valor Executado (R$)', '% Executado', 'Banco', 'Conta Corrente', 'Anuência SUS', 'Data Cadastro',
   ];
 
@@ -115,7 +116,7 @@ function generateCSV(emendas: Emenda[]): string {
     const valorTotal = valorConc + valorContra;
     return [
       escapeCSV(e.numero),
-      escapeCSV(e.esfera === 'estadual' ? 'Estadual' : 'Federal'),
+      escapeCSV(e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'),
       escapeCSV(tipoLabels[e.tipo_concedente] || e.tipo_concedente),
       escapeCSV(e.nome_parlamentar || e.nome_concedente || ''),
       escapeCSV(e.objeto),
@@ -134,6 +135,9 @@ function generateCSV(emendas: Emenda[]): string {
       escapeCSV(Number(e.valor_repassado || 0).toFixed(2)),
       escapeCSV(valorContra.toFixed(2)),
       escapeCSV(valorTotal.toFixed(2)),
+      escapeCSV(Number(e.valor_empenhado || 0).toFixed(2)),
+      escapeCSV(Number(e.valor_liquidado || 0).toFixed(2)),
+      escapeCSV(Number(e.valor_pago || 0).toFixed(2)),
       escapeCSV(Number(e.valor_executado).toFixed(2)),
       escapeCSV(valorTotal > 0 ? ((Number(e.valor_executado) / valorTotal) * 100).toFixed(2) + '%' : '0%'),
       escapeCSV(e.banco),

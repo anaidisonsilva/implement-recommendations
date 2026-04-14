@@ -25,6 +25,9 @@ export interface EmendaDB {
   valor: number;
   valor_executado: number;
   valor_repassado: number;
+  valor_empenhado: number;
+  valor_liquidado: number;
+  valor_pago: number;
   banco: string | null;
   conta_corrente: string | null;
   anuencia_previa_sus: boolean | null;

@@ -184,7 +184,10 @@ export type Database = {
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
           updated_at: string
           valor: number
+          valor_empenhado: number
           valor_executado: number
+          valor_liquidado: number
+          valor_pago: number
           valor_repassado: number
         }
         Insert: {
@@ -221,7 +224,10 @@ export type Database = {
           tipo_recebedor: Database["public"]["Enums"]["tipo_recebedor"]
           updated_at?: string
           valor: number
+          valor_empenhado?: number
           valor_executado?: number
+          valor_liquidado?: number
+          valor_pago?: number
           valor_repassado?: number
         }
         Update: {
@@ -258,7 +264,10 @@ export type Database = {
           tipo_recebedor?: Database["public"]["Enums"]["tipo_recebedor"]
           updated_at?: string
           valor?: number
+          valor_empenhado?: number
           valor_executado?: number
+          valor_liquidado?: number
+          valor_pago?: number
           valor_repassado?: number
         }
         Relationships: [

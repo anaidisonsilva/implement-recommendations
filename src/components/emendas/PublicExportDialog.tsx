@@ -31,6 +31,7 @@ interface EmendaData {
   especial?: boolean;
   numero_convenio?: string | null;
   grupo_natureza_despesa?: string;
+  funcao_governo?: string | null;
 }
 
 interface PrefeituraInfo {

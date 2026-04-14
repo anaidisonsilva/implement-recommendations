@@ -107,6 +107,35 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     }
   }, [emenda, open]);
 
+  // Auto-preencher valores ao mudar status
+  useEffect(() => {
+    if (!emenda || !open) return;
+    const previousStatus = emenda.status;
+    const newStatus = formData.status;
+    if (previousStatus === newStatus) return;
+
+    const valor = parseFloat(formData.valor) || 0;
+
+    if (newStatus === 'aprovado') {
+      // Ao aprovar, preenche empenhado com o valor da emenda (se ainda não preenchido)
+      const currentEmpenhado = parseFloat(formData.valor_empenhado) || 0;
+      if (currentEmpenhado === 0) {
+        setFormData(prev => ({ ...prev, valor_empenhado: String(valor) }));
+      }
+    } else if (newStatus === 'concluido') {
+      // Ao concluir (pago), preenche liquidado e pago com o valor da emenda (se ainda não preenchidos)
+      const currentLiquidado = parseFloat(formData.valor_liquidado) || 0;
+      const currentPago = parseFloat(formData.valor_pago) || 0;
+      const currentEmpenhado = parseFloat(formData.valor_empenhado) || 0;
+      setFormData(prev => ({
+        ...prev,
+        valor_empenhado: currentEmpenhado === 0 ? String(valor) : prev.valor_empenhado,
+        valor_liquidado: currentLiquidado === 0 ? String(valor) : prev.valor_liquidado,
+        valor_pago: currentPago === 0 ? String(valor) : prev.valor_pago,
+      }));
+    }
+  }, [formData.status]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     

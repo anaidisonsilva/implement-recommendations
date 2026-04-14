@@ -268,6 +268,9 @@ const EmendaDetail = () => {
   const valor = Number(emenda.valor);
   const valorExecutado = Number(emenda.valor_executado);
   const valorRepassado = Number((emenda as any).valor_repassado || 0);
+  const valorEmpenhado = Number(emenda.valor_empenhado || 0);
+  const valorLiquidado = Number(emenda.valor_liquidado || 0);
+  const valorPago = Number(emenda.valor_pago || 0);
   const contrapartida = Number(emenda.contrapartida || 0);
   const valorTotal = valor + contrapartida;
   const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
@@ -391,7 +394,7 @@ const EmendaDetail = () => {
         </div>
 
         {/* Valores - grid responsivo */}
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div className="rounded-lg bg-muted/50 p-3">
             <p className="text-xs text-muted-foreground">Valor Concedente</p>
             <p className="text-lg font-semibold text-foreground">
@@ -416,8 +419,30 @@ const EmendaDetail = () => {
               {formatCurrency(valorRepassado)}
             </p>
           </div>
+        </div>
+
+        {/* Execução Orçamentária - Empenhado/Liquidado/Pago */}
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-lg bg-blue-500/10 p-3">
+            <p className="text-xs text-muted-foreground">Empenhado</p>
+            <p className="text-lg font-semibold text-blue-700 dark:text-blue-300">
+              {formatCurrency(valorEmpenhado)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-amber-500/10 p-3">
+            <p className="text-xs text-muted-foreground">Liquidado</p>
+            <p className="text-lg font-semibold text-amber-700 dark:text-amber-300">
+              {formatCurrency(valorLiquidado)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-green-500/10 p-3">
+            <p className="text-xs text-muted-foreground">Pago</p>
+            <p className="text-lg font-semibold text-green-700 dark:text-green-300">
+              {formatCurrency(valorPago)}
+            </p>
+          </div>
           <div className="rounded-lg bg-muted/50 p-3">
-            <p className="text-xs text-muted-foreground">Executado</p>
+            <p className="text-xs text-muted-foreground">Executado (Total)</p>
             <p className="text-lg font-semibold text-foreground">
               {formatCurrency(valorExecutado)}
             </p>

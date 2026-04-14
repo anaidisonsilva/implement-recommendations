@@ -379,6 +379,37 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
                     value={formData.valor_executado}
                     onChange={(e) => setFormData({ ...formData, valor_executado: e.target.value })}
                   />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="valor_empenhado">Valor Empenhado (R$)</Label>
+                  <Input
+                    id="valor_empenhado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_empenhado}
+                    onChange={(e) => setFormData({ ...formData, valor_empenhado: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_liquidado">Valor Liquidado (R$)</Label>
+                  <Input
+                    id="valor_liquidado"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_liquidado}
+                    onChange={(e) => setFormData({ ...formData, valor_liquidado: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor_pago">Valor Pago (R$)</Label>
+                  <Input
+                    id="valor_pago"
+                    type="number"
+                    step="0.01"
+                    value={formData.valor_pago}
+                    onChange={(e) => setFormData({ ...formData, valor_pago: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="valor_repassado">Valor Repassado (R$)</Label>

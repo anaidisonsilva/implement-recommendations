@@ -265,7 +265,7 @@ const PrefeituraRelatoriosPublicos = () => {
                 <td>${formaRepasse}</td>
                 <td>${emenda.numero_convenio || '-'}</td>
                 <td>${emenda.objeto.substring(0, 40)}${emenda.objeto.length > 40 ? '...' : ''}</td>
-                <td>${emenda.grupo_natureza_despesa || '-'}</td>
+                <td>${(emenda as any).funcao_governo || emenda.grupo_natureza_despesa || '-'}</td>
                 <td class="text-right">${formatCurrency(Number(emenda.valor))}</td>
                 <td class="text-right">${formatCurrency(Number(emenda.valor_repassado || 0))}</td>
                 <td class="text-right">${formatCurrency(Number(emenda.valor_executado))}</td>

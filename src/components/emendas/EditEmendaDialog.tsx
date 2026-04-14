@@ -20,6 +20,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { EmendaDB, useUpdateEmenda } from '@/hooks/useEmendas';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { FUNCOES_GOVERNO } from '@/constants/funcoesGoverno';
 
 interface EditEmendaDialogProps {
   emenda: EmendaDB;
@@ -405,13 +406,22 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="grupo_natureza_despesa">Grupo Natureza de Despesa *</Label>
-                  <Input
-                    id="grupo_natureza_despesa"
+                  <Label htmlFor="grupo_natureza_despesa">Função de Governo *</Label>
+                  <Select
                     value={formData.grupo_natureza_despesa}
-                    onChange={(e) => setFormData({ ...formData, grupo_natureza_despesa: e.target.value })}
-                    required
-                  />
+                    onValueChange={(value) => setFormData({ ...formData, grupo_natureza_despesa: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a função de governo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FUNCOES_GOVERNO.map((f) => (
+                        <SelectItem key={f.codigo} value={`${f.codigo} - ${f.descricao}`}>
+                          {f.codigo} - {f.descricao}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">

@@ -24,6 +24,9 @@ interface EmendaData {
   valor: number;
   valor_executado: number;
   valor_repassado?: number;
+  valor_empenhado?: number;
+  valor_liquidado?: number;
+  valor_pago?: number;
   contrapartida?: number | null;
   status: string;
   data_disponibilizacao: string;

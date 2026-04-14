@@ -68,6 +68,7 @@ const PrefeturaDadosAbertos = () => {
     tipo_concedente: e.tipo_concedente,
     tipo_recebedor: e.tipo_recebedor,
     grupo_natureza_despesa: e.grupo_natureza_despesa,
+    funcao_governo: (e as any).funcao_governo,
     data_inicio_vigencia: e.data_inicio_vigencia,
     data_fim_vigencia: e.data_fim_vigencia,
     numero_convenio: e.numero_convenio,

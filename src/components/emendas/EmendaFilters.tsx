@@ -94,6 +94,7 @@ const EmendaFilters = ({
               <SelectItem value="todos">Todas Esferas</SelectItem>
               <SelectItem value="federal">🇧🇷 Federal</SelectItem>
               <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+              <SelectItem value="municipal">🏘️ Municipal</SelectItem>
             </SelectContent>
           </Select>
         )}

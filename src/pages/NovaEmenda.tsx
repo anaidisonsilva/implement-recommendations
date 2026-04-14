@@ -47,7 +47,7 @@ const NovaEmenda = () => {
     hasAnuencia: false,
     especial: false,
     programa: false,
-    esfera: 'federal' as 'federal' | 'estadual',
+    esfera: 'federal' as 'federal' | 'estadual' | 'municipal',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -195,6 +195,7 @@ const NovaEmenda = () => {
                 <SelectContent>
                   <SelectItem value="federal">🇧🇷 Federal</SelectItem>
                   <SelectItem value="estadual">🏛️ Estadual</SelectItem>
+                  <SelectItem value="municipal">🏘️ Municipal</SelectItem>
                 </SelectContent>
               </Select>
             </div>

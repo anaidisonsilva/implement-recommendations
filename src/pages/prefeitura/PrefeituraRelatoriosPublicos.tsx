@@ -97,6 +97,8 @@ const PrefeituraRelatoriosPublicos = () => {
   const [statusFilter, setStatusFilter] = useState<StatusEmenda | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual' | 'municipal'>('todos');
+  const [parlamentarFilter, setParlamentarFilter] = useState<string>('todos');
+  const [tipoFilter, setTipoFilter] = useState<string>('todos');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const { selectedYear, setSelectedYear } = useYearParam();
@@ -134,6 +136,17 @@ const PrefeituraRelatoriosPublicos = () => {
     });
   }, [emendas, selectedYear]);
 
+  // Get unique parlamentares for filter
+  const parlamentares = useMemo(() => {
+    if (!yearFilteredEmendas) return [];
+    const names = new Set<string>();
+    yearFilteredEmendas.forEach((e) => {
+      const name = e.nome_parlamentar || e.nome_concedente;
+      if (name) names.add(name);
+    });
+    return Array.from(names).sort();
+  }, [yearFilteredEmendas]);
+
   const filteredEmendas = useMemo(() => {
     return yearFilteredEmendas.filter((emenda) => {
       const searchLower = searchTerm.toLowerCase();
@@ -151,10 +164,13 @@ const PrefeituraRelatoriosPublicos = () => {
         (especialFilter === 'sim' && emenda.especial) ||
         (especialFilter === 'nao' && !emenda.especial);
       const matchesEsfera = esferaFilter === 'todos' || emenda.esfera === esferaFilter;
+      const matchesParlamentar = parlamentarFilter === 'todos' || 
+        (emenda.nome_parlamentar || emenda.nome_concedente || '') === parlamentarFilter;
+      const matchesTipo = tipoFilter === 'todos' || emenda.tipo_concedente === tipoFilter;
 
-      return matchesSearch && matchesStatus && matchesEspecial && matchesEsfera;
+      return matchesSearch && matchesStatus && matchesEspecial && matchesEsfera && matchesParlamentar && matchesTipo;
     });
-  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter, esferaFilter]);
+  }, [yearFilteredEmendas, searchTerm, statusFilter, especialFilter, esferaFilter, parlamentarFilter, tipoFilter]);
 
   // Calculate summary values
   const summaryStats = useMemo(() => {
@@ -182,10 +198,12 @@ const PrefeituraRelatoriosPublicos = () => {
     setStatusFilter('todos');
     setEspecialFilter('todos');
     setEsferaFilter('todos');
+    setParlamentarFilter('todos');
+    setTipoFilter('todos');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos';
+  const hasActiveFilters = searchTerm || statusFilter !== 'todos' || especialFilter !== 'todos' || esferaFilter !== 'todos' || parlamentarFilter !== 'todos' || tipoFilter !== 'todos';
 
   const getEmptyMessage = () => {
     if (esferaFilter !== 'todos' && filteredEmendas.length === 0) {

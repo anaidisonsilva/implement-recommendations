@@ -532,6 +532,10 @@ const EmendaDetail = () => {
               <p className="font-medium text-foreground">{emenda.grupo_natureza_despesa}</p>
             </div>
             <div>
+              <p className="text-sm text-muted-foreground">Função de Governo</p>
+              <p className="font-medium text-foreground">{(emenda as any).funcao_governo || '-'}</p>
+            </div>
+            <div>
               <p className="text-sm text-muted-foreground">Banco</p>
               <p className="font-medium text-foreground">{emenda.banco}</p>
             </div>

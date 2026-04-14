@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useCreateEmenda, CreateEmendaInput } from '@/hooks/useEmendas';
+import { FUNCOES_GOVERNO } from '@/constants/funcoesGoverno';
 
 const NovaEmenda = () => {
   const navigate = useNavigate();
@@ -330,21 +331,20 @@ const NovaEmenda = () => {
           <h2 className="mb-4 text-lg font-semibold text-foreground">Dados Financeiros</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="grupoNaturezaDespesa">Grupo Natureza de Despesa *</Label>
+              <Label htmlFor="grupoNaturezaDespesa">Função de Governo *</Label>
               <Select
                 value={formData.grupoNaturezaDespesa}
                 onValueChange={(value) => handleChange('grupoNaturezaDespesa', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o GND" />
+                  <SelectValue placeholder="Selecione a função de governo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1 - Pessoal e Encargos Sociais">1 - Pessoal e Encargos Sociais</SelectItem>
-                  <SelectItem value="2 - Juros e Encargos da Dívida">2 - Juros e Encargos da Dívida</SelectItem>
-                  <SelectItem value="3 - Outras Despesas Correntes">3 - Outras Despesas Correntes</SelectItem>
-                  <SelectItem value="4 - Investimentos">4 - Investimentos</SelectItem>
-                  <SelectItem value="5 - Inversões Financeiras">5 - Inversões Financeiras</SelectItem>
-                  <SelectItem value="6 - Amortização da Dívida">6 - Amortização da Dívida</SelectItem>
+                  {FUNCOES_GOVERNO.map((f) => (
+                    <SelectItem key={f.codigo} value={`${f.codigo} - ${f.descricao}`}>
+                      {f.codigo} - {f.descricao}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

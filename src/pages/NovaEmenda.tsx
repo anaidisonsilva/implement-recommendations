@@ -37,6 +37,7 @@ const NovaEmenda = () => {
     gestorResponsavel: '',
     objeto: '',
     grupoNaturezaDespesa: '',
+    funcaoGoverno: '',
     valor: '',
     contrapartida: '',
     valorRepassado: '',
@@ -73,6 +74,7 @@ const NovaEmenda = () => {
       gestor_responsavel: formData.gestorResponsavel,
       objeto: formData.objeto,
       grupo_natureza_despesa: formData.grupoNaturezaDespesa,
+      funcao_governo: formData.funcaoGoverno || null,
       valor: parseFloat(formData.valor),
       contrapartida: formData.contrapartida ? parseFloat(formData.contrapartida) : null,
       valor_repassado: formData.valorRepassado ? parseFloat(formData.valorRepassado) : 0,
@@ -331,10 +333,29 @@ const NovaEmenda = () => {
           <h2 className="mb-4 text-lg font-semibold text-foreground">Dados Financeiros</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="grupoNaturezaDespesa">Função de Governo *</Label>
+              <Label htmlFor="grupoNaturezaDespesa">Grupo Natureza de Despesa *</Label>
               <Select
                 value={formData.grupoNaturezaDespesa}
                 onValueChange={(value) => handleChange('grupoNaturezaDespesa', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o GND" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1 - Pessoal e Encargos Sociais">1 - Pessoal e Encargos Sociais</SelectItem>
+                  <SelectItem value="2 - Juros e Encargos da Dívida">2 - Juros e Encargos da Dívida</SelectItem>
+                  <SelectItem value="3 - Outras Despesas Correntes">3 - Outras Despesas Correntes</SelectItem>
+                  <SelectItem value="4 - Investimentos">4 - Investimentos</SelectItem>
+                  <SelectItem value="5 - Inversões Financeiras">5 - Inversões Financeiras</SelectItem>
+                  <SelectItem value="6 - Amortização da Dívida">6 - Amortização da Dívida</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="funcaoGoverno">Função de Governo</Label>
+              <Select
+                value={formData.funcaoGoverno}
+                onValueChange={(value) => handleChange('funcaoGoverno', value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione a função de governo" />

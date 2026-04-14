@@ -21,6 +21,7 @@ export interface EmendaDB {
   gestor_responsavel: string;
   objeto: string;
   grupo_natureza_despesa: string;
+  funcao_governo: string | null;
   valor: number;
   valor_executado: number;
   valor_repassado: number;
@@ -57,6 +58,7 @@ export interface CreateEmendaInput {
   gestor_responsavel: string;
   objeto: string;
   grupo_natureza_despesa: string;
+  funcao_governo?: string | null;
   valor: number;
   banco?: string | null;
   conta_corrente?: string | null;

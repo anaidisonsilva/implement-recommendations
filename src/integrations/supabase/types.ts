@@ -798,7 +798,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "prefeitura_admin" | "prefeitura_user"
-      esfera_emenda: "federal" | "estadual"
+      esfera_emenda: "federal" | "estadual" | "municipal"
       status_emenda:
         | "pendente"
         | "aprovado"
@@ -940,7 +940,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "prefeitura_admin", "prefeitura_user"],
-      esfera_emenda: ["federal", "estadual"],
+      esfera_emenda: ["federal", "estadual", "municipal"],
       status_emenda: [
         "pendente",
         "aprovado",

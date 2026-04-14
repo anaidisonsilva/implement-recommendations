@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import * as XLSX from 'xlsx';
 import {
   Database,
   Download,
   FileSpreadsheet,
   FileJson,
   FileCode,
+  Table2,
   Loader2,
   Info,
   Calendar,
@@ -221,12 +223,30 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
     }
   };
 
+  const handleExportXLSX = () => {
+    setIsExporting('xlsx');
+    try {
+      const rows = buildRows();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = Object.keys(rows[0] || {}).map(() => ({ wch: 20 }));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Dados Abertos');
+      XLSX.writeFile(wb, `dados-abertos-emendas-${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast.success('XLSX exportado com sucesso!');
+    } catch {
+      toast.error('Erro ao exportar XLSX');
+    } finally {
+      setIsExporting(null);
+    }
+  };
+
   const datasets = [
     {
       title: 'Emendas Parlamentares e Convênios',
       description: 'Dataset completo com todas as emendas, convênios, valores, repasses, status e informações de vigência.',
       records: emendas.length,
       formats: [
+        { label: 'XLSX', icon: Table2, color: 'text-emerald-600', handler: handleExportXLSX, key: 'xlsx' },
         { label: 'CSV', icon: FileSpreadsheet, color: 'text-green-600', handler: handleExportCSV, key: 'csv' },
         { label: 'JSON', icon: FileJson, color: 'text-blue-600', handler: handleExportJSON, key: 'json' },
         { label: 'XML', icon: FileCode, color: 'text-orange-600', handler: handleExportXML, key: 'xml' },

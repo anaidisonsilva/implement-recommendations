@@ -97,11 +97,14 @@ export function applyAdvancedFilters(emendas: EmendaBasic[], filters: AdvancedSe
     // Forma de repasse filter
     let matchesFormaRepasse = true;
     if (filters.formaRepasseFilter !== 'todos') {
-      const formaRepasse = emenda.especial
-        ? 'transferencia_especial'
-        : emenda.numero_convenio
-          ? 'convenio'
-          : 'fundo_a_fundo';
+      const manual = (emenda as any).forma_repasse;
+      const formaRepasse = manual
+        ? manual
+        : emenda.especial
+          ? 'transferencia_especial'
+          : emenda.numero_convenio
+            ? 'convenio'
+            : 'fundo_a_fundo';
       matchesFormaRepasse = formaRepasse === filters.formaRepasseFilter;
     }
 

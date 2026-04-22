@@ -125,7 +125,7 @@ const Relatorios = () => {
     const rows = filteredEmendas.map((e) => {
       const valorConc = Number(e.valor);
       const valorContra = Number(e.contrapartida || 0);
-      const formaRepasse = e.especial ? 'Transferência Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+      const formaRepasse = getFormaRepasseLabel(e as any);
       return [
         e.numero,
         (e as any).esfera === 'estadual' ? 'Estadual' : (e as any).esfera === 'municipal' ? 'Municipal' : 'Federal',

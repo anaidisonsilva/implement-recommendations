@@ -64,6 +64,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     especial: false,
     programa: false,
     esfera: 'federal' as EmendaDB['esfera'],
+    forma_repasse: 'auto' as 'auto' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo',
     status: '' as EmendaDB['status'],
   });
 
@@ -102,6 +103,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         especial: emenda.especial || false,
         programa: emenda.programa || false,
         esfera: (emenda as any).esfera || 'federal',
+        forma_repasse: ((emenda as any).forma_repasse as any) || 'auto',
         status: emenda.status,
       });
     }
@@ -182,6 +184,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       especial: formData.especial,
       programa: formData.programa,
       esfera: formData.esfera,
+      forma_repasse: formData.forma_repasse === 'auto' ? null : formData.forma_repasse,
       status: formData.status,
     });
     

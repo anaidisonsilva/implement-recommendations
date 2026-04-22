@@ -4,6 +4,7 @@ import { useYearParam } from '@/hooks/useYearParam';
 import AdvancedSearch, { defaultFilters, applyAdvancedFilters, hasActiveAdvancedFilters, type AdvancedSearchFilters } from '@/components/emendas/AdvancedSearch';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 import { FullPortalSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 import {
   FileText,
@@ -438,11 +439,7 @@ const PrefeituraPortal = () => {
               </TableHeader>
               <TableBody>
                 {paginatedEmendas.map((emenda) => {
-                  const formaRepasse = emenda.especial
-                    ? 'Transferência Especial'
-                    : emenda.numero_convenio
-                      ? 'Convênio'
-                      : 'Fundo a Fundo';
+                  const formaRepasse = getFormaRepasseLabel(emenda as any);
 
                   const tipoLabels: Record<string, string> = {
                     parlamentar: 'Individual',

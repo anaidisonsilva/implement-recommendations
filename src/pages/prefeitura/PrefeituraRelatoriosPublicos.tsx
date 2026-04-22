@@ -10,6 +10,7 @@ import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 import {
   ArrowLeft,
   Loader2,
@@ -288,7 +289,7 @@ const PrefeituraRelatoriosPublicos = () => {
           <tbody>
             ${filteredEmendas.map(emenda => {
               const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
-              const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+              const formaRepasse = getFormaRepasseLabel(emenda as any);
               return `
               <tr>
                 <td>${emenda.numero || 'Programa'}</td>
@@ -643,7 +644,7 @@ const PrefeituraRelatoriosPublicos = () => {
                 {paginatedEmendas.length > 0 ? (
                   paginatedEmendas.map((emenda) => {
                     const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
-                    const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+                    const formaRepasse = getFormaRepasseLabel(emenda as any);
                     return (
                       <TableRow key={emenda.id}>
                         <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>

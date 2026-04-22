@@ -167,7 +167,7 @@ const Relatorios = () => {
     const tableRows = filteredEmendas
       .map((e) => {
         const valorConc = Number(e.valor);
-        const formaRepasse = e.especial ? 'Transf. Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+        const formaRepasse = getFormaRepasseLabel(e as any);
 
         return `
           <tr>
@@ -584,7 +584,7 @@ const Relatorios = () => {
               <TableBody>
                 {filteredEmendas.slice(0, 20).map((emenda) => {
                   const tipoLabels3: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
-                  const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+                  const formaRepasse = getFormaRepasseLabel(emenda as any);
                   return (
                     <TableRow key={emenda.id}>
                       <TableCell className="font-medium">{emenda.numero || 'Programa'}</TableCell>

@@ -10,6 +10,7 @@ import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 import {
   ArrowLeft,
   Loader2,

@@ -23,6 +23,7 @@ import EmpresasLicitacaoSection from '@/components/emendas/EmpresasLicitacaoSect
 import PlanoTrabalhoPublicSection from '@/components/plano-trabalho/PlanoTrabalhoPublicSection';
 import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import { toast } from 'sonner';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {

@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Download, FileText, FileJson, FileSpreadsheet, Table } from 'lucide-react';
 import { toast } from 'sonner';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 
 interface EmendaData {
   numero: string;

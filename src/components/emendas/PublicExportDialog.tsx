@@ -68,6 +68,10 @@ const tipoConcedenteLabels: Record<string, string> = {
 };
 
 const getFormaRepasse = (e: EmendaData) => {
+  const manual = (e as any).forma_repasse;
+  if (manual === 'transferencia_especial') return 'Transferência Especial';
+  if (manual === 'convenio') return 'Convênio';
+  if (manual === 'fundo_a_fundo') return 'Fundo a Fundo';
   if (e.especial) return 'Transferência Especial';
   if (e.numero_convenio) return 'Convênio';
   return 'Fundo a Fundo';

@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEmendas } from '@/hooks/useEmendas';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
 import YearFilter from '@/components/dashboard/YearFilter';
 import {

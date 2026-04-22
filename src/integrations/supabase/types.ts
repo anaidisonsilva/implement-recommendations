@@ -164,6 +164,9 @@ export type Database = {
           esfera: Database["public"]["Enums"]["esfera_emenda"]
           especial: boolean
           estado: string
+          forma_repasse:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           funcao_governo: string | null
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -204,6 +207,9 @@ export type Database = {
           esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
+          forma_repasse?:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           funcao_governo?: string | null
           gestor_responsavel: string
           grupo_natureza_despesa: string
@@ -244,6 +250,9 @@ export type Database = {
           esfera?: Database["public"]["Enums"]["esfera_emenda"]
           especial?: boolean
           estado?: string
+          forma_repasse?:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           funcao_governo?: string | null
           gestor_responsavel?: string
           grupo_natureza_despesa?: string
@@ -647,6 +656,9 @@ export type Database = {
           data_inicio_vigencia: string | null
           especial: boolean | null
           estado: string | null
+          forma_repasse:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           gestor_responsavel: string | null
           grupo_natureza_despesa: string | null
           id: string | null
@@ -678,6 +690,9 @@ export type Database = {
           data_inicio_vigencia?: string | null
           especial?: boolean | null
           estado?: string | null
+          forma_repasse?:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           gestor_responsavel?: string | null
           grupo_natureza_despesa?: string | null
           id?: string | null
@@ -711,6 +726,9 @@ export type Database = {
           data_inicio_vigencia?: string | null
           especial?: boolean | null
           estado?: string | null
+          forma_repasse?:
+            | Database["public"]["Enums"]["forma_repasse_emenda"]
+            | null
           gestor_responsavel?: string | null
           grupo_natureza_despesa?: string | null
           id?: string | null
@@ -808,6 +826,10 @@ export type Database = {
     Enums: {
       app_role: "super_admin" | "prefeitura_admin" | "prefeitura_user"
       esfera_emenda: "federal" | "estadual" | "municipal"
+      forma_repasse_emenda:
+        | "transferencia_especial"
+        | "convenio"
+        | "fundo_a_fundo"
       status_emenda:
         | "pendente"
         | "aprovado"
@@ -950,6 +972,11 @@ export const Constants = {
     Enums: {
       app_role: ["super_admin", "prefeitura_admin", "prefeitura_user"],
       esfera_emenda: ["federal", "estadual", "municipal"],
+      forma_repasse_emenda: [
+        "transferencia_especial",
+        "convenio",
+        "fundo_a_fundo",
+      ],
       status_emenda: [
         "pendente",
         "aprovado",

@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Download, FileText, FileJson, FileSpreadsheet, Table } from 'lucide-react';
 import { toast } from 'sonner';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 
 interface EmendaData {
   numero: string;
@@ -87,7 +88,7 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 function buildEmendaObject(emenda: EmendaData) {
   const valor = Number(emenda.valor);
   const contrapartida = Number(emenda.contrapartida || 0);
-  const formaRepasse = emenda.especial ? 'Transferência Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+  const formaRepasse = getFormaRepasseLabel(emenda as any);
   return {
     numero: emenda.numero,
     esfera: (emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal',

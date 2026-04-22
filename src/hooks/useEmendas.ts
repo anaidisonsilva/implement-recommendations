@@ -5,6 +5,7 @@ import { useUserRoles } from '@/hooks/useUserRoles';
 import { toast } from 'sonner';
 
 export type EsferaEmenda = 'federal' | 'estadual' | 'municipal';
+export type FormaRepasse = 'transferencia_especial' | 'convenio' | 'fundo_a_fundo';
 
 export interface EmendaDB {
   id: string;
@@ -40,6 +41,7 @@ export interface EmendaDB {
   especial: boolean;
   programa: boolean;
   esfera: EsferaEmenda;
+  forma_repasse: FormaRepasse | null;
   status: 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
   created_by: string | null;
   prefeitura_id: string | null;
@@ -76,6 +78,7 @@ export interface CreateEmendaInput {
   programa?: boolean;
   valor_repassado?: number;
   esfera?: EsferaEmenda;
+  forma_repasse?: FormaRepasse | null;
 }
 
 export const useEmendas = () => {

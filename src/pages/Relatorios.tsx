@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEmendas } from '@/hooks/useEmendas';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 import { usePrefeituras } from '@/hooks/usePrefeituras';
 import YearFilter from '@/components/dashboard/YearFilter';
 import {
@@ -125,7 +126,7 @@ const Relatorios = () => {
     const rows = filteredEmendas.map((e) => {
       const valorConc = Number(e.valor);
       const valorContra = Number(e.contrapartida || 0);
-      const formaRepasse = e.especial ? 'Transferência Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+      const formaRepasse = getFormaRepasseLabel(e as any);
       return [
         e.numero,
         (e as any).esfera === 'estadual' ? 'Estadual' : (e as any).esfera === 'municipal' ? 'Municipal' : 'Federal',

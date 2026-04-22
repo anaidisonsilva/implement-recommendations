@@ -64,6 +64,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
     especial: false,
     programa: false,
     esfera: 'federal' as EmendaDB['esfera'],
+    forma_repasse: 'auto' as 'auto' | 'transferencia_especial' | 'convenio' | 'fundo_a_fundo',
     status: '' as EmendaDB['status'],
   });
 
@@ -102,6 +103,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
         especial: emenda.especial || false,
         programa: emenda.programa || false,
         esfera: (emenda as any).esfera || 'federal',
+        forma_repasse: ((emenda as any).forma_repasse as any) || 'auto',
         status: emenda.status,
       });
     }
@@ -182,6 +184,7 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
       especial: formData.especial,
       programa: formData.programa,
       esfera: formData.esfera,
+      forma_repasse: formData.forma_repasse === 'auto' ? null : formData.forma_repasse,
       status: formData.status,
     });
     
@@ -552,6 +555,26 @@ const EditEmendaDialog = ({ emenda, open, onOpenChange }: EditEmendaDialogProps)
             {/* Números de Referência */}
             <div className="space-y-4">
               <h4 className="font-medium text-foreground">Números de Referência</h4>
+              <div className="space-y-2">
+                <Label htmlFor="forma_repasse">Forma de Repasse</Label>
+                <Select
+                  value={formData.forma_repasse}
+                  onValueChange={(value) => setFormData({ ...formData, forma_repasse: value as typeof formData.forma_repasse })}
+                >
+                  <SelectTrigger id="forma_repasse">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Automático (com base em Especial / Nº Convênio)</SelectItem>
+                    <SelectItem value="transferencia_especial">Transferência Especial</SelectItem>
+                    <SelectItem value="convenio">Convênio</SelectItem>
+                    <SelectItem value="fundo_a_fundo">Fundo a Fundo</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Se "Automático", o sistema deduz: Especial → Transferência Especial; com Nº Convênio → Convênio; senão → Fundo a Fundo.
+                </p>
+              </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="numero_convenio">Nº do Convênio</Label>

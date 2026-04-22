@@ -289,7 +289,7 @@ const PrefeituraRelatoriosPublicos = () => {
           <tbody>
             ${filteredEmendas.map(emenda => {
               const tipoLabels: Record<string, string> = { parlamentar: 'Individual', comissao: 'Comissão', bancada: 'Bancada', outro: 'Outro' };
-              const formaRepasse = emenda.especial ? 'Transf. Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+              const formaRepasse = getFormaRepasseLabel(emenda as any);
               return `
               <tr>
                 <td>${emenda.numero || 'Programa'}</td>

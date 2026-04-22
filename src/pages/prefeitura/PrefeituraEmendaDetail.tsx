@@ -460,7 +460,7 @@ const PrefeituraEmendaDetail = () => {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                     <span>Tipo: <strong className="text-foreground">{tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</strong></span>
-                    <span>Forma de Repasse: <strong className="text-foreground">{emenda.especial ? 'Transferência Especial' : emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo'}</strong></span>
+                    <span>Forma de Repasse: <strong className="text-foreground">{getFormaRepasseLabel(emenda as any)}</strong></span>
                     {emenda.numero_proposta && (
                       <span>Proposta: <strong className="text-foreground">{emenda.numero_proposta}</strong></span>
                     )}

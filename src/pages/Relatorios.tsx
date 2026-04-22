@@ -167,7 +167,7 @@ const Relatorios = () => {
     const tableRows = filteredEmendas
       .map((e) => {
         const valorConc = Number(e.valor);
-        const formaRepasse = e.especial ? 'Transf. Especial' : e.numero_convenio ? 'Convênio' : 'Fundo a Fundo';
+        const formaRepasse = getFormaRepasseLabel(e as any);
 
         return `
           <tr>

@@ -67,12 +67,15 @@ const PrefeituraPortal = () => {
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
 
   const { data: emendas, isLoading: loadingEmendas } = useQuery({
-    queryKey: ['emendas', 'prefeitura', prefeitura?.id],
+    queryKey: ['emendas', 'prefeitura', prefeitura?.id, 'portal'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('emendas')
         .select('*')
         .eq('prefeitura_id', prefeitura!.id)
+        .eq('programa', false)
+        .not('numero', 'is', null)
+        .neq('numero', '')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

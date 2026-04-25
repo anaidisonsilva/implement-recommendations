@@ -242,6 +242,12 @@ const PrefeituraPortal = () => {
                 </Link>
               </Button>
               <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/programas`}>
+                  <ClipboardList className="mr-2 h-4 w-4" />
+                  Programas
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
                 <Link to={`/p/${slug}/dados-abertos`}>
                   <Database className="mr-2 h-4 w-4" />
                   Dados Abertos

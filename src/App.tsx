@@ -40,6 +40,7 @@ import PrefeituraRelatoriosPublicos from "./pages/prefeitura/PrefeituraRelatorio
 import PrefeituraEmendaDetail from "./pages/prefeitura/PrefeituraEmendaDetail";
 import PrefeturaDadosAbertos from "./pages/prefeitura/PrefeturaDadosAbertos";
 import PrefeituraConvenios from "./pages/prefeitura/PrefeituraConvenios";
+import PrefeituraProgramas from "./pages/prefeitura/PrefeituraProgramas";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/p/:slug/relatorios" element={<PrefeituraRelatoriosPublicos />} />
             <Route path="/p/:slug/dados-abertos" element={<PrefeturaDadosAbertos />} />
             <Route path="/p/:slug/convenios" element={<PrefeituraConvenios />} />
+            <Route path="/p/:slug/programas" element={<PrefeituraProgramas />} />
             <Route path="/p/:slug/emenda/:id" element={<PrefeituraEmendaDetail />} />
             <Route path="/p/:slug/auth" element={<PrefeituraAuth />} />
             <Route

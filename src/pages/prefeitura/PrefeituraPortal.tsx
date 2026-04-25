@@ -26,6 +26,7 @@ import {
   Database,
   Clock,
   Handshake,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -239,6 +240,12 @@ const PrefeituraPortal = () => {
                 <Link to={`/p/${slug}/convenios`}>
                   <Handshake className="mr-2 h-4 w-4" />
                   Convênios
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to={`/p/${slug}/programas`}>
+                  <ClipboardList className="mr-2 h-4 w-4" />
+                  Programas
                 </Link>
               </Button>
               <Button variant="outline" asChild>

@@ -218,45 +218,49 @@ const PrefeituraPortal = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <YearFilter
-                selectedYear={selectedYear}
-                onYearChange={(year) => {
-                  setSelectedYear(year);
-                  setCurrentPage(1);
-                }}
-                availableYears={availableYears}
-              />
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/pix`}>
-                  <Zap className="mr-2 h-4 w-4" />
-                  Dashboard PIX
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/relatorios`}>
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Relatórios
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/convenios`}>
-                  <Handshake className="mr-2 h-4 w-4" />
-                  Convênios
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/programas`}>
-                  <ClipboardList className="mr-2 h-4 w-4" />
-                  Programas
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/p/${slug}/dados-abertos`}>
-                  <Database className="mr-2 h-4 w-4" />
-                  Dados Abertos
-                </Link>
-              </Button>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-3 flex-wrap justify-end">
+                <YearFilter
+                  selectedYear={selectedYear}
+                  onYearChange={(year) => {
+                    setSelectedYear(year);
+                    setCurrentPage(1);
+                  }}
+                  availableYears={availableYears}
+                />
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}/dados-abertos`}>
+                    <Database className="mr-2 h-4 w-4" />
+                    Dados Abertos
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap justify-end">
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}/pix`}>
+                    <Zap className="mr-2 h-4 w-4" />
+                    Dashboard PIX
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}/relatorios`}>
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Relatórios
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}/convenios`}>
+                    <Handshake className="mr-2 h-4 w-4" />
+                    Convênios
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to={`/p/${slug}/programas`}>
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    Programas
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

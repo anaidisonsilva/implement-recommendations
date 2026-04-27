@@ -117,14 +117,12 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
       setEmpresaForm({
         nome_empresa: empresa.nome_empresa,
         cnpj: empresa.cnpj,
-        numero_empenho: empresa.numero_empenho,
       });
     } else {
       setEditingEmpresa(null);
       setEmpresaForm({
         nome_empresa: '',
         cnpj: '',
-        numero_empenho: '',
       });
     }
     setEmpresaDialogOpen(true);

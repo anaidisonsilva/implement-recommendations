@@ -304,7 +304,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                       <div>
                         <p className="font-medium text-foreground">{empresa.nome_empresa}</p>
                         <p className="text-sm text-muted-foreground">
-                          CNPJ: {empresa.cnpj} • Empenho: {empresa.numero_empenho}
+                          CNPJ: {empresa.cnpj}
                         </p>
                       </div>
                     </div>

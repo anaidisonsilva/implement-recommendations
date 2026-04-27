@@ -101,6 +101,19 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       numero_plano_acao: e.numero_plano_acao || '',
       tipo: e.programa ? 'Programa' : 'Emenda',
       especial_pix: e.especial ? 'Sim' : 'Não',
+      forma_repasse: (() => {
+        if (e.forma_repasse) {
+          const map: Record<string, string> = {
+            especial: 'Transferência Especial',
+            convenio: 'Convênio',
+            fundo_a_fundo: 'Fundo a Fundo',
+          };
+          return map[e.forma_repasse] || e.forma_repasse;
+        }
+        if (e.especial) return 'Transferência Especial';
+        if (e.numero_convenio) return 'Convênio';
+        return 'Fundo a Fundo';
+      })(),
       objeto: e.objeto,
       parlamentar: e.nome_parlamentar || '',
       tipo_concedente: tipoConcedenteLabels[e.tipo_concedente] || e.tipo_concedente,

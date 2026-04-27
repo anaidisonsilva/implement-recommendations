@@ -6,6 +6,7 @@ import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
+import PublicVigenciaCards from '@/components/dashboard/PublicVigenciaCards';
 import PaginationControls from '@/components/ui/pagination-controls';
 import {
   Building2,

@@ -62,6 +62,16 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+const formatCurrencyCompact = (value: number) => {
+  if (Math.abs(value) >= 1_000_000) {
+    return `R$ ${(value / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })} mi`;
+  }
+  if (Math.abs(value) >= 1_000) {
+    return `R$ ${(value / 1_000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
+  }
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+};
+
 const PrefeituraPortal = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');

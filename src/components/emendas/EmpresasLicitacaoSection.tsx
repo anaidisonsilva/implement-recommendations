@@ -363,6 +363,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                           <TableRow>
                             <TableHead>Data</TableHead>
                             <TableHead>Valor</TableHead>
+                            <TableHead>Empenho</TableHead>
                             <TableHead>Descrição</TableHead>
                             {!readOnly && <TableHead className="w-[80px]">Ações</TableHead>}
                           </TableRow>
@@ -380,6 +381,9 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                                 </TableCell>
                                 <TableCell className="font-medium text-accent">
                                   {formatCurrency(Number(pagamento.valor))}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {pagamento.numero_empenho || '-'}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">
                                   {pagamento.descricao || '-'}

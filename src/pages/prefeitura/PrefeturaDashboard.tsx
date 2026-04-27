@@ -43,8 +43,31 @@ const PrefeturaDashboard = () => {
     enabled: !!prefeitura?.id,
   });
 
+  const [selectedYear, setSelectedYear] = useState<string>('todos');
+
+  const availableYears = useMemo(() => {
+    if (!emendas) return [];
+    const years = new Set<number>();
+    emendas.forEach((e) => {
+      if (e.data_disponibilizacao) {
+        years.add(new Date(e.data_disponibilizacao).getFullYear());
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  const filteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (selectedYear === 'todos') return emendas;
+    return emendas.filter(
+      (e) =>
+        e.data_disponibilizacao &&
+        new Date(e.data_disponibilizacao).getFullYear().toString() === selectedYear,
+    );
+  }, [emendas, selectedYear]);
+
   const stats = useMemo(() => {
-    if (!emendas) {
+    if (!filteredEmendas) {
       return {
         totalEmendas: 0,
         valorConcedente: 0,
@@ -59,24 +82,24 @@ const PrefeturaDashboard = () => {
       };
     }
 
-    const emendasComValor = emendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+    const emendasComValor = filteredEmendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
     const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
     const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
     const valorTotal = valorConcedente + valorContrapartida;
 
     return {
-      totalEmendas: emendas.length,
+      totalEmendas: filteredEmendas.length,
       valorConcedente,
       valorTotal,
       valorExecutado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
       valorContrapartida,
-      emendasPendentes: emendas.filter((e) => e.status === 'pendente').length,
-      emendasAprovadas: emendas.filter((e) => e.status === 'aprovado').length,
-      emendasEmExecucao: emendas.filter((e) => e.status === 'em_execucao').length,
-      emendasConcluidas: emendas.filter((e) => e.status === 'concluido').length,
-      emendasCanceladas: emendas.filter((e) => e.status === 'cancelado').length,
+      emendasPendentes: filteredEmendas.filter((e) => e.status === 'pendente').length,
+      emendasAprovadas: filteredEmendas.filter((e) => e.status === 'aprovado').length,
+      emendasEmExecucao: filteredEmendas.filter((e) => e.status === 'em_execucao').length,
+      emendasConcluidas: filteredEmendas.filter((e) => e.status === 'concluido').length,
+      emendasCanceladas: filteredEmendas.filter((e) => e.status === 'cancelado').length,
     };
-  }, [emendas]);
+  }, [filteredEmendas]);
 
   if (isLoading) {
     return <FullDashboardSkeleton />;

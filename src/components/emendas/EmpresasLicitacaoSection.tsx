@@ -264,16 +264,6 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="numero_empenho">Número do Empenho *</Label>
-                  <Input
-                    id="numero_empenho"
-                    placeholder="Ex: 2024NE000123"
-                    value={empresaForm.numero_empenho}
-                    onChange={(e) => setEmpresaForm({ ...empresaForm, numero_empenho: e.target.value })}
-                    required
-                  />
-                </div>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setEmpresaDialogOpen(false)}>
                     Cancelar

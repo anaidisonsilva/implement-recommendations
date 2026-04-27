@@ -59,9 +59,14 @@ const EmendasList = () => {
       const matchesEsfera =
         esferaFilter === 'todos' || (emenda as any).esfera === esferaFilter;
 
-      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera;
+      const matchesYear =
+        yearFilter === 'todos' ||
+        (emenda.data_disponibilizacao &&
+          new Date(emenda.data_disponibilizacao).getFullYear().toString() === yearFilter);
+
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera && matchesYear;
     });
-  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter, esferaFilter]);
+  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter, esferaFilter, yearFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);

@@ -82,7 +82,6 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
   const [empresaForm, setEmpresaForm] = useState({
     nome_empresa: '',
     cnpj: '',
-    numero_empenho: '',
   });
 
   // Estados para pagamento
@@ -95,6 +94,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
     valor: '',
     data_pagamento: '',
     descricao: '',
+    numero_empenho: '',
   });
 
   // Estados para collapsible
@@ -117,14 +117,12 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
       setEmpresaForm({
         nome_empresa: empresa.nome_empresa,
         cnpj: empresa.cnpj,
-        numero_empenho: empresa.numero_empenho,
       });
     } else {
       setEditingEmpresa(null);
       setEmpresaForm({
         nome_empresa: '',
         cnpj: '',
-        numero_empenho: '',
       });
     }
     setEmpresaDialogOpen(true);
@@ -165,6 +163,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: String(pagamento.valor),
         data_pagamento: pagamento.data_pagamento,
         descricao: pagamento.descricao || '',
+        numero_empenho: pagamento.numero_empenho || '',
       });
     } else {
       setEditingPagamento(null);
@@ -172,6 +171,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: '',
         data_pagamento: '',
         descricao: '',
+        numero_empenho: '',
       });
     }
     setPagamentoDialogOpen(true);
@@ -186,6 +186,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: parseFloat(pagamentoForm.valor),
         data_pagamento: pagamentoForm.data_pagamento,
         descricao: pagamentoForm.descricao || null,
+        numero_empenho: pagamentoForm.numero_empenho || null,
       });
     } else if (selectedEmpresaId) {
       await createPagamento.mutateAsync({
@@ -193,6 +194,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: parseFloat(pagamentoForm.valor),
         data_pagamento: pagamentoForm.data_pagamento,
         descricao: pagamentoForm.descricao || undefined,
+        numero_empenho: pagamentoForm.numero_empenho || null,
       });
     }
 
@@ -262,16 +264,6 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="numero_empenho">Número do Empenho *</Label>
-                  <Input
-                    id="numero_empenho"
-                    placeholder="Ex: 2024NE000123"
-                    value={empresaForm.numero_empenho}
-                    onChange={(e) => setEmpresaForm({ ...empresaForm, numero_empenho: e.target.value })}
-                    required
-                  />
-                </div>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setEmpresaDialogOpen(false)}>
                     Cancelar
@@ -312,7 +304,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                       <div>
                         <p className="font-medium text-foreground">{empresa.nome_empresa}</p>
                         <p className="text-sm text-muted-foreground">
-                          CNPJ: {empresa.cnpj} • Empenho: {empresa.numero_empenho}
+                          CNPJ: {empresa.cnpj}
                         </p>
                       </div>
                     </div>
@@ -371,6 +363,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                           <TableRow>
                             <TableHead>Data</TableHead>
                             <TableHead>Valor</TableHead>
+                            <TableHead>Empenho</TableHead>
                             <TableHead>Descrição</TableHead>
                             {!readOnly && <TableHead className="w-[80px]">Ações</TableHead>}
                           </TableRow>
@@ -388,6 +381,9 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                                 </TableCell>
                                 <TableCell className="font-medium text-accent">
                                   {formatCurrency(Number(pagamento.valor))}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {pagamento.numero_empenho || '-'}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">
                                   {pagamento.descricao || '-'}
@@ -478,6 +474,15 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
                 value={pagamentoForm.data_pagamento}
                 onChange={(e) => setPagamentoForm({ ...pagamentoForm, data_pagamento: e.target.value })}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="numero_empenho_pag">Número do Empenho</Label>
+              <Input
+                id="numero_empenho_pag"
+                placeholder="Ex: 2024NE000123"
+                value={pagamentoForm.numero_empenho}
+                onChange={(e) => setPagamentoForm({ ...pagamentoForm, numero_empenho: e.target.value })}
               />
             </div>
             <div className="space-y-2">

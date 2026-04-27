@@ -304,7 +304,7 @@ export type Database = {
           emenda_id: string
           id: string
           nome_empresa: string
-          numero_empenho: string
+          numero_empenho: string | null
           updated_at: string
         }
         Insert: {
@@ -314,7 +314,7 @@ export type Database = {
           emenda_id: string
           id?: string
           nome_empresa: string
-          numero_empenho: string
+          numero_empenho?: string | null
           updated_at?: string
         }
         Update: {
@@ -324,7 +324,7 @@ export type Database = {
           emenda_id?: string
           id?: string
           nome_empresa?: string
-          numero_empenho?: string
+          numero_empenho?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -415,6 +415,7 @@ export type Database = {
           descricao: string | null
           empresa_id: string
           id: string
+          numero_empenho: string | null
           updated_at: string
           valor: number
         }
@@ -425,6 +426,7 @@ export type Database = {
           descricao?: string | null
           empresa_id: string
           id?: string
+          numero_empenho?: string | null
           updated_at?: string
           valor: number
         }
@@ -435,6 +437,7 @@ export type Database = {
           descricao?: string | null
           empresa_id?: string
           id?: string
+          numero_empenho?: string | null
           updated_at?: string
           valor?: number
         }

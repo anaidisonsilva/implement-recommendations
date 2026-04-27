@@ -378,12 +378,7 @@ const PrefeituraPortal = () => {
           />
         </div>
 
-        {/* Vigência Cards */}
-        {yearFilteredEmendas && yearFilteredEmendas.length > 0 && (
-          <div className="mb-8">
-            <PublicVigenciaCards emendas={yearFilteredEmendas} />
-          </div>
-        )}
+        {/* Vigência de Convênios movida para a aba de Convênios */}
 
         {/* Advanced Search */}
         <div className="mb-6">

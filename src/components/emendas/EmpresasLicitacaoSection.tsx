@@ -477,6 +477,15 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="numero_empenho_pag">Número do Empenho</Label>
+              <Input
+                id="numero_empenho_pag"
+                placeholder="Ex: 2024NE000123"
+                value={pagamentoForm.numero_empenho}
+                onChange={(e) => setPagamentoForm({ ...pagamentoForm, numero_empenho: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="descricao">Descrição</Label>
               <Textarea
                 id="descricao"

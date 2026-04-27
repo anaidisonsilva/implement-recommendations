@@ -145,6 +145,7 @@ export const useCreatePagamento = () => {
       valor: number;
       data_pagamento: string;
       descricao?: string;
+      numero_empenho?: string | null;
     }) => {
       const { data, error } = await supabase
         .from('pagamentos')
@@ -180,6 +181,7 @@ export const useUpdatePagamento = () => {
           valor: input.valor,
           data_pagamento: input.data_pagamento,
           descricao: input.descricao,
+          numero_empenho: input.numero_empenho,
         })
         .eq('id', input.id)
         .select()

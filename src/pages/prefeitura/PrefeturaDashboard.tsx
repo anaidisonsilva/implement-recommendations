@@ -9,9 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePrefeituraBySlug } from '@/hooks/usePrefeituras';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIsPrefeituraAdmin } from '@/hooks/useUserRoles';
 import { FullDashboardSkeleton } from '@/components/ui/skeletons';
+import YearFilter from '@/components/dashboard/YearFilter';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -42,8 +43,31 @@ const PrefeturaDashboard = () => {
     enabled: !!prefeitura?.id,
   });
 
+  const [selectedYear, setSelectedYear] = useState<string>('todos');
+
+  const availableYears = useMemo(() => {
+    if (!emendas) return [];
+    const years = new Set<number>();
+    emendas.forEach((e) => {
+      if (e.data_disponibilizacao) {
+        years.add(new Date(e.data_disponibilizacao).getFullYear());
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
+
+  const filteredEmendas = useMemo(() => {
+    if (!emendas) return [];
+    if (selectedYear === 'todos') return emendas;
+    return emendas.filter(
+      (e) =>
+        e.data_disponibilizacao &&
+        new Date(e.data_disponibilizacao).getFullYear().toString() === selectedYear,
+    );
+  }, [emendas, selectedYear]);
+
   const stats = useMemo(() => {
-    if (!emendas) {
+    if (!filteredEmendas) {
       return {
         totalEmendas: 0,
         valorConcedente: 0,
@@ -58,24 +82,24 @@ const PrefeturaDashboard = () => {
       };
     }
 
-    const emendasComValor = emendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
+    const emendasComValor = filteredEmendas.filter((e) => e.status !== 'pendente' && e.status !== 'cancelado');
     const valorConcedente = emendasComValor.reduce((acc, e) => acc + Number(e.valor), 0);
     const valorContrapartida = emendasComValor.reduce((acc, e) => acc + Number(e.contrapartida || 0), 0);
     const valorTotal = valorConcedente + valorContrapartida;
 
     return {
-      totalEmendas: emendas.length,
+      totalEmendas: filteredEmendas.length,
       valorConcedente,
       valorTotal,
       valorExecutado: emendasComValor.reduce((acc, e) => acc + Number(e.valor_executado), 0),
       valorContrapartida,
-      emendasPendentes: emendas.filter((e) => e.status === 'pendente').length,
-      emendasAprovadas: emendas.filter((e) => e.status === 'aprovado').length,
-      emendasEmExecucao: emendas.filter((e) => e.status === 'em_execucao').length,
-      emendasConcluidas: emendas.filter((e) => e.status === 'concluido').length,
-      emendasCanceladas: emendas.filter((e) => e.status === 'cancelado').length,
+      emendasPendentes: filteredEmendas.filter((e) => e.status === 'pendente').length,
+      emendasAprovadas: filteredEmendas.filter((e) => e.status === 'aprovado').length,
+      emendasEmExecucao: filteredEmendas.filter((e) => e.status === 'em_execucao').length,
+      emendasConcluidas: filteredEmendas.filter((e) => e.status === 'concluido').length,
+      emendasCanceladas: filteredEmendas.filter((e) => e.status === 'cancelado').length,
     };
-  }, [emendas]);
+  }, [filteredEmendas]);
 
   if (isLoading) {
     return <FullDashboardSkeleton />;
@@ -84,11 +108,18 @@ const PrefeturaDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
-          Visão geral das emendas parlamentares • {prefeitura?.nome}
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          <p className="mt-1 text-muted-foreground">
+            Visão geral das emendas parlamentares • {prefeitura?.nome}
+          </p>
+        </div>
+        <YearFilter
+          selectedYear={selectedYear}
+          onYearChange={setSelectedYear}
+          availableYears={availableYears}
+        />
       </div>
 
       {/* Stats grid */}
@@ -185,19 +216,23 @@ const PrefeturaDashboard = () => {
       )}
 
       {/* Recent emendas */}
-      {emendas && emendas.length > 0 && (
-        <RecentEmendas emendas={emendas} basePath={`/p/${slug}`} />
+      {filteredEmendas && filteredEmendas.length > 0 && (
+        <RecentEmendas emendas={filteredEmendas} basePath={`/p/${slug}`} />
       )}
 
       {/* Empty state */}
-      {(!emendas || emendas.length === 0) && (
+      {(!filteredEmendas || filteredEmendas.length === 0) && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
           <FileText className="h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-lg font-medium text-muted-foreground">
-            Nenhuma emenda cadastrada
+            {selectedYear !== 'todos'
+              ? `Nenhuma emenda encontrada para ${selectedYear}`
+              : 'Nenhuma emenda cadastrada'}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Comece cadastrando a primeira emenda no sistema
+            {selectedYear !== 'todos'
+              ? 'Selecione outro ano ou cadastre novas emendas'
+              : 'Comece cadastrando a primeira emenda no sistema'}
           </p>
         </div>
       )}

@@ -8,7 +8,7 @@ export interface EmpresaLicitacao {
   emenda_id: string;
   nome_empresa: string;
   cnpj: string;
-  numero_empenho: string;
+  numero_empenho: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -20,6 +20,7 @@ export interface Pagamento {
   valor: number;
   data_pagamento: string;
   descricao: string | null;
+  numero_empenho: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;

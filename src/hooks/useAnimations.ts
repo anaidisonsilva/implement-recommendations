@@ -9,18 +9,25 @@ export function useInView(threshold = 0.1) {
     const element = ref.current;
     if (!element) return;
 
+    // Fallback: if IntersectionObserver doesn't fire within 300ms, force visible
+    const fallback = setTimeout(() => setIsInView(true), 300);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
           observer.unobserve(element);
+          clearTimeout(fallback);
         }
       },
-      { threshold }
+      { threshold: 0 }
     );
 
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, [threshold]);
 
   return { ref, isInView };

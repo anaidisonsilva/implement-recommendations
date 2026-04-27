@@ -6,6 +6,7 @@ import PortalBreadcrumb from '@/components/prefeitura/PortalBreadcrumb';
 import PublicExportDialog from '@/components/emendas/PublicExportDialog';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';
 import YearFilter from '@/components/dashboard/YearFilter';
+import PublicVigenciaCards from '@/components/dashboard/PublicVigenciaCards';
 import PaginationControls from '@/components/ui/pagination-controls';
 import {
   Building2,
@@ -263,6 +264,13 @@ const PrefeituraConvenios = () => {
             <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.executado)}>{formatCurrency(stats.executado)}</p>
           </div>
         </div>
+
+        {/* Vigência de Convênios */}
+        {yearFilteredEmendas && yearFilteredEmendas.length > 0 && (
+          <div className="mb-6">
+            <PublicVigenciaCards emendas={yearFilteredEmendas} />
+          </div>
+        )}
 
         {/* Advanced Search */}
         <div className="mb-6">

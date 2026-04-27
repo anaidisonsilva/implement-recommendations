@@ -216,19 +216,23 @@ const PrefeturaDashboard = () => {
       )}
 
       {/* Recent emendas */}
-      {emendas && emendas.length > 0 && (
-        <RecentEmendas emendas={emendas} basePath={`/p/${slug}`} />
+      {filteredEmendas && filteredEmendas.length > 0 && (
+        <RecentEmendas emendas={filteredEmendas} basePath={`/p/${slug}`} />
       )}
 
       {/* Empty state */}
-      {(!emendas || emendas.length === 0) && (
+      {(!filteredEmendas || filteredEmendas.length === 0) && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
           <FileText className="h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-lg font-medium text-muted-foreground">
-            Nenhuma emenda cadastrada
+            {selectedYear !== 'todos'
+              ? `Nenhuma emenda encontrada para ${selectedYear}`
+              : 'Nenhuma emenda cadastrada'}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Comece cadastrando a primeira emenda no sistema
+            {selectedYear !== 'todos'
+              ? 'Selecione outro ano ou cadastre novas emendas'
+              : 'Comece cadastrando a primeira emenda no sistema'}
           </p>
         </div>
       )}

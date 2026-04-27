@@ -19,9 +19,21 @@ const EmendasList = () => {
   const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const [yearFilter, setYearFilter] = useState<string>('todos');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const availableYears = useMemo(() => {
+    if (!emendas) return [];
+    const years = new Set<number>();
+    emendas.forEach((e) => {
+      if (e.data_disponibilizacao) {
+        years.add(new Date(e.data_disponibilizacao).getFullYear());
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
 
   const filteredEmendas = useMemo(() => {
     if (!emendas) return [];

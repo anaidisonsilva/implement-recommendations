@@ -216,6 +216,11 @@ const PrefeturaDashboard = () => {
         </Card>
       )}
 
+      {/* Vigência de Convênios */}
+      {filteredEmendas && filteredEmendas.length > 0 && (
+        <VigenciaCards emendas={filteredEmendas} />
+      )}
+
       {/* Recent emendas */}
       {filteredEmendas && filteredEmendas.length > 0 && (
         <RecentEmendas emendas={filteredEmendas} basePath={`/p/${slug}`} />

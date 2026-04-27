@@ -108,7 +108,15 @@ const EmendasList = () => {
             {filteredEmendas.length} emenda(s) encontrada(s)
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <YearFilter
+            selectedYear={yearFilter}
+            onYearChange={(value) => {
+              setYearFilter(value);
+              setCurrentPage(1);
+            }}
+            availableYears={availableYears}
+          />
           <ExportDialog 
             statusFilter={statusFilter} 
             concedenteFilter={concedenteFilter} 

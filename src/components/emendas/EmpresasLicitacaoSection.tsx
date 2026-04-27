@@ -82,7 +82,6 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
   const [empresaForm, setEmpresaForm] = useState({
     nome_empresa: '',
     cnpj: '',
-    numero_empenho: '',
   });
 
   // Estados para pagamento
@@ -95,6 +94,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
     valor: '',
     data_pagamento: '',
     descricao: '',
+    numero_empenho: '',
   });
 
   // Estados para collapsible

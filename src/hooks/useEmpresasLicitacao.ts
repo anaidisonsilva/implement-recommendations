@@ -61,7 +61,7 @@ export const useCreateEmpresa = () => {
       emenda_id: string;
       nome_empresa: string;
       cnpj: string;
-      numero_empenho: string;
+      numero_empenho?: string | null;
     }) => {
       const { data, error } = await supabase
         .from('empresas_licitacao')

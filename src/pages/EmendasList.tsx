@@ -6,6 +6,7 @@ import EmendaCard from '@/components/emendas/EmendaCard';
 import EmendaFilters from '@/components/emendas/EmendaFilters';
 import ExportDialog from '@/components/emendas/ExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
+import YearFilter from '@/components/dashboard/YearFilter';
 import { useEmendas } from '@/hooks/useEmendas';
 
 type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';
@@ -18,9 +19,21 @@ const EmendasList = () => {
   const [concedenteFilter, setConcedenteFilter] = useState<TipoConcedente | 'todos'>('todos');
   const [especialFilter, setEspecialFilter] = useState<'todos' | 'sim' | 'nao'>('todos');
   const [esferaFilter, setEsferaFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+  const [yearFilter, setYearFilter] = useState<string>('todos');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const availableYears = useMemo(() => {
+    if (!emendas) return [];
+    const years = new Set<number>();
+    emendas.forEach((e) => {
+      if (e.data_disponibilizacao) {
+        years.add(new Date(e.data_disponibilizacao).getFullYear());
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [emendas]);
 
   const filteredEmendas = useMemo(() => {
     if (!emendas) return [];
@@ -46,9 +59,14 @@ const EmendasList = () => {
       const matchesEsfera =
         esferaFilter === 'todos' || (emenda as any).esfera === esferaFilter;
 
-      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera;
+      const matchesYear =
+        yearFilter === 'todos' ||
+        (emenda.data_disponibilizacao &&
+          new Date(emenda.data_disponibilizacao).getFullYear().toString() === yearFilter);
+
+      return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera && matchesYear;
     });
-  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter, esferaFilter]);
+  }, [emendas, searchTerm, statusFilter, concedenteFilter, especialFilter, esferaFilter, yearFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmendas.length / itemsPerPage);
@@ -68,6 +86,7 @@ const EmendasList = () => {
     setConcedenteFilter('todos');
     setEspecialFilter('todos');
     setEsferaFilter('todos');
+    setYearFilter('todos');
     setCurrentPage(1);
   };
 
@@ -89,7 +108,15 @@ const EmendasList = () => {
             {filteredEmendas.length} emenda(s) encontrada(s)
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <YearFilter
+            selectedYear={yearFilter}
+            onYearChange={(value) => {
+              setYearFilter(value);
+              setCurrentPage(1);
+            }}
+            availableYears={availableYears}
+          />
           <ExportDialog 
             statusFilter={statusFilter} 
             concedenteFilter={concedenteFilter} 

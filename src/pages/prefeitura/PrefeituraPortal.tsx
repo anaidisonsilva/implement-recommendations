@@ -62,16 +62,6 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const formatCurrencyCompact = (value: number) => {
-  if (Math.abs(value) >= 1_000_000) {
-    return `R$ ${(value / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })} mi`;
-  }
-  if (Math.abs(value) >= 1_000) {
-    return `R$ ${(value / 1_000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
-  }
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
-
 const PrefeituraPortal = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: prefeitura, isLoading: loadingPrefeitura, error } = usePrefeituraBySlug(slug ?? '');
@@ -301,28 +291,28 @@ const PrefeituraPortal = () => {
               <Banknote className="h-4 w-4 text-muted-foreground" />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">Concedente + Contrapartida</p>
-            <p className="mt-1 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorTotal)}>{formatCurrencyCompact(stats.valorTotal)}</p>
+            <p className="mt-1 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorTotal)}>{formatCurrency(stats.valorTotal)}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Concedente</p>
               <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
             </div>
-            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorConcedente)}>{formatCurrencyCompact(stats.valorConcedente)}</p>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorConcedente)}>{formatCurrency(stats.valorConcedente)}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Contrapartida</p>
               <HandCoins className="h-4 w-4 text-muted-foreground" />
             </div>
-            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorContrapartida)}>{formatCurrencyCompact(stats.valorContrapartida)}</p>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.valorContrapartida)}>{formatCurrency(stats.valorContrapartida)}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground truncate">Valor Executado</p>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </div>
-            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.executado)}>{formatCurrencyCompact(stats.executado)}</p>
+            <p className="mt-2 text-lg font-bold text-foreground truncate" title={formatCurrency(stats.executado)}>{formatCurrency(stats.executado)}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">

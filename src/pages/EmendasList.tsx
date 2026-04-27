@@ -86,6 +86,7 @@ const EmendasList = () => {
     setConcedenteFilter('todos');
     setEspecialFilter('todos');
     setEsferaFilter('todos');
+    setYearFilter('todos');
     setCurrentPage(1);
   };
 

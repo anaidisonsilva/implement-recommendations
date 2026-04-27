@@ -163,6 +163,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: String(pagamento.valor),
         data_pagamento: pagamento.data_pagamento,
         descricao: pagamento.descricao || '',
+        numero_empenho: pagamento.numero_empenho || '',
       });
     } else {
       setEditingPagamento(null);
@@ -170,6 +171,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: '',
         data_pagamento: '',
         descricao: '',
+        numero_empenho: '',
       });
     }
     setPagamentoDialogOpen(true);
@@ -184,6 +186,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: parseFloat(pagamentoForm.valor),
         data_pagamento: pagamentoForm.data_pagamento,
         descricao: pagamentoForm.descricao || null,
+        numero_empenho: pagamentoForm.numero_empenho || null,
       });
     } else if (selectedEmpresaId) {
       await createPagamento.mutateAsync({
@@ -191,6 +194,7 @@ const EmpresasLicitacaoSection = ({ emendaId, readOnly = false }: EmpresasLicita
         valor: parseFloat(pagamentoForm.valor),
         data_pagamento: pagamentoForm.data_pagamento,
         descricao: pagamentoForm.descricao || undefined,
+        numero_empenho: pagamentoForm.numero_empenho || null,
       });
     }
 

@@ -265,6 +265,13 @@ const PrefeituraConvenios = () => {
           </div>
         </div>
 
+        {/* Vigência de Convênios */}
+        {yearFilteredEmendas && yearFilteredEmendas.length > 0 && (
+          <div className="mb-6">
+            <PublicVigenciaCards emendas={yearFilteredEmendas} />
+          </div>
+        )}
+
         {/* Advanced Search */}
         <div className="mb-6">
           <AdvancedSearch

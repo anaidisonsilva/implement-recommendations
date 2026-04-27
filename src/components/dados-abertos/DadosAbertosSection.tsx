@@ -51,6 +51,7 @@ interface EmendaData {
   banco?: string | null;
   conta_corrente?: string | null;
   anuencia_previa_sus?: boolean | null;
+  forma_repasse?: string | null;
 }
 
 interface DadosAbertosSectionProps {

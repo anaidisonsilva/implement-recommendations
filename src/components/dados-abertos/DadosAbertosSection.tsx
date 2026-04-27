@@ -51,6 +51,7 @@ interface EmendaData {
   banco?: string | null;
   conta_corrente?: string | null;
   anuencia_previa_sus?: boolean | null;
+  forma_repasse?: string | null;
 }
 
 interface DadosAbertosSectionProps {
@@ -100,6 +101,19 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
       numero_plano_acao: e.numero_plano_acao || '',
       tipo: e.programa ? 'Programa' : 'Emenda',
       especial_pix: e.especial ? 'Sim' : 'Não',
+      forma_repasse: (() => {
+        if (e.forma_repasse) {
+          const map: Record<string, string> = {
+            especial: 'Transferência Especial',
+            convenio: 'Convênio',
+            fundo_a_fundo: 'Fundo a Fundo',
+          };
+          return map[e.forma_repasse] || e.forma_repasse;
+        }
+        if (e.especial) return 'Transferência Especial';
+        if (e.numero_convenio) return 'Convênio';
+        return 'Fundo a Fundo';
+      })(),
       objeto: e.objeto,
       parlamentar: e.nome_parlamentar || '',
       tipo_concedente: tipoConcedenteLabels[e.tipo_concedente] || e.tipo_concedente,
@@ -268,34 +282,35 @@ const DadosAbertosSection = ({ emendas, prefeituraName, lastUpdated }: DadosAber
     ['numero_plano_acao', 'Texto', 'Número do plano de ação vinculado'],
     ['tipo', 'Texto', 'Classificação: Emenda ou Programa'],
     ['especial_pix', 'Texto', 'Indica se é emenda especial PIX (Sim/Não)'],
+    ['forma_repasse', 'Texto', 'Forma de repasse do recurso: Transferência Especial (PIX), Convênio ou Fundo a Fundo'],
     ['objeto', 'Texto', 'Descrição do objeto da emenda ou convênio'],
     ['parlamentar', 'Texto', 'Nome do parlamentar autor da emenda'],
-    ['tipo_concedente', 'Texto', 'Tipo do concedente (Parlamentar, Comissão, Bancada, Outro)'],
+    ['tipo_concedente', 'Texto', 'Tipo do concedente: Parlamentar, Comissão, Bancada ou Outro'],
     ['concedente', 'Texto', 'Nome do órgão/entidade concedente dos recursos'],
     ['recebedor', 'Texto', 'Nome do ente recebedor (convenente)'],
-    ['cnpj_recebedor', 'Texto', 'CNPJ do ente recebedor'],
-    ['tipo_recebedor', 'Texto', 'Tipo do recebedor (Adm. Pública, Entidade sem Fins Lucrativos, Consórcio Público, PJ Privada, Outro)'],
+    ['cnpj_recebedor', 'Texto', 'CNPJ do ente recebedor (publicação obrigatória conforme LAI)'],
+    ['tipo_recebedor', 'Texto', 'Tipo do recebedor: Adm. Pública, Entidade sem Fins Lucrativos, Consórcio Público, PJ Privada ou Outro'],
     ['municipio', 'Texto', 'Município beneficiário dos recursos'],
     ['estado', 'Texto', 'Unidade Federativa (UF) do município'],
     ['gestor_responsavel', 'Texto', 'Nome do gestor responsável pela execução'],
-    ['grupo_natureza_despesa', 'Texto', 'Grupo e natureza da despesa conforme classificação orçamentária (1 a 6)'],
-    ['funcao_governo', 'Texto', 'Função de Governo conforme Lei 4.320/64 e Portaria MOG nº 42/1999 (ex: 10 - Saúde, 12 - Educação)'],
-    ['valor_concedente', 'Numérico (R$)', 'Valor pactuado pelo concedente'],
-    ['contrapartida', 'Numérico (R$)', 'Valor de contrapartida do convenente'],
-    ['valor_total', 'Numérico (R$)', 'Valor global (concedente + contrapartida)'],
+    ['grupo_natureza_despesa', 'Texto', 'Grupo de Natureza da Despesa (GND) conforme Portaria STN/SOF nº 163/2001 (1 a 6)'],
+    ['funcao_governo', 'Texto', 'Função de Governo conforme Lei 4.320/64 e Portaria MOG nº 42/1999 (ex.: 10 - Saúde, 12 - Educação)'],
+    ['valor_concedente', 'Numérico (R$)', 'Valor pactuado pelo concedente (origem do recurso)'],
+    ['contrapartida', 'Numérico (R$)', 'Valor de contrapartida do convenente/município'],
+    ['valor_total', 'Numérico (R$)', 'Valor global do instrumento (valor_concedente + contrapartida)'],
     ['valor_repassado', 'Numérico (R$)', 'Valor efetivamente repassado pelo concedente ao convenente'],
-    ['valor_executado', 'Numérico (R$)', 'Valor efetivamente executado/pago nas despesas'],
-    ['valor_empenhado', 'Numérico (R$)', 'Valor empenhado conforme execução orçamentária'],
-    ['valor_liquidado', 'Numérico (R$)', 'Valor liquidado conforme execução orçamentária'],
-    ['valor_pago', 'Numérico (R$)', 'Valor efetivamente pago conforme execução financeira'],
-    ['percentual_execucao', 'Numérico (%)', 'Percentual de execução financeira sobre o valor global'],
+    ['valor_empenhado', 'Numérico (R$)', 'Valor empenhado conforme estágio da execução orçamentária (TCE-MG)'],
+    ['valor_liquidado', 'Numérico (R$)', 'Valor liquidado conforme estágio da execução orçamentária (TCE-MG)'],
+    ['valor_pago', 'Numérico (R$)', 'Valor efetivamente pago conforme execução financeira (TCE-MG)'],
+    ['valor_executado', 'Numérico (R$)', 'Valor total efetivamente executado/pago às empresas licitadas'],
+    ['percentual_execucao', 'Numérico (%)', 'Percentual de execução financeira sobre o valor total'],
     ['status', 'Texto', 'Situação atual: Pendente, Aprovado, Em Execução, Concluído ou Cancelado'],
     ['data_disponibilizacao', 'Data (AAAA-MM-DD)', 'Data de disponibilização/publicação do recurso'],
     ['data_inicio_vigencia', 'Data (AAAA-MM-DD)', 'Data de início da vigência do convênio/emenda'],
     ['data_fim_vigencia', 'Data (AAAA-MM-DD)', 'Data de término da vigência do convênio/emenda'],
     ['banco', 'Texto', 'Instituição bancária da conta específica do convênio'],
-    ['conta_corrente', 'Texto', 'Número da conta corrente específica'],
-    ['anuencia_previa_sus', 'Texto', 'Anuência prévia do SUS, quando aplicável (Sim/Não)'],
+    ['conta_corrente', 'Texto', 'Número da conta corrente específica do convênio'],
+    ['anuencia_previa_sus', 'Texto', 'Indica se há Anuência Prévia do SUS, quando aplicável (Sim/Não)'],
   ];
 
   return (

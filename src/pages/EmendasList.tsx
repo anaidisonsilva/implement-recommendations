@@ -6,6 +6,7 @@ import EmendaCard from '@/components/emendas/EmendaCard';
 import EmendaFilters from '@/components/emendas/EmendaFilters';
 import ExportDialog from '@/components/emendas/ExportDialog';
 import PaginationControls from '@/components/ui/pagination-controls';
+import YearFilter from '@/components/dashboard/YearFilter';
 import { useEmendas } from '@/hooks/useEmendas';
 
 type StatusEmenda = 'pendente' | 'aprovado' | 'em_execucao' | 'concluido' | 'cancelado';

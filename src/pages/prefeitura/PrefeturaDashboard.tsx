@@ -13,6 +13,7 @@ import { useMemo, useState } from 'react';
 import { useIsPrefeituraAdmin } from '@/hooks/useUserRoles';
 import { FullDashboardSkeleton } from '@/components/ui/skeletons';
 import YearFilter from '@/components/dashboard/YearFilter';
+import VigenciaCards from '@/components/dashboard/VigenciaCards';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {

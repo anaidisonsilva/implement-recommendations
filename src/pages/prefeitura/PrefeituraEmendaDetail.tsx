@@ -353,10 +353,12 @@ const PrefeituraEmendaDetail = () => {
   const contrapartida = Number(emenda.contrapartida || 0);
   const valorExecutado = Number(emenda.valor_executado);
   const valorRepassado = Number((emenda as any).valor_repassado || 0);
-  const valorEmpenhado = Number(emenda.valor_empenhado || 0);
+  const valorEmpenhadoRaw = Number(emenda.valor_empenhado || 0);
   const valorLiquidado = Number(emenda.valor_liquidado || 0);
   const valorPago = Number(emenda.valor_pago || 0);
-  const rendimentos = emenda.especial && valorPago > valorEmpenhado ? valorPago - valorEmpenhado : 0;
+  const rendimentos = emenda.especial && valorPago > valorEmpenhadoRaw ? valorPago - valorEmpenhadoRaw : 0;
+  // Para emendas PIX, empenhado efetivo inclui rendimentos (devem bater com Valor Total)
+  const valorEmpenhado = emenda.especial ? valorEmpenhadoRaw + rendimentos : valorEmpenhadoRaw;
   const valorTotal = emenda.especial
     ? valorRepassado + rendimentos
     : valor + contrapartida;

@@ -508,6 +508,14 @@ const PrefeituraEmendaDetail = () => {
                     {formatCurrency(valorRepassado)}
                   </p>
                 </div>
+                {emenda.especial && rendimentos > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Rendimentos</p>
+                    <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(rendimentos)}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm text-muted-foreground">Valor Total</p>
                   <p className="text-2xl font-bold text-primary">

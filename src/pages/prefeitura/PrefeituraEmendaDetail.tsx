@@ -9,6 +9,7 @@ import {
   Download,
   Zap,
   AlertTriangle,
+  TrendingUp,
 } from 'lucide-react';
 import EmendaExportDropdown from '@/components/emendas/EmendaExportDropdown';
 import LastUpdatedBanner from '@/components/prefeitura/LastUpdatedBanner';

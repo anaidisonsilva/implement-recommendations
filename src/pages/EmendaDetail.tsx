@@ -94,8 +94,13 @@ const EmendaDetail = () => {
     const valor = Number(emenda.valor);
     const valorExecutado = Number(emenda.valor_executado);
     const contrapartida = Number(emenda.contrapartida || 0);
-    const valorTotal = valor + contrapartida;
-    const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+    const valorRepassado = Number((emenda as any).valor_repassado || 0);
+    const valorEmpenhadoRaw = Number(emenda.valor_empenhado || 0);
+    const valorPago = Number(emenda.valor_pago || 0);
+    const rendimentos = emenda.especial && valorPago > valorEmpenhadoRaw ? valorPago - valorEmpenhadoRaw : 0;
+    const valorEmpenhado = emenda.especial ? valorEmpenhadoRaw + rendimentos : valorEmpenhadoRaw;
+    const valorTotal = emenda.especial ? valorRepassado + rendimentos : valor + contrapartida;
+    const progressPercent = valorTotal > 0 ? Math.min((valorExecutado / valorTotal) * 100, 100) : 0;
 
     const planoTrabalhoHtml = planoTrabalho ? `
       <div class="section" style="margin-top: 20px;">

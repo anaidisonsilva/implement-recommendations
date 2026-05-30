@@ -351,13 +351,16 @@ const PrefeituraEmendaDetail = () => {
 
   const valor = Number(emenda.valor);
   const contrapartida = Number(emenda.contrapartida || 0);
-  const valorTotal = valor + contrapartida;
   const valorExecutado = Number(emenda.valor_executado);
   const valorRepassado = Number((emenda as any).valor_repassado || 0);
   const valorEmpenhado = Number(emenda.valor_empenhado || 0);
   const valorLiquidado = Number(emenda.valor_liquidado || 0);
   const valorPago = Number(emenda.valor_pago || 0);
-  const progressPercent = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+  const rendimentos = emenda.especial && valorPago > valorEmpenhado ? valorPago - valorEmpenhado : 0;
+  const valorTotal = emenda.especial
+    ? valorRepassado + rendimentos
+    : valor + contrapartida;
+  const progressPercent = valorTotal > 0 ? Math.min((valorExecutado / valorTotal) * 100, 100) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -505,6 +508,14 @@ const PrefeituraEmendaDetail = () => {
                     {formatCurrency(valorRepassado)}
                   </p>
                 </div>
+                {emenda.especial && rendimentos > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Rendimentos</p>
+                    <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(rendimentos)}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm text-muted-foreground">Valor Total</p>
                   <p className="text-2xl font-bold text-primary">

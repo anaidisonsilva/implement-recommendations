@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Download, Landmark, Search } from 'lucide-react';
+import { Download, FileText, Landmark, Search } from 'lucide-react';
 import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 
 type Row = {

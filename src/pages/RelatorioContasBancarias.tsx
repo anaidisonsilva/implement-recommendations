@@ -167,9 +167,14 @@ export default function RelatorioContasBancarias() {
             Relatório de contas bancárias vinculadas a convênios, planos de trabalho, emendas e transferências especiais
           </p>
         </div>
-        <Button onClick={exportCSV} disabled={!filtered.length}>
-          <Download className="h-4 w-4 mr-2" /> Exportar CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportPDF} disabled={!filtered.length}>
+            <FileText className="h-4 w-4 mr-2" /> Exportar PDF
+          </Button>
+          <Button onClick={exportCSV} disabled={!filtered.length}>
+            <Download className="h-4 w-4 mr-2" /> Exportar CSV
+          </Button>
+        </div>
       </div>
 
       <Card>

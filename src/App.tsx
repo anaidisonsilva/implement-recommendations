@@ -26,6 +26,7 @@ import TransparenciaPix from "./pages/TransparenciaPix";
 import TransparenciaDadosAbertos from "./pages/TransparenciaDadosAbertos";
 import NotFound from "./pages/NotFound";
 import Relatorios from "./pages/Relatorios";
+import RelatorioContasBancarias from "./pages/RelatorioContasBancarias";
 import Configuracoes from "./pages/Configuracoes";
 import AuditLogs from "./pages/AuditLogs";
 import AdminPrefeituras from "./pages/admin/AdminPrefeituras";
@@ -171,6 +172,16 @@ const App = () => (
                 <ProtectedRoute>
                   <MainLayout>
                     <Relatorios />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/relatorios/contas-bancarias"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <RelatorioContasBancarias />
                   </MainLayout>
                 </ProtectedRoute>
               }

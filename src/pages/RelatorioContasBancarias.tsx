@@ -86,6 +86,75 @@ export default function RelatorioContasBancarias() {
     URL.revokeObjectURL(url);
   };
 
+  const exportPDF = () => {
+    const fmt = (v: number) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const esc = (s: string | null | undefined) =>
+      String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const filtros: string[] = [];
+    if (search.trim()) filtros.push(`Busca: "${esc(search)}"`);
+    if (forma !== 'todos') {
+      const map: Record<string, string> = { especial: 'Transferência Especial', convenio: 'Convênio', fundo: 'Fundo a Fundo' };
+      filtros.push(`Forma de Repasse: ${map[forma]}`);
+    }
+    const totalRepassado = filtered.reduce((s, r) => s + Number(r.valor_repassado || 0), 0);
+
+    const rowsHtml = filtered.map(r => {
+      const ids: string[] = [];
+      if (r.numero_convenio) ids.push(`<div><span class="muted">Convênio:</span> ${esc(r.numero_convenio)}</div>`);
+      if (r.numero_plano_acao) ids.push(`<div><span class="muted">Plano de Ação:</span> ${esc(r.numero_plano_acao)}</div>`);
+      if (r.numero) ids.push(`<div><span class="muted">Emenda:</span> ${esc(r.numero)}</div>`);
+      if (r.numero_proposta) ids.push(`<div><span class="muted">Proposta:</span> ${esc(r.numero_proposta)}</div>`);
+      return `<tr>
+        <td>${esc(r.banco) || '-'}</td>
+        <td class="mono">${esc(r.conta_corrente) || '-'}</td>
+        <td>${esc(getForma(r))}</td>
+        <td>${ids.join('') || '-'}</td>
+        <td>${esc(r.nome_recebedor)}<div class="muted mono small">${esc(r.cnpj_recebedor)}</div></td>
+        <td class="right mono">${fmt(Number(r.valor_repassado || 0))}</td>
+      </tr>`;
+    }).join('');
+
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Relatório de Contas Bancárias</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: #111; padding: 24px; font-size: 11pt; }
+  h1 { margin: 0 0 4px; font-size: 18pt; }
+  .sub { color: #666; font-size: 10pt; margin-bottom: 14px; }
+  .meta { background: #f5f5f5; padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; font-size: 9.5pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  th { background: #1e40af; color: #fff; padding: 8px 6px; text-align: left; }
+  td { padding: 6px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .right { text-align: right; }
+  .mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; }
+  .muted { color: #6b7280; }
+  .small { font-size: 8pt; }
+  tfoot td { font-weight: bold; background: #f3f4f6 !important; border-top: 2px solid #1e40af; }
+  @media print { body { padding: 0; } @page { margin: 14mm; size: landscape; } }
+</style></head><body>
+  <h1>Relatório de Contas Bancárias</h1>
+  <div class="sub">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+  <div class="meta">
+    <div><b>Filtros aplicados:</b> ${filtros.length ? filtros.join(' &middot; ') : 'Nenhum'}</div>
+    <div><b>Total de registros:</b> ${filtered.length}</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Banco</th><th>Conta Corrente</th><th>Forma de Repasse</th>
+      <th>Identificação</th><th>Recebedor</th><th class="right">Valor Repassado</th>
+    </tr></thead>
+    <tbody>${rowsHtml || '<tr><td colspan="6" style="text-align:center;padding:20px;color:#666;">Nenhuma conta bancária encontrada.</td></tr>'}</tbody>
+    ${filtered.length ? `<tfoot><tr><td colspan="5" class="right">Total Repassado:</td><td class="right mono">${fmt(totalRepassado)}</td></tr></tfoot>` : ''}
+  </table>
+  <script>window.onload = () => { window.print(); };<\/script>
+</body></html>`;
+
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(html);
+    w.document.close();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Download, Landmark, Search } from 'lucide-react';
-import { formaRepasseLabel } from '@/lib/formaRepasse';
+import { getFormaRepasseLabel } from '@/lib/formaRepasse';
 
 type Row = {
   id: string;
@@ -28,12 +28,7 @@ type Row = {
   status: string;
 };
 
-const getForma = (e: Row) => {
-  if (e.especial) return 'Transferência Especial';
-  if (e.forma_repasse) return formaRepasseLabel(e.forma_repasse as any);
-  if (e.numero_convenio) return 'Convênio';
-  return 'Fundo a Fundo';
-};
+const getForma = (e: Row) => getFormaRepasseLabel(e);
 
 const escapeCSV = (v: string | number | null | undefined) => {
   if (v === null || v === undefined) return '';

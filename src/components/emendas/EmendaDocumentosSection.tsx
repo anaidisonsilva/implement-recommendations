@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -29,6 +29,7 @@ import {
   useDocumentosByEmenda,
   useAddDocumentoLink,
   useDeleteDocumentoEmenda,
+  useUploadDocumentoDrive,
 } from '@/hooks/usePlanoTrabalho';
 import {
   FileText,
@@ -36,6 +37,7 @@ import {
   ExternalLink,
   Loader2,
   Link as LinkIcon,
+  Upload,
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
@@ -59,13 +61,19 @@ interface EmendaDocumentosSectionProps {
 
 const EmendaDocumentosSection = ({ emendaId }: EmendaDocumentosSectionProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDriveOpen, setIsDriveOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [linkNome, setLinkNome] = useState('');
   const [selectedTipo, setSelectedTipo] = useState('');
+  const [driveFile, setDriveFile] = useState<File | null>(null);
+  const [driveNome, setDriveNome] = useState('');
+  const [driveTipo, setDriveTipo] = useState('');
+  const driveInputRef = useRef<HTMLInputElement>(null);
 
   const { data: documentos, isLoading } = useDocumentosByEmenda(emendaId);
   const addLink = useAddDocumentoLink();
   const deleteDoc = useDeleteDocumentoEmenda();
+  const uploadDrive = useUploadDocumentoDrive();
 
   const handleAddLink = async () => {
     if (!linkUrl || !linkNome || !selectedTipo) return;

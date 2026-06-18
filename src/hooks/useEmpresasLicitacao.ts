@@ -185,9 +185,10 @@ export const useUpdatePagamento = () => {
         })
         .eq('id', input.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error('Pagamento não encontrado ou sem permissão para editar.');
       return data;
     },
     onSuccess: () => {

@@ -97,6 +97,21 @@ const EmendaDocumentosSection = ({ emendaId }: EmendaDocumentosSectionProps) => 
     }
   };
 
+  const handleUploadDrive = async () => {
+    if (!driveFile || !driveTipo) return;
+    await uploadDrive.mutateAsync({
+      file: driveFile,
+      nome: driveNome || driveFile.name,
+      tipo: driveTipo,
+      emendaId,
+    });
+    setDriveFile(null);
+    setDriveNome('');
+    setDriveTipo('');
+    setIsDriveOpen(false);
+    if (driveInputRef.current) driveInputRef.current.value = '';
+  };
+
   const formatDate = (dateStr: string) => {
     return format(new Date(dateStr), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   };
@@ -112,6 +127,71 @@ const EmendaDocumentosSection = ({ emendaId }: EmendaDocumentosSectionProps) => 
           <FileText className="h-5 w-5 text-primary" />
           <h4 className="font-semibold text-foreground">Documentos Anexados</h4>
         </div>
+        <div className="flex gap-2">
+        <Dialog open={isDriveOpen} onOpenChange={setIsDriveOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" variant="secondary">
+              <Upload className="mr-2 h-4 w-4" />
+              Enviar ao Google Drive
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Enviar arquivo para o Google Drive</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Arquivo</Label>
+                <Input
+                  ref={driveInputRef}
+                  type="file"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    setDriveFile(f);
+                    if (f && !driveNome) setDriveNome(f.name);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Nome do Documento</Label>
+                <Input
+                  value={driveNome}
+                  onChange={(e) => setDriveNome(e.target.value)}
+                  placeholder="Ex: Contrato nº 001/2026"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Tipo</Label>
+                <Select value={driveTipo} onValueChange={setDriveTipo}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tipoDocumentos.map((tipo) => (
+                      <SelectItem key={tipo.value} value={tipo.value}>
+                        {tipo.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsDriveOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleUploadDrive}
+                  disabled={!driveFile || !driveTipo || uploadDrive.isPending}
+                >
+                  {uploadDrive.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Enviar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm">

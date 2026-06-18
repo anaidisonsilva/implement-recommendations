@@ -339,6 +339,53 @@ export const useUploadDocumento = () => {
   });
 };
 
+export const useUploadDocumentoDrive = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      file,
+      nome,
+      tipo,
+      emendaId,
+      planoTrabalhoId,
+    }: {
+      file: File;
+      nome: string;
+      tipo: string;
+      emendaId?: string;
+      planoTrabalhoId?: string;
+    }) => {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('nome', nome);
+      form.append('tipo', tipo);
+      if (emendaId) form.append('emendaId', emendaId);
+      if (planoTrabalhoId) form.append('planoTrabalhoId', planoTrabalhoId);
+
+      const { data, error } = await supabase.functions.invoke('upload-google-drive', {
+        body: form,
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      return data as { documento: DocumentoDB; url: string };
+    },
+    onSuccess: (data) => {
+      const doc = data.documento;
+      if (doc.emenda_id) {
+        queryClient.invalidateQueries({ queryKey: ['documentos-emenda', doc.emenda_id] });
+      }
+      if (doc.plano_trabalho_id) {
+        queryClient.invalidateQueries({ queryKey: ['documentos', doc.plano_trabalho_id] });
+      }
+      toast.success('Documento enviado ao Google Drive!');
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao enviar ao Drive: ${error.message}`);
+    },
+  });
+};
+
 export const useDeleteDocumento = () => {
   const queryClient = useQueryClient();
 

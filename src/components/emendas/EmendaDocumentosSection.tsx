@@ -256,6 +256,7 @@ const EmendaDocumentosSection = ({ emendaId }: EmendaDocumentosSectionProps) => 
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {isLoading ? (

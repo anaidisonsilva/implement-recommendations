@@ -280,7 +280,9 @@ export const useDeleteDocumentoEmenda = () => {
 
   return useMutation({
     mutationFn: async ({ id, emendaId }: { id: string; emendaId: string }) => {
-      const { error } = await supabase.from('documentos').delete().eq('id', id);
+      const { error } = await supabase.functions.invoke('delete-google-drive', {
+        body: { documentoId: id },
+      });
       if (error) throw error;
       return emendaId;
     },

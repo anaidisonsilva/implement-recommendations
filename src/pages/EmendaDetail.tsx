@@ -230,6 +230,7 @@ const EmendaDetail = () => {
           <div class="section">
             <div class="section-title">DADOS FINANCEIROS</div>
             <div class="field"><div class="field-label">Forma de Repasse</div><div class="field-value">${emenda.especial ? 'Transferência Especial' : (emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo')}</div></div>
+            ${(emenda as any).numero_proposta ? `<div class="field"><div class="field-label">Nº Proposta</div><div class="field-value">${(emenda as any).numero_proposta}</div></div>` : ''}
             ${emenda.numero_convenio ? `<div class="field"><div class="field-label">Nº Convênio</div><div class="field-value">${emenda.numero_convenio}</div></div>` : ''}
             <div class="field"><div class="field-label">Grupo Natureza Despesa</div><div class="field-value">${emenda.grupo_natureza_despesa}</div></div>
             <div class="field"><div class="field-label">Função de Governo</div><div class="field-value">${(emenda as any).funcao_governo || '-'}</div></div>

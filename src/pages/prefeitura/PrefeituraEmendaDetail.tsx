@@ -293,6 +293,7 @@ const PrefeituraEmendaDetail = () => {
     <div class="card">
       <h3>Dados Financeiros</h3>
       <div class="field"><div class="label">Forma de Repasse</div><div class="value">${(emenda as any).especial ? 'Transferência Especial' : ((emenda as any).numero_convenio ? 'Convênio' : 'Fundo a Fundo')}</div></div>
+      ${(emenda as any).numero_proposta ? `<div class="field"><div class="label">Nº Proposta</div><div class="value">${(emenda as any).numero_proposta}</div></div>` : ''}
       ${(emenda as any).numero_convenio ? `<div class="field"><div class="label">Nº Convênio</div><div class="value">${(emenda as any).numero_convenio}</div></div>` : ''}
       <div class="field"><div class="label">Grupo Natureza Despesa</div><div class="value">${emenda.grupo_natureza_despesa}</div></div>
       <div class="field"><div class="label">Função de Governo</div><div class="value">${(emenda as any).funcao_governo || '-'}</div></div>

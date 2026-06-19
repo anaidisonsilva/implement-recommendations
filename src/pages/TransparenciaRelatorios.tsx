@@ -82,7 +82,7 @@ const TransparenciaRelatorios = () => {
     if (!emendas || emendas.length === 0) return [];
     const years = new Set<number>();
     emendas.forEach((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
       years.add(year);
     });
     return Array.from(years).sort((a, b) => b - a);
@@ -100,7 +100,7 @@ const TransparenciaRelatorios = () => {
     if (!emendas) return [];
     if (selectedYear === 'todos') return emendas;
     return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
       return year === parseInt(selectedYear);
     });
   }, [emendas, selectedYear]);

@@ -23,7 +23,7 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
     
     const years = new Set<number>();
     emendas.forEach((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
       years.add(year);
     });
     
@@ -43,7 +43,7 @@ export const useYearFilter = (emendas: EmendaDB[] | undefined) => {
     if (!selectedYear) return emendas;
     
     return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
       return year === parseInt(selectedYear);
     });
   }, [emendas, selectedYear]);

@@ -113,7 +113,7 @@ const PrefeituraRelatoriosPublicos = () => {
     }
     if (emendas && emendas.length > 0) {
       emendas.forEach((emenda) => {
-        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
         years.add(year);
       });
     }
@@ -132,7 +132,7 @@ const PrefeituraRelatoriosPublicos = () => {
     if (!emendas) return [];
     if (selectedYear === 'todos') return emendas;
     return emendas.filter((emenda) => {
-      const year = new Date(emenda.data_disponibilizacao).getFullYear();
+      const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
       return year === parseInt(selectedYear);
     });
   }, [emendas, selectedYear]);

@@ -51,7 +51,7 @@ const PrefeturaDashboard = () => {
     const years = new Set<number>();
     emendas.forEach((e) => {
       if (e.data_disponibilizacao) {
-        years.add(new Date(e.data_disponibilizacao).getFullYear());
+        years.add(Number(String(e.data_disponibilizacao).substring(0,4)));
       }
     });
     return Array.from(years).sort((a, b) => b - a);
@@ -63,7 +63,7 @@ const PrefeturaDashboard = () => {
     return emendas.filter(
       (e) =>
         e.data_disponibilizacao &&
-        new Date(e.data_disponibilizacao).getFullYear().toString() === selectedYear,
+        Number(String(e.data_disponibilizacao).substring(0,4)).toString() === selectedYear,
     );
   }, [emendas, selectedYear]);
 

@@ -274,6 +274,7 @@ const PrefeituraEmendaDetail = () => {
       <h3>Concedente</h3>
       <div class="field"><div class="label">Tipo</div><div class="value">${tipoConcedenteLabels[emenda.tipo_concedente] || emenda.tipo_concedente}</div></div>
       <div class="field"><div class="label">Nome</div><div class="value">${emenda.nome_concedente || '-'}</div></div>
+      ${(emenda as any).nome_parlamentar ? `<div class="field"><div class="label">Parlamentar</div><div class="value">${(emenda as any).nome_parlamentar}</div></div>` : ''}
     </div>
     <div class="card">
       <h3>Recebedor</h3>
@@ -286,6 +287,7 @@ const PrefeituraEmendaDetail = () => {
       <div class="field"><div class="label">Município/Estado</div><div class="value">${emenda.municipio}/${emenda.estado}</div></div>
       <div class="field"><div class="label">Gestor Responsável</div><div class="value">${emenda.gestor_responsavel}</div></div>
       <div class="field"><div class="label">Data Disponibilização</div><div class="value">${formatDate(emenda.data_disponibilizacao)}</div></div>
+      ${(emenda as any).data_inicio_vigencia ? `<div class="field"><div class="label">Vigência</div><div class="value">${formatDate((emenda as any).data_inicio_vigencia)} até ${(emenda as any).data_fim_vigencia ? formatDate((emenda as any).data_fim_vigencia) : 'Não definido'}</div></div>` : ''}
       <div class="field"><div class="label">Esfera</div><div class="value">${(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}</div></div>
     </div>
     <div class="card">

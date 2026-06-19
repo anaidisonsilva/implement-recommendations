@@ -106,7 +106,7 @@ const AuditLogs = () => {
   const totalPages = Math.ceil(total / pageSize);
 
   const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleString('pt-BR', {
+    new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? `${dateStr}T12:00:00` : dateStr).toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',

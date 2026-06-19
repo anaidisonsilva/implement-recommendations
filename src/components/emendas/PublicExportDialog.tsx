@@ -410,29 +410,53 @@ const PublicExportDialog = ({ emendas, title = 'Exportar Relatório', prefeitura
         <th>Forma Repasse</th>
         <th>Nº Convênio</th>
         <th>Objeto</th>
+        <th>Recebedor</th>
+        <th>CNPJ</th>
+        <th>Município/UF</th>
+        <th>Data Disp.</th>
         <th>Função Governo</th>
-        <th class="text-right">Previsto</th>
+        <th class="text-right">Concedente</th>
+        <th class="text-right">Contrapartida</th>
+        <th class="text-right">Total</th>
         <th class="text-right">Repassado</th>
+        <th class="text-right">Empenhado</th>
+        <th class="text-right">Liquidado</th>
+        <th class="text-right">Pago</th>
         <th class="text-right">Executado</th>
+        <th class="text-right">% Exec.</th>
         <th>Status</th>
       </tr>
     </thead>
     <tbody>
       ${emendas.map((e) => {
         const valorConc = Number(e.valor);
+        const valorContra = Number(e.contrapartida || 0);
+        const valorTot = valorConc + valorContra;
+        const valorExec = Number(e.valor_executado || 0);
+        const percExec = valorTot > 0 ? ((valorExec / valorTot) * 100).toFixed(1) + '%' : '0%';
         return `
         <tr>
-          <td>${e.numero}</td>
+          <td>${e.numero || '-'}</td>
           <td>${e.esfera === 'estadual' ? 'Estadual' : e.esfera === 'municipal' ? 'Municipal' : 'Federal'}</td>
           <td>${tipoConcedenteLabels[e.tipo_concedente || ''] || e.tipo_concedente || '-'}</td>
           <td>${e.nome_parlamentar || e.nome_concedente || '-'}</td>
           <td>${getFormaRepasse(e)}</td>
           <td>${e.numero_convenio || '-'}</td>
-          <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${e.objeto}</td>
-          <td style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">${e.funcao_governo || e.grupo_natureza_despesa || '-'}</td>
+          <td style="max-width: 140px;">${e.objeto}</td>
+          <td>${e.nome_recebedor || '-'}</td>
+          <td>${e.cnpj_recebedor || '-'}</td>
+          <td>${e.municipio || '-'}/${e.estado || '-'}</td>
+          <td>${e.data_disponibilizacao ? formatDate(e.data_disponibilizacao) : '-'}</td>
+          <td style="max-width: 100px;">${e.funcao_governo || e.grupo_natureza_despesa || '-'}</td>
           <td class="text-right">${formatCurrency(valorConc)}</td>
+          <td class="text-right">${formatCurrency(valorContra)}</td>
+          <td class="text-right">${formatCurrency(valorTot)}</td>
           <td class="text-right">${formatCurrency(Number(e.valor_repassado || 0))}</td>
-          <td class="text-right">${formatCurrency(Number(e.valor_executado))}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_empenhado || 0))}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_liquidado || 0))}</td>
+          <td class="text-right">${formatCurrency(Number(e.valor_pago || 0))}</td>
+          <td class="text-right">${formatCurrency(valorExec)}</td>
+          <td class="text-right">${percExec}</td>
           <td><span class="status status-${e.status}">${statusLabels[e.status] || e.status}</span></td>
         </tr>
       `;

@@ -286,13 +286,17 @@ const PrefeituraEmendaDetail = () => {
       <div class="field"><div class="label">Município/Estado</div><div class="value">${emenda.municipio}/${emenda.estado}</div></div>
       <div class="field"><div class="label">Gestor Responsável</div><div class="value">${emenda.gestor_responsavel}</div></div>
       <div class="field"><div class="label">Data Disponibilização</div><div class="value">${formatDate(emenda.data_disponibilizacao)}</div></div>
+      <div class="field"><div class="label">Esfera</div><div class="value">${(emenda as any).esfera === 'estadual' ? 'Estadual' : (emenda as any).esfera === 'municipal' ? 'Municipal' : 'Federal'}</div></div>
     </div>
     <div class="card">
       <h3>Dados Financeiros</h3>
+      <div class="field"><div class="label">Forma de Repasse</div><div class="value">${(emenda as any).especial ? 'Transferência Especial' : ((emenda as any).numero_convenio ? 'Convênio' : 'Fundo a Fundo')}</div></div>
+      ${(emenda as any).numero_convenio ? `<div class="field"><div class="label">Nº Convênio</div><div class="value">${(emenda as any).numero_convenio}</div></div>` : ''}
       <div class="field"><div class="label">Grupo Natureza Despesa</div><div class="value">${emenda.grupo_natureza_despesa}</div></div>
       <div class="field"><div class="label">Função de Governo</div><div class="value">${(emenda as any).funcao_governo || '-'}</div></div>
       <div class="field"><div class="label">Banco</div><div class="value">${emenda.banco || '-'}</div></div>
       <div class="field"><div class="label">Conta Corrente</div><div class="value">${emenda.conta_corrente || '-'}</div></div>
+      ${(emenda as any).anuencia_previa_sus !== null && (emenda as any).anuencia_previa_sus !== undefined ? `<div class="field"><div class="label">Anuência Prévia do SUS</div><div class="value">${(emenda as any).anuencia_previa_sus ? 'Sim' : 'Não'}</div></div>` : ''}
     </div>
     ${planoTrabalhoHtml}
     ${empresasPagamentosHtml}

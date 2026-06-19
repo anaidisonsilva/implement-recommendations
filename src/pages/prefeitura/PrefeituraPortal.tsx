@@ -99,7 +99,7 @@ const PrefeituraPortal = () => {
     }
     if (emendas && emendas.length > 0) {
       emendas.forEach((emenda) => {
-        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
         years.add(year);
       });
     }
@@ -118,7 +118,7 @@ const PrefeituraPortal = () => {
     let filtered = emendas;
     if (selectedYear !== 'todos') {
       filtered = filtered.filter((emenda) => {
-        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
         return year === parseInt(selectedYear);
       });
     }

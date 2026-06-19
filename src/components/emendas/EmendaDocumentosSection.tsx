@@ -113,7 +113,7 @@ const EmendaDocumentosSection = ({ emendaId }: EmendaDocumentosSectionProps) => 
   };
 
   const formatDate = (dateStr: string) => {
-    return format(new Date(dateStr), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    return format(new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? `${dateStr}T12:00:00` : dateStr), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   };
 
   const getTipoLabel = (tipo: string) => {

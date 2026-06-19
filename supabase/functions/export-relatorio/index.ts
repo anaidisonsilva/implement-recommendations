@@ -78,7 +78,13 @@ function formatCurrency(value: number): string {
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('pt-BR');
+  if (!dateString) return '';
+  // Date-only (YYYY-MM-DD) must be anchored to local noon to avoid TZ shifts
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    const [y, m, d] = dateString.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 }
 
 function escapeCSV(value: string | number | boolean | null): string {

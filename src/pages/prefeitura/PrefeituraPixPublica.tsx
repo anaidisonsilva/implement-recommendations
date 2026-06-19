@@ -51,7 +51,7 @@ const formatCurrency = (value: number) => {
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('pt-BR');
+  return new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateString) ? `${dateString}T12:00:00` : dateString).toLocaleDateString('pt-BR');
 };
 
 const PrefeituraPixPublica = () => {
@@ -86,7 +86,7 @@ const PrefeituraPixPublica = () => {
     }
     if (emendas && emendas.length > 0) {
       emendas.forEach((emenda) => {
-        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
         years.add(year);
       });
     }
@@ -104,7 +104,7 @@ const PrefeituraPixPublica = () => {
     let filtered = emendas;
     if (selectedYear !== 'todos') {
       filtered = filtered.filter((emenda) => {
-        const year = new Date(emenda.data_disponibilizacao).getFullYear();
+        const year = Number(String(emenda.data_disponibilizacao).substring(0,4));
         return year === parseInt(selectedYear);
       });
     }

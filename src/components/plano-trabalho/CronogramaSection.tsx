@@ -123,7 +123,7 @@ const CronogramaSection = ({ planoTrabalhoId }: CronogramaSectionProps) => {
   };
 
   const formatDate = (dateStr: string) => {
-    return format(new Date(dateStr), "dd 'de' MMM 'de' yyyy", { locale: ptBR });
+    return format(new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? `${dateStr}T12:00:00` : dateStr), "dd 'de' MMM 'de' yyyy", { locale: ptBR });
   };
 
   const isFormLoading = createItem.isPending || updateItem.isPending;

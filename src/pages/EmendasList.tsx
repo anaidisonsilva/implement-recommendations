@@ -29,7 +29,7 @@ const EmendasList = () => {
     const years = new Set<number>();
     emendas.forEach((e) => {
       if (e.data_disponibilizacao) {
-        years.add(new Date(e.data_disponibilizacao).getFullYear());
+        years.add(Number(String(e.data_disponibilizacao).substring(0,4)));
       }
     });
     return Array.from(years).sort((a, b) => b - a);
@@ -62,7 +62,7 @@ const EmendasList = () => {
       const matchesYear =
         yearFilter === 'todos' ||
         (emenda.data_disponibilizacao &&
-          new Date(emenda.data_disponibilizacao).getFullYear().toString() === yearFilter);
+          Number(String(emenda.data_disponibilizacao).substring(0,4)).toString() === yearFilter);
 
       return matchesSearch && matchesStatus && matchesConcedente && matchesEspecial && matchesEsfera && matchesYear;
     });

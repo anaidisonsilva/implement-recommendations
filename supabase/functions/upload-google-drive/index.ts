@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
         .maybeSingle();
       if (emenda) {
         if (emenda.data_disponibilizacao) {
-          ano = String(new Date(emenda.data_disponibilizacao).getFullYear());
+          ano = String(emenda.data_disponibilizacao).substring(0, 4);
         }
         const pref = (emenda as any).prefeituras;
         if (pref?.nome) prefeituraNome = pref.nome;

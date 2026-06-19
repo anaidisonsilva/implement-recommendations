@@ -19,6 +19,10 @@ interface EmendaData {
   nome_concedente: string | null;
   nome_parlamentar?: string | null;
   nome_recebedor: string;
+  cnpj_recebedor?: string | null;
+  gestor_responsavel?: string | null;
+  banco?: string | null;
+  conta_corrente?: string | null;
   municipio: string;
   estado: string;
   valor: number;

@@ -225,13 +225,17 @@ const EmendaDetail = () => {
             <div class="field"><div class="field-label">Município/Estado</div><div class="field-value">${emenda.municipio}/${emenda.estado}</div></div>
             <div class="field"><div class="field-label">Gestor Responsável</div><div class="field-value">${emenda.gestor_responsavel}</div></div>
             <div class="field"><div class="field-label">Data Disponibilização</div><div class="field-value">${formatDate(emenda.data_disponibilizacao)}</div></div>
+            <div class="field"><div class="field-label">Esfera</div><div class="field-value">${emenda.esfera === 'estadual' ? 'Estadual' : emenda.esfera === 'municipal' ? 'Municipal' : 'Federal'}</div></div>
           </div>
           <div class="section">
             <div class="section-title">DADOS FINANCEIROS</div>
+            <div class="field"><div class="field-label">Forma de Repasse</div><div class="field-value">${emenda.especial ? 'Transferência Especial' : (emenda.numero_convenio ? 'Convênio' : 'Fundo a Fundo')}</div></div>
+            ${emenda.numero_convenio ? `<div class="field"><div class="field-label">Nº Convênio</div><div class="field-value">${emenda.numero_convenio}</div></div>` : ''}
             <div class="field"><div class="field-label">Grupo Natureza Despesa</div><div class="field-value">${emenda.grupo_natureza_despesa}</div></div>
             <div class="field"><div class="field-label">Função de Governo</div><div class="field-value">${(emenda as any).funcao_governo || '-'}</div></div>
             <div class="field"><div class="field-label">Banco</div><div class="field-value">${emenda.banco || '-'}</div></div>
             <div class="field"><div class="field-label">Conta Corrente</div><div class="field-value">${emenda.conta_corrente || '-'}</div></div>
+            ${emenda.anuencia_previa_sus !== null && emenda.anuencia_previa_sus !== undefined ? `<div class="field"><div class="field-label">Anuência Prévia do SUS</div><div class="field-value">${emenda.anuencia_previa_sus ? 'Sim' : 'Não'}</div></div>` : ''}
           </div>
         </div>
 

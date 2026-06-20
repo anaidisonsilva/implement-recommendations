@@ -250,6 +250,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <AccessibilityWidget />
+          <ChatbotWidget />
         </BrowserRouter>
         </TooltipProvider>
       </AppSettingsProvider>

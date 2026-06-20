@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import AppSettingsProvider from "./components/AppSettingsProvider";
 import AccessibilityWidget from "./components/accessibility/AccessibilityWidget";
+import ChatbotWidget from "./components/chatbot/ChatbotWidget";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import SuperAdminRoute from "./components/auth/SuperAdminRoute";
 import AdminRoute from "./components/auth/AdminRoute";
@@ -249,6 +250,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <AccessibilityWidget />
+          <ChatbotWidget />
         </BrowserRouter>
         </TooltipProvider>
       </AppSettingsProvider>
